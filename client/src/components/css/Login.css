@@ -1,0 +1,126 @@
+/* LOGIN PAGE STYLES */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5e6d7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;  /* Changed from height to min-height for better adaptability */
+    margin: 0;
+    padding: 20px;  /* Added padding to prevent content from touching the edges */
+}
+
+section {
+    background: #fff8f0;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;  /* Changed from fixed width to percentage for responsiveness */
+    max-width: 400px;  /* Set a max-width to maintain structure on larger screens */
+}
+
+h1 {
+    color: #8b5e3b;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    text-align: left;
+    font-weight: 600;
+    margin: 10px 0 5px;
+    color: #704c2f;
+}
+
+input {
+    width: 100%;
+    padding: 12px; /* Increased padding for better touch experience */
+    border: 1px solid #c2a080;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    background: #fdf6ee;
+    transition: 0.3s ease-in-out;
+}
+
+input:focus {
+    border-color: #8b5e3b;
+    box-shadow: 0px 0px 5px rgba(139, 94, 59, 0.3);
+}
+
+button {
+    width: 100%;
+    padding: 14px;  /* Increased padding for better mobile experience */
+    margin-top: 15px;
+    background: #8b5e3b;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #704c2f;
+}
+
+.errmsg {
+    color: #c0392b;
+    font-weight: bold;
+    background: #f9e0e0;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 480px) {
+    section {
+        padding: 1.5rem;  /* Reduce padding for smaller screens */
+    }
+
+    h1 {
+        font-size: 1.8rem;  /* Slightly reduce heading size */
+    }
+
+    label {
+        font-size: 0.9rem; /* Adjust label size for readability */
+    }
+
+    input {
+        font-size: 0.95rem; /* Adjust input font size */
+        padding: 10px;  /* Reduce padding slightly */
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    p {
+        font-size: 0.9rem; /* Adjust text size for better readability */
+    }
+}
+
+p {
+    color: #704c2f;
+    font-size: 1rem;
+    margin-top: 15px;
+    text-align: center;
+}
+
+p a {
+    color: #8b5e3b;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+p a:hover {
+    color: #704c2f;
+    text-decoration: underline;
+}

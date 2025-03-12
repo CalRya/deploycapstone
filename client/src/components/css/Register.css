@@ -1,0 +1,134 @@
+/* REGISTER PAGE STYLES */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5e6d7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container to properly contain everything */
+section {
+    background: #fff8f0;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 400px;
+    max-width: 100%; /* Prevents overflow on smaller screens */
+    box-sizing: border-box;
+    overflow: hidden; /* Prevents text from overflowing */
+    word-wrap: break-word; /* Ensures text stays inside */
+}
+
+/* Headings */
+h1 {
+    color: #8b5e3b;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    word-wrap: break-word; /* Prevents long text from overflowing */
+}
+
+/* Form Elements */
+label {
+    display: block;
+    text-align: left;
+    font-weight: 600;
+    margin: 10px 0 5px;
+    color: #704c2f;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #c2a080;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    background: #fdf6ee;
+    transition: 0.3s ease-in-out;
+    box-sizing: border-box;
+    word-break: break-word; /* Prevents long input text from overflowing */
+}
+
+input:focus {
+    border-color: #8b5e3b;
+    box-shadow: 0px 0px 5px rgba(139, 94, 59, 0.3);
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: #8b5e3b;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-sizing: border-box;
+}
+
+button:hover {
+    background: #704c2f;
+}
+
+/* Error Message */
+.errmsg {
+    color: red;
+    background-color: #ffecec;
+    border: 1px solid red;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    border-radius: 8px;
+    word-wrap: break-word;
+}
+
+/* Links */
+.line {
+    margin-top: 15px;
+}
+
+.line a {
+    color: #8b5e3b;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.line a:hover {
+    color: #704c2f;
+    text-decoration: underline;
+}
+
+/* Paragraph */
+p {
+    color: #704c2f;
+    font-size: 1rem;
+    margin-top: 15px;
+    word-wrap: break-word;
+}
+
+p a {
+    color: #8b5e3b;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+p a:hover {
+    color: #704c2f;
+    text-decoration: underline;
+}
+
+/* Utility */
+.offscreen {
+    position: absolute;
+    left: -9999px;
+}
