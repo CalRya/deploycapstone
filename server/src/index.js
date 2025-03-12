@@ -1,5 +1,4 @@
 
-console.log(require.resolve('express'));
     const express = require("express");
     const app = express();
     const mongoose = require("mongoose");
@@ -19,8 +18,9 @@ console.log(require.resolve('express'));
     const nodemailer = require("nodemailer");
     const Quote = require("../models/Quotes");  // ✅ Use the existing model instead of redefining it
     const premiumRoutes = require("../routes/premiumRoutes");
+    const MONGODB_URI = "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE?retryWrites=true&w=majority";
 
-    mongoose.connect("mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE", {
+    mongoose.connect(MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
@@ -30,8 +30,7 @@ console.log(require.resolve('express'));
         console.log("✅ Initialized averageRating for all books");
     })
     .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-
+    
 
 const calculateLateFee = (dueDate) => {
     const today = new Date();
@@ -50,21 +49,7 @@ const allowedOrigins = [
     "https://pageturnerdeploy.vercel.app" // Deployed frontend
 ];
 
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true // 🔹 Ensures cookies & auth headers are sent
-}));
-console.log("MONGODB_URI:", process.env.MONGODB_URI);
-
-app.get('/test', (req, res) => {
-    res.json({ message: "API is working!" });
-});
+app.use(cors()); // Allows all origins (for testing)
 
 // ✅ Ensure "uploads" folder exists
 const uploadDir = path.join(__dirname, "uploads");
