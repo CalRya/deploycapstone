@@ -1,130 +1,134 @@
 
-    const express = require("express");
-    const app = express();
-    const mongoose = require("mongoose");
-    const cors = require("cors");
-    const bcrypt = require("bcryptjs");
-    const multer = require("multer");
-    const path = require("path");
-    const fs = require("fs");
-    const userModel = require("../models/User");
-    const bookRoutes = require("../routes/bookRoutes");
-    const adminRoutes = require("../routes/adminRoutes");
-    const Book = require("../models/Book");
-    const Borrow = require("../models/Borrow");
-    const articleRoutes = require("../routes/articleRoutes");
-    const borrowRoutes = require("../routes/borrowRoutes");
-    const authenticateUser = require("../middleware/authMiddleware");
-    const nodemailer = require("nodemailer");
-    const Quote = require("../models/Quotes");  // ✅ Use the existing model instead of redefining it
-    const premiumRoutes = require("../routes/premiumRoutes");
-    const MONGODB_URI = "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE?retryWrites=true&w=majority";
+        const express = require("express");
+        const app = express();
+        const mongoose = require("mongoose");
+        const cors = require("cors");
+        const bcrypt = require("bcryptjs");
+        const multer = require("multer");
+        const path = require("path");
+        const fs = require("fs");
+        const userModel = require("../models/User");
+        const bookRoutes = require("../routes/bookRoutes");
+        const adminRoutes = require("../routes/adminRoutes");
+        const Book = require("../models/Book");
+        const Borrow = require("../models/Borrow");
+        const articleRoutes = require("../routes/articleRoutes");
+        const borrowRoutes = require("../routes/borrowRoutes");
+        const authenticateUser = require("../middleware/authMiddleware");
+        const nodemailer = require("nodemailer");
+        const Quote = require("../models/Quotes");  // ✅ Use the existing model instead of redefining it
+        const premiumRoutes = require("../routes/premiumRoutes");
+        const MONGODB_URI = "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE?retryWrites=true&w=majority";
 
-    mongoose.connect(MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(async () => {
-        console.log("✅ Connected to MongoDB Atlas");
-        await Book.updateMany({}, { $set: { averageRating: 0 } });
-        console.log("✅ Initialized averageRating for all books");
-    })
-    .catch((err) => console.error("❌ MongoDB connection error:", err));
-    
+        mongoose.connect(MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        .then(async () => {
+            console.log("✅ Connected to MongoDB Atlas");
+            await Book.updateMany({}, { $set: { averageRating: 0 } });
+            console.log("✅ Initialized averageRating for all books");
+        })
+        .catch((err) => console.error("❌ MongoDB connection error:", err));
+        
 
-const calculateLateFee = (dueDate) => {
-    const today = new Date();
-    const due = new Date(dueDate);
+    const calculateLateFee = (dueDate) => {
+        const today = new Date();
+        const due = new Date(dueDate);
 
-    const daysLate = Math.max(0, Math.ceil((today - due) / (1000 * 60 * 60 * 24))); // Convert ms to days
+        const daysLate = Math.max(0, Math.ceil((today - due) / (1000 * 60 * 60 * 24))); // Convert ms to days
 
-    if (daysLate === 0) return 0; // Not late
-    return 15 + (daysLate - 1) * 5; // ₱15 once late + ₱5 per extra day
-};
-
-
-app.use(express.json());
-const allowedOrigins = [
-    "http://localhost:5173", // Local frontend
-    "https://pageturnerdeploy.vercel.app" // Deployed frontend
-];
-
-app.use(cors({
-    origin: "https://pageturnerdeploy.vercel.app", // Allow only your frontend domain
-    credentials: true, // Allow cookies and authorization headers
-    methods: "GET,POST,PUT,DELETE,OPTIONS",
-    allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-}));
-
-// ✅ Ensure "uploads" folder exists
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
-
-// ✅ Serve uploaded images as static files
-app.use("/uploads", express.static(uploadDir));
-
-app.options("*", (req, res) => {
-    console.log("Pre-flight request received");
-    res.sendStatus(200);
-});
+        if (daysLate === 0) return 0; // Not late
+        return 15 + (daysLate - 1) * 5; // ₱15 once late + ₱5 per extra day
+    };
 
 
+    app.use(express.json());
+    const allowedOrigins = [
+        "http://localhost:5173", // Local frontend
+        "https://pageturnerdeploy.vercel.app" // Deployed frontend
+    ];
 
-// ✅ User Registration
-app.post("/register", async (req, res) => {
-    try {
-        const { user, email, password } = req.body;
+    app.use(cors({
+        origin: "https://pageturnerdeploy.vercel.app", // Allow only your frontend domain
+        credentials: true, // Allow cookies and authorization headers
+        methods: "GET,POST,PUT,DELETE,OPTIONS",
+        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    }));
 
-        if (!user || !email || !password) {
-            return res.status(400).json({ error: "Username, email, and password are required" });
-        }
-
-        // Check if user already exists
-        const existingUser = await userModel.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: "Email already registered" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await userModel.create({ user, email, password: hashedPassword });
-
-        res.status(201).json({ message: "User registered successfully", email: newUser.email });
-
-    } catch (err) {
-        console.error("❌ Error inserting user:", err);
-        res.status(500).json({ error: "Internal server error" });
+    // ✅ Ensure "uploads" folder exists
+    const uploadDir = path.join(__dirname, "uploads");
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir);
     }
+
+    // ✅ Serve uploaded images as static files
+    app.use("/uploads", express.static(uploadDir));
+
+    app.options("*", (req, res) => {
+        console.log("Pre-flight request received");
+        res.sendStatus(200);
+    });
+
+    // ✅ Default Route (Prevents "Cannot GET /login" error)
+app.get("/", (req, res) => {
+    res.send("📚 Library Management API is running.");
 });
 
-// ✅ User Login
-app.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const foundUser = await userModel.findOne({ email });
 
-        if (!foundUser) {
-            return res.status(401).json({ error: "User not found" });
+    // ✅ User Registration
+    app.post("/register", async (req, res) => {
+        try {
+            const { user, email, password } = req.body;
+
+            if (!user || !email || !password) {
+                return res.status(400).json({ error: "Username, email, and password are required" });
+            }
+
+            // Check if user already exists
+            const existingUser = await userModel.findOne({ email });
+            if (existingUser) {
+                return res.status(400).json({ error: "Email already registered" });
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newUser = await userModel.create({ user, email, password: hashedPassword });
+
+            res.status(201).json({ message: "User registered successfully", email: newUser.email });
+
+        } catch (err) {
+            console.error("❌ Error inserting user:", err);
+            res.status(500).json({ error: "Internal server error" });
         }
+    });
 
-        const passwordMatch = await bcrypt.compare(password, foundUser.password);
-        if (!passwordMatch) {
-            return res.status(401).json({ error: "Invalid credentials" });
+    // ✅ User Login
+    app.post("/login", async (req, res) => {
+        try {
+            const { email, password } = req.body;
+            const foundUser = await userModel.findOne({ email });
+
+            if (!foundUser) {
+                return res.status(401).json({ error: "User not found" });
+            }
+
+            const passwordMatch = await bcrypt.compare(password, foundUser.password);
+            if (!passwordMatch) {
+                return res.status(401).json({ error: "Invalid credentials" });
+            }
+
+            res.json({
+                message: "✅ Login successful",
+                id: foundUser._id,
+                email: foundUser.email,
+                role: foundUser.role
+            });
+
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Internal server error" });
         }
-
-        res.json({
-            message: "✅ Login successful",
-            id: foundUser._id,
-            email: foundUser.email,
-            role: foundUser.role
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
+    });
 
 
 // ✅ Get Borrowed Books by User
