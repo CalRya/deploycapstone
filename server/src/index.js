@@ -45,16 +45,17 @@
 
     app.use(express.json());
     const allowedOrigins = [
-        "http://localhost:5173", // Local frontend
-        "https://pageturnerdeploy.vercel.app" // Deployed frontend
+        "https://pageturnerdeploy.vercel.app",
+        "https://pageturnerdeploy-dx4r2n6wz-calryas-projects.vercel.app"
     ];
-
+    
     app.use(cors({
-        origin: "https://pageturnerdeploy.vercel.app", // Allow only your frontend domain
-        credentials: true, // Allow cookies and authorization headers
+        origin: allowedOrigins,
+        credentials: true,
         methods: "GET,POST,PUT,DELETE,OPTIONS",
         allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     }));
+    
 
     // ✅ Ensure "uploads" folder exists
     const uploadDir = path.join(__dirname, "uploads");
@@ -70,11 +71,7 @@
         res.sendStatus(200);
     });
 
-    // ✅ Default Route (Prevents "Cannot GET /login" error)
-app.get("/", (req, res) => {
-    res.send("📚 Library Management API is running.");
-});
-
+ 
 
     // ✅ User Registration
     app.post("/register", async (req, res) => {
@@ -682,9 +679,11 @@ app.get("/api/check-premium/:userId", async (req, res) => {
     }
 });
 
-app.get("/", (req, res) => {
-    res.send("📢 Courier Club API is running...");
+   // ✅ Default Route (Prevents "Cannot GET /login" error)
+   app.get("/", (req, res) => {
+    res.send("📚 Library Management API is running.");
 });
+
 
 // ✅ Routes
 app.use("/api", bookRoutes);
