@@ -46,7 +46,10 @@ const BookDisplay = ({ searchQuery }) => {
     }, []);
 
     // Open & Close Modal
-    const openModal = (book) => setSelectedBook(book);
+    const openModal = (book) => {
+        console.log("📌 Opening modal for book:", book); // Debugging log
+        setSelectedBook(book);
+    };
     const closeModal = () => setSelectedBook(null);
 
     // Function to convert newline characters into <br /> tags
@@ -102,7 +105,7 @@ const BookDisplay = ({ searchQuery }) => {
                 <ul className="book-list">
                     {filteredAndSortedBooks.map((book) => (
                         <li key={book._id} className="book-card" onClick={() => openModal(book)}>
-                            <img src={`${BASE_URL}${selectedBook.bookCoverUrl}`} alt="Book Cover" />
+                            <img src={`${BASE_URL}${book.bookCoverUrl}`} alt="Book Cover" />
                             <h2>{book.bookTitle}</h2>
                             <p><strong>Author:</strong> {book.bookAuthor}</p>
                             <p><strong>Genre:</strong> {book.bookGenre}</p>
