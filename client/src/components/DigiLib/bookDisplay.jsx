@@ -15,17 +15,13 @@ const BookDisplay = ({ searchQuery }) => {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await axios.get("https://deploycapstone.onrender.com/api/books");
+                const response = await axios.get(`${BASE_URL}/books`);
                 console.log("📥 Books API Response:", response.data);
 
-                const updatedBooks = response.data.map((book) => {
-                    if (book.averageRating && book.averageRating !== null) {
-                        book.averageRating = book.averageRating.toFixed(1);
-                    } else {
-                        book.averageRating = "No ratings yet";
-                    }
-                    return book;
-                });
+                const updatedBooks = response.data.map((book) => ({
+                    ...book,
+                    averageRating: book.averageRating ? book.averageRating.toFixed(1) : "No ratings yet",
+                }));
 
                 setBooks(updatedBooks);
             } catch (error) {
@@ -54,33 +50,33 @@ const BookDisplay = ({ searchQuery }) => {
     const closeModal = () => setSelectedBook(null);
 
     // Function to convert newline characters into <br /> tags
-    const formatDescription = (description) => {
-        if (!description) return "";
-        return description.split("\n").map((line, index) => (
-            <span key={index}>
-                {line}
-                <br />
-            </span>
-        ));
-    };
+    const formatDescription = (description) =>
+        description
+            ? description.split("\n").map((line, index) => (
+                  <span key={index}>
+                      {line}
+                      <br />
+                  </span>
+              ))
+            : "";
 
     // Function to sort books based on selected option
     const sortBooks = (books) => {
-        if (sortOption === "title") {
-            return [...books].sort((a, b) => a.bookTitle.localeCompare(b.bookTitle));
-        } else if (sortOption === "author") {
-            return [...books].sort((a, b) => a.bookAuthor.localeCompare(b.bookAuthor));
-        } else if (sortOption === "genre") {
-            return [...books].sort((a, b) => a.bookGenre.localeCompare(b.bookGenre));
+        switch (sortOption) {
+            case "title":
+                return [...books].sort((a, b) => a.bookTitle.localeCompare(b.bookTitle));
+            case "author":
+                return [...books].sort((a, b) => a.bookAuthor.localeCompare(b.bookAuthor));
+            case "genre":
+                return [...books].sort((a, b) => a.bookGenre.localeCompare(b.bookGenre));
+            default:
+                return books;
         }
-        return books; // Default order if no sorting is applied
     };
 
     // Filter and sort books based on user input
     const filteredAndSortedBooks = sortBooks(
-        books.filter((book) =>
-            book.bookTitle.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+        books.filter((book) => book.bookTitle.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     return (
@@ -106,13 +102,21 @@ const BookDisplay = ({ searchQuery }) => {
                         <li key={book._id} className="book-card" onClick={() => openModal(book)}>
                             <img src={`${BASE_URL}${book.bookCoverUrl}`} alt="Book Cover" />
                             <h2>{book.bookTitle}</h2>
-                            <p><strong>Author:</strong> {book.bookAuthor}</p>
-                            <p><strong>Genre:</strong> {book.bookGenre}</p>
-                            <p><strong>Platform:</strong> {book.bookPlatform}</p>
+                            <p>
+                                <strong>Author:</strong> {book.bookAuthor}
+                            </p>
+                            <p>
+                                <strong>Genre:</strong> {book.bookGenre}
+                            </p>
+                            <p>
+                                <strong>Platform:</strong> {book.bookPlatform}
+                            </p>
                             <p className={`availability ${book.bookAvailability ? "available" : "unavailable"}`}>
                                 {book.bookAvailability ? "Available" : "Not Available"}
                             </p>
-                            <p><strong>Average Rating:</strong> {book.averageRating} ⭐</p>
+                            <p>
+                                <strong>Average Rating:</strong> {book.averageRating} ⭐
+                            </p>
                         </li>
                     ))}
                 </ul>
@@ -122,17 +126,27 @@ const BookDisplay = ({ searchQuery }) => {
             {selectedBook && (
                 <div className="modal-overlay" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <span className="close-btn" onClick={closeModal}>&times;</span>
-                        <img src={`${BASE_URL}${book.bookCoverUrl}`} alt="Book Cover" />
+                        <span className="close-btn" onClick={closeModal}>
+                            &times;
+                        </span>
+                        <img src={`${BASE_URL}${selectedBook.bookCoverUrl}`} alt="Book Cover" />
                         <h2>{selectedBook.bookTitle}</h2>
-                        <p><strong>Author:</strong> {selectedBook.bookAuthor}</p>
-                        <p><strong>Genre:</strong> {selectedBook.bookGenre}</p>
-                        <p><strong>Platform:</strong> {selectedBook.bookPlatform}</p>
-                        <p><strong>Description:</strong></p>
-                        <div className="book-description">
-                            {formatDescription(selectedBook.bookDescription)}
-                        </div>
-                        <p><strong>Average Rating:</strong> {selectedBook.averageRating} ⭐</p>
+                        <p>
+                            <strong>Author:</strong> {selectedBook.bookAuthor}
+                        </p>
+                        <p>
+                            <strong>Genre:</strong> {selectedBook.bookGenre}
+                        </p>
+                        <p>
+                            <strong>Platform:</strong> {selectedBook.bookPlatform}
+                        </p>
+                        <p>
+                            <strong>Description:</strong>
+                        </p>
+                        <div className="book-description">{formatDescription(selectedBook.bookDescription)}</div>
+                        <p>
+                            <strong>Average Rating:</strong> {selectedBook.averageRating} ⭐
+                        </p>
                         <p className={`availability ${selectedBook.bookAvailability ? "available" : "unavailable"}`}>
                             {selectedBook.bookAvailability ? "Available" : "Not Available"}
                         </p>
