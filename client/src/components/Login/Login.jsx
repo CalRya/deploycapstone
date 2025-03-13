@@ -1,7 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // No need for '../api/axios' unless you configured it
+import axios from 'axios';
 import '../css/Login.css';
+
+const API_URL = import.meta.env.VITE_API_URL || "https://deploycapstone.onrender.com";
+const LOGIN_URL = `${API_URL}/login`;
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -18,8 +21,15 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!email || !password) {
+            setErrMsg("Please fill in both fields.");
+            return;
+        }
+
         try {
-            const result = await axios.post('http://localhost:3004/login', { email, password });
+            const result = await axios.post(LOGIN_URL, { email, password }, { 
+                withCredentials: true, // ✅ Send cookies with request
+            });
 
             console.log("✅ Server Response:", result.data);
 
@@ -47,6 +57,7 @@ function Login() {
             setErrMsg(err.response?.data?.error || "Login failed");
         }
     };
+
     return (
         <section>
             {errMsg && <p ref={errRef} className="errmsg">{errMsg}</p>}

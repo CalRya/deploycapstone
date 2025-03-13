@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../css/borrowBookButton.css";
 
+const BASE_URL = "https://deploycapstone.onrender.com/api";
+
 const BorrowBookButton = ({ bookID }) => {
   const [loading, setLoading] = useState(false);
   const [activeBorrows, setActiveBorrows] = useState(null);
@@ -17,7 +19,7 @@ const BorrowBookButton = ({ bookID }) => {
       if (!user) return;
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:3004/api/users/${user}`, {
+        const response = await fetch(`${BASE_URL}/users/${user}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -42,7 +44,7 @@ const BorrowBookButton = ({ bookID }) => {
   const fetchBorrows = async () => {
     if (!user) return;
     try {
-      const response = await fetch(`http://localhost:3004/api/borrow/count/${user}`);
+      const response = await fetch(`${BASE_URL}/borrow/count/${user}`);
       const data = await response.json();
       console.log("🔍 Updated Active Borrows:", data);
       setActiveBorrows(data.activeBorrows || 0);
@@ -68,7 +70,7 @@ const BorrowBookButton = ({ bookID }) => {
     setLoading(true);
     try {
       // ✅ Fetch latest borrow count before enforcing the limit
-      const responseCount = await fetch(`http://localhost:3004/api/borrow/count/${user}`);
+      const responseCount = await fetch(`${BASE_URL}/borrow/count/${user}`);
       const dataCount = await responseCount.json();
       const updatedActiveBorrows = dataCount.activeBorrows || 0;
 
@@ -78,7 +80,7 @@ const BorrowBookButton = ({ bookID }) => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3004/api/borrow/${bookID}`, {
+      const response = await fetch(`${BASE_URL}/borrow/${bookID}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user }),

@@ -6,7 +6,7 @@ const QuoteGuessingGame = () => {
     const [guess, setGuess] = useState("");
     const [feedback, setFeedback] = useState("");
     const [score, setScore] = useState(0);
-    const [highScore, setHighScore] = useState(localStorage.getItem("highScore") || 0);
+    const [highScore, setHighScore] = useState(parseInt(localStorage.getItem("highScore")) || 0);
     const [skipsLeft, setSkipsLeft] = useState(3);
     const [timer, setTimer] = useState(15);
     const [gameOver, setGameOver] = useState(false);
@@ -31,7 +31,7 @@ const QuoteGuessingGame = () => {
         setAnswered(false);
         setFeedback("");
         try {
-            const response = await fetch("http://localhost:3004/quote");
+            const response = await fetch("https://deploycapstone.onrender.com/quote");
             if (!response.ok) throw new Error("Failed to fetch quote");
             const data = await response.json();
             setQuote(data.text);
@@ -72,7 +72,7 @@ const QuoteGuessingGame = () => {
 
     const handleGameOver = () => {
         setGameOver(true);
-        setFeedback(`Game Over! High Score: ${highScore}`);
+        setFeedback(`Game Over! High score: ${highScore}`);
     };
 
     const exitGame = () => {

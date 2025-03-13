@@ -14,7 +14,7 @@ const BookDisplay = ({ searchQuery }) => {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await axios.get("http://localhost:3004/api/books");
+                const response = await axios.get("https://deploycapstone.onrender.com/api/books");
                 console.log("📥 Books API Response:", response.data);
 
                 const updatedBooks = response.data.map((book) => {
@@ -103,7 +103,7 @@ const BookDisplay = ({ searchQuery }) => {
                 <ul className="book-list">
                     {filteredAndSortedBooks.map((book) => (
                         <li key={book._id} className="book-card" onClick={() => openModal(book)}>
-                            <img src={`http://localhost:3004${book.bookCoverUrl}`} alt="Book Cover" />
+                            <img src={`${BASE_URL}${book.bookCoverUrl}`} alt="Book Cover" />
                             <h2>{book.bookTitle}</h2>
                             <p><strong>Author:</strong> {book.bookAuthor}</p>
                             <p><strong>Genre:</strong> {book.bookGenre}</p>
@@ -122,7 +122,7 @@ const BookDisplay = ({ searchQuery }) => {
                 <div className="modal-overlay" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <span className="close-btn" onClick={closeModal}>&times;</span>
-                        <img src={`http://localhost:3004${selectedBook.bookCoverUrl}`} alt="Book Cover" />
+                        <img src={`${BASE_URL}${book.bookCoverUrl}`} alt="Book Cover" />
                         <h2>{selectedBook.bookTitle}</h2>
                         <p><strong>Author:</strong> {selectedBook.bookAuthor}</p>
                         <p><strong>Genre:</strong> {selectedBook.bookGenre}</p>

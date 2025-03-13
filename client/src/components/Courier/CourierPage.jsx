@@ -20,7 +20,7 @@ const [previewImages, setPreviewImages] = useState([]);
     }, []);
 
     const fetchArticles = () => {
-        fetch("http://localhost:3004/api/articles")
+        fetch("https://deploycapstone.onrender.com/api/articles")
             .then((res) => res.json())
             .then((data) => setArticles(data))
             .catch((err) => console.error("❌ Error fetching articles:", err));
@@ -62,8 +62,8 @@ const [previewImages, setPreviewImages] = useState([]);
         };
     
         const url = editing 
-            ? `http://localhost:3004/api/articles/${selectedArticle._id}`
-            : "http://localhost:3004/api/articles";
+            ? `https://deploycapstone.onrender.com/api/articles/${selectedArticle._id}`
+            : "https://deploycapstone.onrender.com/api/articles";
     
         try {
             const response = await fetch(url, requestOptions);
@@ -83,7 +83,7 @@ const [previewImages, setPreviewImages] = useState([]);
         if (!window.confirm("Are you sure you want to delete this article?")) return;
 
         try {
-            const response = await fetch(`http://localhost:3004/api/articles/${id}`, { method: "DELETE" });
+            const response = await fetch(`https://deploycapstone.onrender.com/api/articles/${id}`, { method: "DELETE" });
             if (!response.ok) throw new Error("Failed to delete article");
 
             fetchArticles();
@@ -100,7 +100,7 @@ const [previewImages, setPreviewImages] = useState([]);
         setIllustrator(article.illustrator);
         setArticleLanguage(article.language);
         setCategory(article.category);
-        setPreviewImages(article.images ? `http://localhost:3004${article.images}` : null);
+        setPreviewImages(article.images ? `https://deploycapstone.onrender.com${article.images}` : null);
         setEditing(true);
     };
 

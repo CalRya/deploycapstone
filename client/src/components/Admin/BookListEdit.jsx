@@ -4,7 +4,7 @@ const BookListEdit = ({ onEdit, searchQuery }) => { // ✅ Accept searchQuery as
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3004/api/books")
+    fetch("https://deploycapstone.onrender.com/api/books")
       .then((response) => response.json())
       .then((data) => setBooks(data))
       .catch((error) => console.error("Error fetching books:", error));
@@ -23,7 +23,7 @@ const BookListEdit = ({ onEdit, searchQuery }) => { // ✅ Accept searchQuery as
           <li key={book._id} style={styles.bookCard}>
             {book.bookCoverUrl && (
               <img
-                src={`http://localhost:3004${book.bookCoverUrl}`}
+                src={`https://deploycapstone.onrender.com${book.bookCoverUrl}`}
                 alt={`Cover of ${book.bookTitle}`}
                 style={styles.bookCover}
               />

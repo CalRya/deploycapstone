@@ -13,7 +13,7 @@
         const fetchUsers = async () => {
             try {
                 const adminId = localStorage.getItem('roles');  // 🔹 Get admin ID
-                const response = await axios.get('http://localhost:3004/api/admin/users', {
+                const response = await axios.get('https://deploycapstone.onrender.com/api/admin/users', {
                     headers: { adminid: adminId }  // 🔹 Send admin ID in headers (must match backend case)
                 });
                 setUsers(response.data);

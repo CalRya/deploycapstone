@@ -49,7 +49,12 @@ const allowedOrigins = [
     "https://pageturnerdeploy.vercel.app" // Deployed frontend
 ];
 
-app.use(cors()); // Allows all origins (for testing)
+app.use(cors({
+    origin: "https://pageturnerdeploy.vercel.app", // Allow only your frontend domain
+    credentials: true, // Allow cookies and authorization headers
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+}));
 
 // ✅ Ensure "uploads" folder exists
 const uploadDir = path.join(__dirname, "uploads");
@@ -120,6 +125,7 @@ app.post("/login", async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 // ✅ Get Borrowed Books by User
 app.get("/api/borrow/:user", async (req, res) => {

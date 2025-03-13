@@ -11,7 +11,7 @@ const ApproveBorrowRequests = () => {
   useEffect(() => {
     const fetchBorrowRequests = async () => {
       try {
-        const response = await axios.get("http://localhost:3004/api/borrow");
+        const response = await axios.get("https://deploycapstone.onrender.com/api/borrow");
         console.log("📜 Borrow requests received (frontend):", response.data);
         setBorrowRequests(response.data);
       } catch (error) {
@@ -35,7 +35,7 @@ const ApproveBorrowRequests = () => {
 
   const handleApproveRequest = async (borrowId) => {
     try {
-      const response = await axios.put(`http://localhost:3004/api/borrow/approve/${borrowId}`);
+      const response = await axios.put(`https://deploycapstone.onrender.com/api/borrow/approve/${borrowId}`);
       setSuccessMessage(response.data.message || "Request approved successfully!");
       setBorrowRequests(prevRequests =>
         prevRequests.map(request =>
@@ -49,7 +49,7 @@ const ApproveBorrowRequests = () => {
 
   const handleReturnRequest = async (borrowId) => {
     try {
-      const response = await axios.put(`http://localhost:3004/api/borrow/return/${borrowId}`);
+      const response = await axios.put(`https://deploycapstone.onrender.com/api/borrow/return/${borrowId}`);
       alert(response.data.message || "Book returned successfully!");
       setBorrowRequests(prevRequests =>
         prevRequests.map(request =>
@@ -70,7 +70,7 @@ const ApproveBorrowRequests = () => {
 
   const handleSendOverdueNotifications = async () => {
     try {
-      const response = await axios.get("http://localhost:3004/api/borrow/overdue/notify");
+      const response = await axios.get("https://deploycapstone.onrender.com/api/borrow/overdue/notify");
       setNotificationMessage(response.data.message || "Overdue notifications sent successfully!");
       setTimeout(() => setNotificationMessage(""), 5000);
     } catch (error) {

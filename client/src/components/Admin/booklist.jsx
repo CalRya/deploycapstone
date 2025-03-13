@@ -50,7 +50,7 @@ const AddBook = ({ onBookAdded }) => {
     console.log("📤 Sending data:", Object.fromEntries(formData)); // ✅ Debug log
 
     try {
-      const response = await fetch("http://localhost:3004/api/books", {
+      const response = await fetch("https://deploycapstone.onrender.com/api/books", {
         method: "POST",
         body: formData,
       });

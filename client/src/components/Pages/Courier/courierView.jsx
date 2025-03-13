@@ -8,7 +8,7 @@ const ArticleList = () => {
 
     // Function to build API URL correctly
     const buildApiUrl = () => {
-        let url = "http://localhost:3004/api/articles?";
+        let url = "https://deploycapstone.onrender.com/api/articles?";
         const params = [];
 
         if (language) params.push(`language=${encodeURIComponent(language)}`);
@@ -28,7 +28,7 @@ const ArticleList = () => {
     // Function to get the correct image URLs (handles multiple images)
     const getImageUrls = (imagePaths) => {
         if (!imagePaths || imagePaths.length === 0) return [];
-        return imagePaths.map((path) => `http://localhost:3004${path}`);
+        return imagePaths.map((path) => `https://deploycapstone.onrender.com${path}`);
     };
 
     return (

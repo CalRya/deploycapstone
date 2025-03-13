@@ -18,7 +18,7 @@ const AddUserForm = ({ refreshUsers }) => {
         e.preventDefault();
         console.log("📩 Submitting new user:", formData);
 
-        const response = await fetch("http://localhost:3004/api/users", {
+        const response = await fetch("https://deploycapstone.onrender.com/api/users", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData),

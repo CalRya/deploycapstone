@@ -27,7 +27,7 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
         bookAvailability: bookToEdit.bookAvailability,
         bookCoverUrl: bookToEdit.bookCoverUrl,
       });
-      setPreviewImage(`http://localhost:3004${bookToEdit.bookCoverUrl}`);
+      setPreviewImage(`https://deploycapstone.onrender.com${bookToEdit.bookCoverUrl}`);
     }
   }, [bookToEdit]);
 
@@ -71,7 +71,7 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3004/api/books/${bookToEdit._id}`, {
+      const response = await fetch(`https://deploycapstone.onrender.com/api/books/${bookToEdit._id}`, {
         method: "PUT",
         body: formData,
       });

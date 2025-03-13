@@ -7,7 +7,7 @@ const Premium = ({ userId }) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch(`http://localhost:3004/api/users/${userId}`);
+                const response = await fetch(`https://deploycapstone.onrender.com/api/users/${userId}`);
                 if (!response.ok) throw new Error("Failed to fetch user data");
 
                 const data = await response.json();

@@ -14,7 +14,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`http://localhost:3004/api/users/${userId}`);
+        const res = await axios.get(`https://deploycapstone.onrender.com/api/users/${userId}`);
         setUser(res.data);
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -41,7 +41,7 @@ export default function Profile() {
     formData.append("address", user.address);
     
     try {
-      await axios.put("http://localhost:3004/api/users/{userID}", formData, {
+      await axios.put("https://deploycapstone.onrender.com/api/users/{userID}", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       alert("Profile updated successfully!");

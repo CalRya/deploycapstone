@@ -20,7 +20,7 @@ const Profile = ({ userId }) => {
     const fetchUserData = async () => {
       try {
         console.log("📢 Fetching user data for:", cleanUserId);
-        const response = await fetch(`http://localhost:3004/api/users/${cleanUserId}`);
+        const response = await fetch(`https://deploycapstone.onrender.com/api/users/${cleanUserId}`);
 
         if (!response.ok) throw new Error("Failed to fetch user data");
 

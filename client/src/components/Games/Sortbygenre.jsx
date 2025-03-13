@@ -14,7 +14,7 @@ function SortbyGenre() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get("http://localhost:3004/api/books");
+        const response = await axios.get("https://deploycapstone.onrender.com/api/books");
         if (response.data && response.data.length > 0) {
           setBooks(response.data);
         } else {
@@ -188,7 +188,7 @@ function SortbyGenre() {
           <p style={styles.bookTitle}>Book: {currentBook.bookTitle}</p>
           {currentBook.bookCoverUrl && (
             <img
-              src={`http://localhost:3004${currentBook.bookCoverUrl}`}
+              src={`https://deploycapstone.onrender.com${currentBook.bookCoverUrl}`}
               alt="Book Cover"
               style={styles.bookCover}
             />

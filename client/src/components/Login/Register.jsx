@@ -1,39 +1,36 @@
 import { useRef, useState, useEffect } from "react";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from '../api/axios';
-import '../css/Register.css';
-import App from '../../App';
-import { Link } from 'react-router-dom'; 
+import axios from "axios";
+import "../css/Register.css";
+import App from "../../App";
+import { Link } from "react-router-dom";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = '/register';
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3004";
 
+const API_URL = import.meta.env.VITE_API_URL || "https://deploycapstone.onrender.com";
+const REGISTER_URL = `${API_URL}/register`;
 
 const Register = () => {
     const userRef = useRef();
     const errRef = useRef();
 
-    const [email, setEmail] = useState('');  // Added email state
-    const [user, setUser] = useState('');
+    const [email, setEmail] = useState("");
+    const [user, setUser] = useState("");
     const [validName, setValidName] = useState(false);
-    const [userFocus, setUserFocus] = useState(false);
 
-    const [pwd, setPwd] = useState('');
+    const [pwd, setPwd] = useState("");
     const [validPwd, setValidPwd] = useState(false);
-    const [pwdFocus, setPwdFocus] = useState(false);
 
-    const [matchPwd, setMatchPwd] = useState('');
+    const [matchPwd, setMatchPwd] = useState("");
     const [validMatch, setValidMatch] = useState(false);
-    const [matchFocus, setMatchFocus] = useState(false);
 
-    const [errMsg, setErrMsg] = useState('');
+    const [errMsg, setErrMsg] = useState("");
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        userRef.current.focus();
+        userRef.current?.focus();
     }, []);
 
     useEffect(() => {
@@ -46,47 +43,43 @@ const Register = () => {
     }, [pwd, matchPwd]);
 
     useEffect(() => {
-        setErrMsg('');
+        setErrMsg("");
     }, [user, pwd, matchPwd]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validName || !validPwd || !validMatch) {
+            setErrMsg("Invalid input, please check your details.");
+            return;
+        }
 
-        const formData = { email, user, password: pwd };  // Include email in formData
+        const formData = { email, user, password: pwd };
         console.log("Submitting data: ", formData);
 
         try {
-            const result = await axios.post(`${API_URL}/register`, formData, { withCredentials: true });
+            const result = await axios.post(REGISTER_URL, formData, { withCredentials: true });
             console.log("Response from backend: ", result.data);
-
-            if (result.data) {
-                setSuccess(true);
-                console.log("User created successfully:", result.data);
-            } else {
-                setErrMsg("Failed to create user.");
-            }
+            setSuccess(true);
         } catch (err) {
-            console.error("Error:", err);
-            setErrMsg("There was an error processing your request.");
+            console.error("❌ Registration Error:", err);
+            setErrMsg("Failed to create user. Please try again.");
         }
 
-        setEmail('');
-        setUser('');
-        setPwd('');
-        setMatchPwd('');
+        setEmail("");
+        setUser("");
+        setPwd("");
+        setMatchPwd("");
     };
 
     return (
         <>
             {success ? (
-                <App/>
+                <App />
             ) : (
                 <section>
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p>
                     <h1>Register</h1>
                     <form onSubmit={handleSubmit}>
-
-                        {/* Email Field */}
                         <label htmlFor="email">Email:</label>
                         <input
                             type="email"
@@ -133,11 +126,11 @@ const Register = () => {
                         <button disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
                     </form>
 
-                    <p> Already registered? <Link to="/login">Sign In</Link></p>
+                    <p>Already registered? <Link to="/login">Sign In</Link></p>
                 </section>
             )}
         </>
     );
-}
+};
 
 export default Register;

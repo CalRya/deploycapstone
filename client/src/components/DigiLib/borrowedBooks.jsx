@@ -3,10 +3,12 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import "../css/borrowedBook.css";
 
-const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {  
+const BASE_URL = "https://deploycapstone.onrender.com/api";
+
+const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
   const { id: paramId } = useParams();
   const storedUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-  const localStorageId = storedUser?.id || null;
+  const localStorageId = storedUser?.id || storedUser?._id;
   const id = propId || paramId || localStorageId;
 
   console.log("🟢 User ID in BorrowedBooks:", id);
@@ -25,7 +27,7 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
 
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:3004/api/borrow/${id}`, {
+        const response = await axios.get(`${BASE_URL}/borrow/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -42,9 +44,8 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
     fetchBorrowedBooks();
   }, [id]);
 
-  // ✅ Handles book rating submission
   const handleRating = async (borrowId, rating) => {
-    if (!borrowId || !rating || rating < 1 || rating > 5) {
+    if (!borrowId || rating < 1 || rating > 5) {
       alert("❌ Invalid rating. Please select a number between 1 and 5.");
       return;
     }
@@ -53,11 +54,11 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
       console.log(`📤 Submitting rating: ${rating} for borrow ID: ${borrowId}`);
 
       const response = await axios.put(
-        `http://localhost:3004/api/rate/${borrowId}`,
+        `${BASE_URL}/rate/${borrowId}`,
         { rating },
         {
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
         }
@@ -93,7 +94,7 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
       ) : borrowedBooks.length > 0 ? (
         <ul className="borrowed-books-list">
           {borrowedBooks.map((borrow) => {
-            if (!borrow.book) return null; // Ensure book exists
+            if (!borrow.book) return null;
 
             const today = new Date();
             const dueDate = borrow.dueDate ? new Date(borrow.dueDate) : null;
@@ -105,38 +106,21 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
               statusText = "Overdue";
               statusClass = "status-overdue";
             } else {
-              switch (borrow.status) {
-                case "pending":
-                  statusText = "Pending";
-                  statusClass = "status-pending";
-                  break;
-                case "approved":
-                  statusText = "Borrowed";
-                  statusClass = "status-borrowed";
-                  break;
-                case "returned":
-                  statusText = "Returned";
-                  statusClass = "status-returned";
-                  break;
-                case "overdue":
-                  statusText = "Overdue";
-                  statusClass = "status-overdue";
-                  break;
-                case "denied":
-                  statusText = "Denied";
-                  statusClass = "status-denied";
-                  break;
-                default:
-                  statusText = "Unknown";
-                  statusClass = "status-unknown";
-              }
+              const statusMap = {
+                pending: "status-pending",
+                approved: "status-borrowed",
+                returned: "status-returned",
+                overdue: "status-overdue",
+                denied: "status-denied",
+              };
+              statusClass = statusMap[borrow.status] || "status-unknown";
             }
 
             return (
               <li key={borrow._id} className="borrowed-book-item">
                 {borrow.book?.bookCoverUrl && (
                   <img
-                    src={`http://localhost:3004${borrow.book.bookCoverUrl}`}
+                    src={`${BASE_URL}${borrow.book.bookCoverUrl}`}
                     alt={borrow.book?.bookTitle || "Book Cover"}
                     className="book-image"
                   />
@@ -147,8 +131,7 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
                     <strong>Author:</strong> {borrow.book?.bookAuthor || "Unknown Author"}
                   </p>
                   <p className="borrowed-date">
-                    <strong>Borrowed:</strong>{" "}
-                    {borrow.borrowDate ? new Date(borrow.borrowDate).toLocaleDateString() : "N/A"}
+                    <strong>Borrowed:</strong> {borrow.borrowDate ? new Date(borrow.borrowDate).toLocaleDateString() : "N/A"}
                   </p>
                   <p className="borrowed-date">
                     <strong>Due:</strong> {dueDate ? dueDate.toLocaleDateString() : "N/A"}
@@ -160,7 +143,6 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
                   )}
                   <p className={`status ${statusClass}`}>{statusText}</p>
 
-                  {/* ⭐ Rating Section */}
                   {borrow.status === "returned" ? (
                     borrow.rating ? (
                       <p className="rating-display">

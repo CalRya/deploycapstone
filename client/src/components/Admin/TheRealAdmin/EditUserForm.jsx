@@ -15,7 +15,7 @@ const EditUserForm = ({ user, close, refreshUsers }) => {
         e.preventDefault();
         console.log("Submitting edit for user ID:", user._id); // Debugging
     
-        await fetch(`http://localhost:3004/api/users/${user._id}`, { // ✅ Change port to 3004
+        await fetch(`https://deploycapstone.onrender.com/api/users/${user._id}`, { // ✅ Change port to 3004
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData),

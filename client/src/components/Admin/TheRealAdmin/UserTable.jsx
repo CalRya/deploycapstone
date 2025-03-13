@@ -9,7 +9,7 @@ const UserTable = ({ users = [], refreshUsers }) => {
     // 🔄 Handle Role Change
     const handleRoleChange = async (userId, newRole) => {
         try {
-            const response = await fetch(`http://localhost:3004/api/users/${userId}`, {
+            const response = await fetch(`https://deploycapstone.onrender.com/api/users/${userId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ role: newRole }),
@@ -30,7 +30,7 @@ const UserTable = ({ users = [], refreshUsers }) => {
         console.log(`Deleting user with ID: ${userId}`);
 
         try {
-            const response = await fetch(`http://localhost:3004/api/users/${userId}`, {
+            const response = await fetch(`https://deploycapstone.onrender.com/api/users/${userId}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });

@@ -8,7 +8,7 @@ const ArticlePreview = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get("http://localhost:3004/api/articles");
+        const response = await axios.get("https://deploycapstone.onrender.com/api/articles");
         setArticles(response.data.slice(0, 5)); // Limit to 5 articles
       } catch (error) {
         console.error("Failed to fetch articles:", error);
@@ -26,7 +26,7 @@ const ArticlePreview = () => {
           {articles.map((article) => (
             <div key={article._id} style={styles.articleCard}>
               <img
-                src={`http://localhost:3004${article.images[0]}`}
+                src={`https://deploycapstone.onrender.com${article.images[0]}`}
                 alt="Article Image"
                 style={styles.articleCover}
               />

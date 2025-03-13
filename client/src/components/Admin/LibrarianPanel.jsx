@@ -9,7 +9,7 @@ const LibrarianPanel = () => {
             try {
                 console.log("📡 Requesting premium requests...");
                 
-                const response = await fetch("http://localhost:3004/api/premium/premium-requests");
+                const response = await fetch("https://deploycapstone.onrender.com/api/premium/premium-requests");
                 
                 console.log("🔄 Response Status:", response.status);
                 
@@ -31,7 +31,7 @@ const LibrarianPanel = () => {
 
     const handleApprove = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3004/api/premium/approve-premium/${id}`, { 
+            const response = await fetch(`https://deploycapstone.onrender.com/api/premium/approve-premium/${id}`, { 
                 method: "PUT",
                 headers: { "Content-Type": "application/json" }
             });
