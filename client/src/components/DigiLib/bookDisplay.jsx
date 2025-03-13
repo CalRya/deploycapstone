@@ -102,7 +102,7 @@ const BookDisplay = ({ searchQuery }) => {
                 <ul className="book-list">
                     {filteredAndSortedBooks.map((book) => (
                         <li key={book._id} className="book-card" onClick={() => openModal(book)}>
-                            <img src={`${BASE_URL}${book.bookCoverUrl}`} alt="Book Cover" />
+                            <img src={`${BASE_URL}${selectedBook.bookCoverUrl}`} alt="Book Cover" />
                             <h2>{book.bookTitle}</h2>
                             <p><strong>Author:</strong> {book.bookAuthor}</p>
                             <p><strong>Genre:</strong> {book.bookGenre}</p>
