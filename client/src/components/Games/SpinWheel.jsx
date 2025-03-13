@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import("spin-wheel-game").then((module) => {
-    const SpinWheel = module.SpinWheel;
-  });
+
+
   
 
 const SpinWheelGame = () => {

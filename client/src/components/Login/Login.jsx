@@ -17,30 +17,24 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrMsg('');
 
         try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3004';
+            const result = await axios.post('http://localhost:3004/login', { email, password });
 
-            const response = await axios.post(
-                `${API_URL}/login`, 
-                { email, password },
-                { withCredentials: true } // 🔹 Ensures cookies work (important for CORS)
-            );
+            console.log("✅ Server Response:", result.data);
 
-            console.log("✅ Server Response:", response.data);
-
-            if (response.data?.message?.includes("Login successful")) {
-                const { id, email, role } = response.data;
+            if (result.data?.message?.includes("Login successful")) {
+                const { id, email, role } = result.data;
 
                 if (!id || !email || !role) {
                     setErrMsg("Login error: Missing user details.");
                     return;
                 }
 
-                localStorage.setItem("currentUser", JSON.stringify({ id, email, role }));
+                const userData = { id, email, role };
+                localStorage.setItem("currentUser", JSON.stringify(userData));
 
-                switch (role) {
+                switch (userData.role) {
                     case 'admin': navigate('/adminmanage'); break;
                     case 'librarian': navigate('/homeadmin'); break;
                     case 'courier': navigate('/courierhome'); break;
@@ -50,11 +44,9 @@ function Login() {
                 setErrMsg("Invalid credentials.");
             }
         } catch (err) {
-            console.error("❌ Login Error:", err);
-            setErrMsg(err.response?.data?.error || "Login failed. Please try again.");
+            setErrMsg(err.response?.data?.error || "Login failed");
         }
     };
-
     return (
         <section>
             {errMsg && <p ref={errRef} className="errmsg">{errMsg}</p>}
