@@ -76,7 +76,9 @@ const BookDisplay = ({ searchQuery }) => {
 
     // Filter and sort books based on user input
     const filteredAndSortedBooks = sortBooks(
-        books.filter((book) => book.bookTitle.toLowerCase().includes(searchQuery.toLowerCase()))
+        books.filter((book) =>
+            book.bookTitle.toLowerCase().includes(searchQuery.toLowerCase())
+        )
     );
 
     return (
@@ -102,21 +104,13 @@ const BookDisplay = ({ searchQuery }) => {
                         <li key={book._id} className="book-card" onClick={() => openModal(book)}>
                             <img src={`${BASE_URL}${book.bookCoverUrl}`} alt="Book Cover" />
                             <h2>{book.bookTitle}</h2>
-                            <p>
-                                <strong>Author:</strong> {book.bookAuthor}
-                            </p>
-                            <p>
-                                <strong>Genre:</strong> {book.bookGenre}
-                            </p>
-                            <p>
-                                <strong>Platform:</strong> {book.bookPlatform}
-                            </p>
+                            <p><strong>Author:</strong> {book.bookAuthor}</p>
+                            <p><strong>Genre:</strong> {book.bookGenre}</p>
+                            <p><strong>Platform:</strong> {book.bookPlatform}</p>
                             <p className={`availability ${book.bookAvailability ? "available" : "unavailable"}`}>
                                 {book.bookAvailability ? "Available" : "Not Available"}
                             </p>
-                            <p>
-                                <strong>Average Rating:</strong> {book.averageRating} ⭐
-                            </p>
+                            <p><strong>Average Rating:</strong> {book.averageRating} ⭐</p>
                         </li>
                     ))}
                 </ul>
@@ -126,27 +120,17 @@ const BookDisplay = ({ searchQuery }) => {
             {selectedBook && (
                 <div className="modal-overlay" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <span className="close-btn" onClick={closeModal}>
-                            &times;
-                        </span>
+                        <span className="close-btn" onClick={closeModal}>&times;</span>
                         <img src={`${BASE_URL}${selectedBook.bookCoverUrl}`} alt="Book Cover" />
                         <h2>{selectedBook.bookTitle}</h2>
-                        <p>
-                            <strong>Author:</strong> {selectedBook.bookAuthor}
-                        </p>
-                        <p>
-                            <strong>Genre:</strong> {selectedBook.bookGenre}
-                        </p>
-                        <p>
-                            <strong>Platform:</strong> {selectedBook.bookPlatform}
-                        </p>
-                        <p>
-                            <strong>Description:</strong>
-                        </p>
-                        <div className="book-description">{formatDescription(selectedBook.bookDescription)}</div>
-                        <p>
-                            <strong>Average Rating:</strong> {selectedBook.averageRating} ⭐
-                        </p>
+                        <p><strong>Author:</strong> {selectedBook.bookAuthor}</p>
+                        <p><strong>Genre:</strong> {selectedBook.bookGenre}</p>
+                        <p><strong>Platform:</strong> {selectedBook.bookPlatform}</p>
+                        <p><strong>Description:</strong></p>
+                        <div className="book-description">
+                            {formatDescription(selectedBook.bookDescription)}
+                        </div>
+                        <p><strong>Average Rating:</strong> {selectedBook.averageRating} ⭐</p>
                         <p className={`availability ${selectedBook.bookAvailability ? "available" : "unavailable"}`}>
                             {selectedBook.bookAvailability ? "Available" : "Not Available"}
                         </p>
