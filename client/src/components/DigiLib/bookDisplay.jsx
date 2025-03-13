@@ -9,6 +9,7 @@ const BookDisplay = ({ searchQuery }) => {
     const [selectedBook, setSelectedBook] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
     const [sortOption, setSortOption] = useState(""); // State for sorting
+    const BASE_URL = "https://deploycapstone.onrender.com/api";
 
     // Fetch Books - Updates when ratingUpdated changes
     useEffect(() => {
