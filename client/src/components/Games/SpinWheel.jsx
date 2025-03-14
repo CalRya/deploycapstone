@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const SpinWheelGame = () => {
+const SpinWheel = () => {
     const [books, setBooks] = useState([]);
     const [selectedBook, setSelectedBook] = useState(null);
     const [gameStarted, setGameStarted] = useState(false);
