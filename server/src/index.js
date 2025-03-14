@@ -15,7 +15,7 @@ const articleRoutes = require("../routes/articleRoutes");
 const borrowRoutes = require("../routes/borrowRoutes");
 const authenticateUser = require("../middleware/authMiddleware");
 const nodemailer = require("nodemailer");
-const Quote = require("../models/Quotes");  // Use the existing model instead of redefining it
+const Quote = require("../models/Quotes"); // Use the existing model instead of redefining it
 const premiumRoutes = require("../routes/premiumRoutes");
 const MONGODB_URI = "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE?retryWrites=true&w=majority";
 
@@ -33,9 +33,9 @@ mongoose.connect(MONGODB_URI, {
 const calculateLateFee = (dueDate) => {
     const today = new Date();
     const due = new Date(dueDate);
-    const daysLate = Math.max(0, Math.ceil((today - due) / (1000 * 60 * 60 * 24))); // Convert ms to days
-    if (daysLate === 0) return 0; // Not late
-    return 15 + (daysLate - 1) * 5; // ₱15 once late + ₱5 per extra day
+    const daysLate = Math.max(0, Math.ceil((today - due) / (1000 * 60 * 60 * 24)));
+    if (daysLate === 0) return 0;
+    return 15 + (daysLate - 1) * 5;
 };
 
 app.use(express.json());
@@ -57,12 +57,10 @@ app.use(cors({
     allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
 }));
 
-// Ensure "uploads" folder exists
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
-// Serve uploaded images as static files
 app.use("/uploads", express.static(uploadDir));
 
 app.options("*", (req, res) => {
@@ -70,7 +68,6 @@ app.options("*", (req, res) => {
     res.sendStatus(200);
 });
 
-// User Registration
 app.post("/register", async (req, res) => {
     try {
         const { user, email, password } = req.body;
@@ -90,7 +87,6 @@ app.post("/register", async (req, res) => {
     }
 });
 
-// User Login
 app.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -114,7 +110,6 @@ app.post("/login", async (req, res) => {
     }
 });
 
-// Get Borrowed Books by User
 app.get("/api/borrow/:user", async (req, res) => {
     try {
         const { user } = req.params;
@@ -142,7 +137,6 @@ app.get("/api/user/:id", async (req, res) => {
     }
 });
 
-// Borrow a Book
 app.post("/api/borrow/:bookID", async (req, res) => {
     try {
         const { bookID } = req.params;
@@ -190,7 +184,6 @@ app.put("/api/borrow/approve/:borrowId", async (req, res) => {
     }
 });
 
-// Return a Borrowed Book
 app.put("/api/borrow/return/:borrowId", async (req, res) => {
     try {
         const { borrowId } = req.params;
@@ -233,7 +226,6 @@ app.get("/api/books/random", async (req, res) => {
     }
 });
 
-// Get ALL Borrow Requests (for admin)
 app.get("/api/borrow", async (req, res) => {
     try {
         const borrowRequests = await Borrow.find({
@@ -249,7 +241,6 @@ app.get("/api/borrow", async (req, res) => {
     }
 });
 
-// Configure Multer for File Uploads
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => cb(null, "uploads/"),
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
@@ -302,21 +293,21 @@ app.patch("/api/users/:id", async (req, res) => {
 });
 
 app.get("/api/stats", async (req, res) => {
-  try {
-    const totalUsers = await userModel.countDocuments();
-    const totalBooks = await Book.countDocuments();
-    const totalBorrowedBooks = await Borrow.countDocuments({ isReturned: false });
-    const activeSessions = 20;  // For now, assume 20 active sessions
-    res.json({
-      totalUsers,
-      totalBooks,
-      totalBorrowedBooks,
-      activeSessions,
-    });
-  } catch (error) {
-    console.error('❌ Error fetching stats:', error);
-    res.status(500).send('Error fetching stats');
-  }
+    try {
+        const totalUsers = await userModel.countDocuments();
+        const totalBooks = await Book.countDocuments();
+        const totalBorrowedBooks = await Borrow.countDocuments({ isReturned: false });
+        const activeSessions = 20;
+        res.json({
+            totalUsers,
+            totalBooks,
+            totalBorrowedBooks,
+            activeSessions,
+        });
+    } catch (error) {
+        console.error("❌ Error fetching stats:", error);
+        res.status(500).send("Error fetching stats");
+    }
 });
 
 app.put("/api/rate/:borrowId", async (req, res) => {
