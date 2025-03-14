@@ -61,6 +61,8 @@ const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
+
+app.use("/books", bookRoutes);
 app.use("/uploads", express.static(uploadDir));
 
 app.options("*", (req, res) => {
