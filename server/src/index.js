@@ -15,7 +15,7 @@ const articleRoutes = require("../routes/articleRoutes");
 const borrowRoutes = require("../routes/borrowRoutes");
 const authenticateUser = require("../middleware/authMiddleware");
 const nodemailer = require("nodemailer");
-const Quote = require("../models/Quotes"); // Use the existing model instead of redefining it
+const Quote = require("../models/Quotes");  // Use the existing model instead of redefining it
 const premiumRoutes = require("../routes/premiumRoutes");
 const MONGODB_URI = "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE?retryWrites=true&w=majority";
 
@@ -58,7 +58,7 @@ app.use(cors({
 }));
 
 // Ensure "uploads" folder exists
-const uploadDir = path.join(__dirname, "../uploads");
+const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
@@ -249,7 +249,7 @@ app.get("/api/borrow", async (req, res) => {
     }
 });
 
-// Configure Multer for File Uploads (second configuration)
+// Configure Multer for File Uploads
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => cb(null, "uploads/"),
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
@@ -302,21 +302,21 @@ app.patch("/api/users/:id", async (req, res) => {
 });
 
 app.get("/api/stats", async (req, res) => {
-    try {
-        const totalUsers = await userModel.countDocuments();
-        const totalBooks = await Book.countDocuments();
-        const totalBorrowedBooks = await Borrow.countDocuments({ isReturned: false });
-        const activeSessions = 20;  // For now, assume 20 active sessions
-        res.json({
-            totalUsers,
-            totalBooks,
-            totalBorrowedBooks,
-            activeSessions,
-        });
-    } catch (error) {
-        console.error('❌ Error fetching stats:', error);
-        res.status(500).send('Error fetching stats');
-    }
+  try {
+    const totalUsers = await userModel.countDocuments();
+    const totalBooks = await Book.countDocuments();
+    const totalBorrowedBooks = await Borrow.countDocuments({ isReturned: false });
+    const activeSessions = 20;  // For now, assume 20 active sessions
+    res.json({
+      totalUsers,
+      totalBooks,
+      totalBorrowedBooks,
+      activeSessions,
+    });
+  } catch (error) {
+    console.error('❌ Error fetching stats:', error);
+    res.status(500).send('Error fetching stats');
+  }
 });
 
 app.put("/api/rate/:borrowId", async (req, res) => {
