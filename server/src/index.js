@@ -68,7 +68,24 @@ app.options("*", (req, res) => {
     res.sendStatus(200);
 });
 
-// NEW: Serve books at /books (for frontend that calls /books)
+// --- New Route to support frontend calls to /borrow/:user ---
+app.get("/borrow/:user", async (req, res) => {
+    try {
+        const { user } = req.params;
+        if (!user) return res.status(400).json({ message: "User ID is required" });
+        const borrowedBooks = await Borrow.find({ user: user, status: { $in: ["pending", "approved", "returned"] } })
+            .populate("book");
+        if (!borrowedBooks.length) {
+            return res.status(404).json({ message: "No borrowed books found" });
+        }
+        res.status(200).json(borrowedBooks);
+    } catch (error) {
+        console.error("❌ Error fetching borrowed books:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// Existing routes remain unchanged:
 app.get("/books", async (req, res) => {
     try {
         const books = await Book.find();
