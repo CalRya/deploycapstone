@@ -3,7 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import "../css/borrowedBook.css";
 
-const BASE_URL = "https://deploycapstone.onrender.com/api";
+const BASE_URL = "https://deploycapstone.onrender.com";
 
 const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
   const { id: paramId } = useParams();

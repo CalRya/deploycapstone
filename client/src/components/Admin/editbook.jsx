@@ -27,7 +27,12 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
         bookAvailability: bookToEdit.bookAvailability,
         bookCoverUrl: bookToEdit.bookCoverUrl,
       });
-      setPreviewImage(`https://deploycapstone.onrender.com${bookToEdit.bookCoverUrl}`);
+
+      setPreviewImage(
+        bookToEdit.bookCoverUrl.startsWith("http")
+          ? bookToEdit.bookCoverUrl
+          : `https://deploycapstone.onrender.com${bookToEdit.bookCoverUrl}`
+      );
     }
   }, [bookToEdit]);
 
@@ -63,11 +68,13 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     formData.append("bookDescription", bookData.bookDescription);
     formData.append("bookGenre", bookData.bookGenre);
     formData.append("bookPlatform", bookData.bookPlatform);
-    formData.append("bookAvailability", bookData.bookAvailability.toString()); // Convert boolean to string
+    formData.append("bookAvailability", bookData.bookAvailability ? "true" : "false");
 
-    // Append book cover file if selected
+    // Append book cover file if selected, otherwise keep the existing URL
     if (selectedFile) {
       formData.append("bookCover", selectedFile);
+    } else if (bookData.bookCoverUrl) {
+      formData.append("bookCoverUrl", bookData.bookCoverUrl);
     }
 
     try {
@@ -194,7 +201,7 @@ const styles = {
   },
   previewImage: {
     width: "100%",
-    maxHeight: "220px", // Sleek rectangular cover
+    maxHeight: "220px",
     objectFit: "cover",
     borderRadius: "8px",
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.2)",
@@ -204,29 +211,21 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     marginTop: "20px",
-    gap: "15px", // Adds spacing between buttons
+    gap: "15px",
   },
   saveButton: {
     padding: "12px 18px",
     background: "#b77b43",
     color: "white",
     fontSize: "15px",
-    border: "none",
-    cursor: "pointer",
     borderRadius: "8px",
-    fontWeight: "bold",
-    transition: "background 0.3s ease-in-out",
   },
   cancelButton: {
     padding: "12px 18px",
     background: "#d32f2f",
     color: "white",
     fontSize: "15px",
-    border: "none",
-    cursor: "pointer",
     borderRadius: "8px",
-    fontWeight: "bold",
-    transition: "background 0.3s ease-in-out",
   },
 };
 
