@@ -153,7 +153,7 @@ app.get("/api/borrow/:user", async (req, res) => {
     }
 });
 
-app.get("/api/user/:id", async (req, res) => {
+app.get("/api/users/:id", async (req, res) => {
     try {
         const user = await userModel.findById(req.params.id).select("user email role premium");
         if (!user) return res.status(404).json({ message: "User not found" });
