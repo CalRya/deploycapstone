@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import SpinWheel from "./games/SpinWheel";
 
   
 
