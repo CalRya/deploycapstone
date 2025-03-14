@@ -52,9 +52,11 @@ const SpinWheel = () => {
     };
 
     const startGame = async () => {
-        setGameStarted(true);
-        setSelectedBook(null);
-        await fetchRandomBooks();
+        if (!gameStarted) {
+            setGameStarted(true);
+            setSelectedBook(null);
+            await fetchRandomBooks();
+        }
     };
 
     const exitGame = () => {
@@ -103,11 +105,18 @@ const SpinWheel = () => {
                             <h1 style={styles.title}>📖 Spin the Wheel!</h1>
                             {books.length > 0 ? (
                                 <div style={styles.wheelContainer}>
-                                    {/* Make sure that the SpinWheel component is either globally available or imported correctly in a parent file if needed */}
-                                    <SpinWheel {...spinWheelProps} />
+                                    {/* 
+                                      Replacing the problematic recursive reference with a placeholder.
+                                      Replace this placeholder with your actual spin wheel component later.
+                                    */}
+                                    <div style={{padding: "20px", backgroundColor: "#fff", borderRadius: "50%"}}>
+                                      Spin Wheel Placeholder
+                                    </div>
                                 </div>
                             ) : (
-                                <p style={{ color: "red", fontSize: "18px" }}>❌ No books available. Check your database.</p>
+                                <p style={{ color: "red", fontSize: "18px" }}>
+                                    ❌ No books available. Check your database.
+                                </p>
                             )}
                         </>
                     ) : (
@@ -209,4 +218,3 @@ const styles = {
 };
 
 export default SpinWheel;
-;
