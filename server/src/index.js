@@ -437,6 +437,10 @@ app.use("/api/admin", adminRoutes);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/api/premium", premiumRoutes);
 
+app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "public", "index.html"));
+});
+
 const PORT = process.env.PORT || 3004;
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
