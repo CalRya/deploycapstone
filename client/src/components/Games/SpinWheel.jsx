@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import SpinWheel from "./games/SpinWheel";
 
-  
+// Removed: import SpinWheel from "./games/SpinWheel";  <-- This was causing the error
 
 const SpinWheelGame = () => {
     const [books, setBooks] = useState([]);
@@ -11,16 +10,16 @@ const SpinWheelGame = () => {
     // Fetch random books from the database (limited to 5)
     const fetchRandomBooks = async () => {
         try {
-            const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5"); // ✅ If API supports limits
+            const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
             if (!response.ok) throw new Error("Failed to fetch books");
 
             let data = await response.json();
-            console.log("Fetched books:", data); // Debugging log
+            console.log("Fetched books:", data);
 
-            data = data.slice(0, 5); // ✅ Guarantee only 5 books
+            data = data.slice(0, 5);
 
             const formattedBooks = data.map((book, index) => ({
-                segmentText: book.bookTitle, // ✅ Full title (No cutting off)
+                segmentText: book.bookTitle,
                 segColor: getWheelColors(index),
                 coverImage: book.bookCoverUrl ? `https://deploycapstone.onrender.com${book.bookCoverUrl}` : null,
                 fontSize: adjustFontSize(book.bookTitle),
@@ -32,52 +31,44 @@ const SpinWheelGame = () => {
         }
     };
 
-    // Adjust font size based on title length
     const adjustFontSize = (title) => {
         if (!title) return "16px";
         const length = title.length;
-        if (length < 15) return "16px"; // Short titles = Default size
-        if (length < 25) return "14px"; // Medium length
-        if (length < 35) return "12px"; // Long titles
-        return "10px"; // Extra long titles
+        if (length < 15) return "16px";
+        if (length < 25) return "14px";
+        if (length < 35) return "12px";
+        return "10px";
     };
 
-    // Generate colors that fit the brown motif
     const getWheelColors = (index) => {
         const colors = ["#C19A6B", "#8B5E3C", "#D2B48C", "#A67B5B", "#7D4E2D"];
         return colors[index % colors.length];
     };
 
-    // Handle spin result
     const handleSpinFinish = (selectedTitle) => {
         console.log(`Spun to: ${selectedTitle}`);
-
         const foundBook = books.find(book => book.segmentText === selectedTitle);
         if (foundBook) {
             setSelectedBook(foundBook);
         }
     };
 
-    // Start the game
     const startGame = async () => {
         setGameStarted(true);
         setSelectedBook(null);
         await fetchRandomBooks();
     };
 
-    // Exit the game
     const exitGame = () => {
         setGameStarted(false);
         setSelectedBook(null);
     };
 
-    // Spin again and fetch new books
     const spinAgain = async () => {
         setSelectedBook(null);
         await fetchRandomBooks();
     };
 
-    // Spin Wheel settings
     const spinWheelProps = {
         segments: books,
         onFinished: handleSpinFinish,
@@ -114,6 +105,7 @@ const SpinWheelGame = () => {
                             <h1 style={styles.title}>📖 Spin the Wheel!</h1>
                             {books.length > 0 ? (
                                 <div style={styles.wheelContainer}>
+                                    {/* Make sure that the SpinWheel component is either globally available or imported correctly in a parent file if needed */}
                                     <SpinWheel {...spinWheelProps} />
                                 </div>
                             ) : (
@@ -129,8 +121,6 @@ const SpinWheelGame = () => {
                                 <p style={{ fontSize: "18px", color: "gray" }}>No cover available</p>
                             )}
                             <h3 style={styles.resultTitle}>{selectedBook.segmentText}</h3>
-
-                            {/* Spin Again Button */}
                             <button style={styles.spinAgainButton} onClick={spinAgain}>🔄 Spin Again</button>
                         </div>
                     )}
@@ -141,7 +131,6 @@ const SpinWheelGame = () => {
     );
 };
 
-// Styling
 const styles = {
     container: {
         backgroundColor: "#F5E1C8",
