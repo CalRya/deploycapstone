@@ -3,17 +3,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  base: '/', // Use '/' for Vercel deployment
+  build: {
+    outDir: 'dist', // Ensure Vite outputs to "dist"
+  },
   server: {
-    port: 5173, // Change the port as needed
-    proxy: {
-      "/api": {
-        target: "https://your-render-backend-url.onrender.com",
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-    build: {
-      outDir: "dist",
-    },
+    historyApiFallback: true, // Ensures proper client-side routing
   },
 });
