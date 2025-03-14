@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import SpinWheel from "./Games/SpinWheel";
 
 const SpinWheelGame = () => {
     const [books, setBooks] = useState([]);
@@ -209,4 +208,5 @@ const styles = {
     },
 };
 
-export default SpinWheelGame;
+export default SpinWheel;
+;
