@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 const Recommend = () => {
   const [booksByGenre, setBooksByGenre] = useState({});
-  const [recommendedBook, setRecommendedBook] = useState("Please select a genre");
+  const [recommendedBook, setRecommendedBook] = useState("📖 Please select a genre");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -13,7 +13,13 @@ const Recommend = () => {
         if (!response.ok) throw new Error("Failed to fetch books");
 
         const data = await response.json();
-        console.log("Fetched books:", data);
+        console.log("📚 Fetched books:", data);
+
+        if (!Array.isArray(data) || data.length === 0) {
+          setError("⚠️ No books found in the database.");
+          setLoading(false);
+          return;
+        }
 
         const booksByGenreMap = {};
         data.forEach((book) => {
@@ -26,13 +32,12 @@ const Recommend = () => {
         });
 
         if (Object.keys(booksByGenreMap).length === 0) {
-          setError("❌ No genres available. Check your database.");
+          setError("⚠️ No genres available. Check your database.");
+        } else {
+          setBooksByGenre(booksByGenreMap);
         }
-
-        console.log("Organized books by genre:", booksByGenreMap);
-        setBooksByGenre(booksByGenreMap);
-      } catch (error) {
-        console.error("Error fetching books:", error);
+      } catch (err) {
+        console.error("❌ Error fetching books:", err);
         setError("❌ Error fetching books. Please try again later.");
       } finally {
         setLoading(false);
@@ -43,15 +48,13 @@ const Recommend = () => {
   }, []);
 
   const recommendBook = (genre) => {
-    const books = booksByGenre[genre];
-
-    if (!books || books.length === 0) {
+    if (!booksByGenre[genre] || booksByGenre[genre].length === 0) {
       setRecommendedBook("⚠️ No books found for this genre.");
       return;
     }
 
-    const randomIndex = Math.floor(Math.random() * books.length);
-    setRecommendedBook(`📖 Recommended Book: ${books[randomIndex]}`);
+    const randomIndex = Math.floor(Math.random() * booksByGenre[genre].length);
+    setRecommendedBook(`📖 Recommended Book: ${booksByGenre[genre][randomIndex]}`);
   };
 
   const styles = {
@@ -69,10 +72,6 @@ const Recommend = () => {
       fontSize: "28px",
       fontWeight: "bold",
       color: "#5F3418",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: "10px",
     },
     subtitle: {
       fontSize: "16px",
@@ -104,7 +103,7 @@ const Recommend = () => {
     recommendationBox: {
       marginTop: "20px",
       padding: "15px",
-      backgroundColor: "#FCE8D5", // Changed to warm beige
+      backgroundColor: "#FCE8D5",
       borderRadius: "8px",
       fontSize: "18px",
       fontWeight: "bold",
@@ -122,29 +121,23 @@ const Recommend = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>
-        📚 <span>Book Recommendation</span>
-      </h1>
+      <h1 style={styles.title}>📚 Book Recommendation</h1>
       <p style={styles.subtitle}>Select a genre to get a random book recommendation:</p>
 
       {loading ? (
-        <p>Loading...</p>
+        <p>⏳ Loading books...</p>
       ) : error ? (
         <p style={styles.errorMessage}>{error}</p>
+      ) : Object.keys(booksByGenre).length === 0 ? (
+        <p style={styles.errorMessage}>⚠️ No genres available.</p>
       ) : (
         <div style={styles.genreButtons}>
           {Object.keys(booksByGenre).map((genre) => (
             <button
               key={genre}
               style={styles.button}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = styles.buttonHover.backgroundColor;
-                e.target.style.transform = styles.buttonHover.transform;
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = styles.button.backgroundColor;
-                e.target.style.transform = "scale(1)";
-              }}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = styles.button.backgroundColor)}
               onClick={() => recommendBook(genre)}
             >
               {genre}
