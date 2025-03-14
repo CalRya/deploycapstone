@@ -61,13 +61,21 @@ const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
-
-app.use("/books", bookRoutes);
 app.use("/uploads", express.static(uploadDir));
 
 app.options("*", (req, res) => {
     console.log("Pre-flight request received");
     res.sendStatus(200);
+});
+
+// NEW: Serve books at /books (for frontend that calls /books)
+app.get("/books", async (req, res) => {
+    try {
+        const books = await Book.find();
+        res.json(books);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch books" });
+    }
 });
 
 app.post("/register", async (req, res) => {
