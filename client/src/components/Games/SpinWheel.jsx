@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-
-// Removed: import SpinWheel from "./games/SpinWheel";  <-- This was causing the error
+import SpinWheel from "./Games/SpinWheel";
 
 const SpinWheelGame = () => {
     const [books, setBooks] = useState([]);
