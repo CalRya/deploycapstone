@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { RoulettePro } from "react-roulette-pro";
+import "react-roulette-pro/dist/index.css";
 
 const SpinWheel = () => {
     const [books, setBooks] = useState([]);
     const [selectedBook, setSelectedBook] = useState(null);
     const [gameStarted, setGameStarted] = useState(false);
-    const [angle, setAngle] = useState(0);
     const [spinning, setSpinning] = useState(false);
+    const [prizeIndex, setPrizeIndex] = useState(null);
 
     // Fetch random books from the database
     const fetchRandomBooks = async () => {
@@ -17,25 +19,15 @@ const SpinWheel = () => {
             data = data.slice(0, 5);
 
             const formattedBooks = data.map((book, index) => ({
-                segmentText: book.bookTitle,
-                segColor: getWheelColors(index),
+                option: book.bookTitle,
+                style: { backgroundColor: getWheelColors(index) },
                 coverImage: book.bookCoverUrl ? `https://deploycapstone.onrender.com${book.bookCoverUrl}` : null,
-                fontSize: adjustFontSize(book.bookTitle),
             }));
 
             setBooks(formattedBooks);
         } catch (error) {
             console.error("Error fetching books:", error);
         }
-    };
-
-    const adjustFontSize = (title) => {
-        if (!title) return "16px";
-        const length = title.length;
-        if (length < 15) return "16px";
-        if (length < 25) return "14px";
-        if (length < 35) return "12px";
-        return "10px";
     };
 
     const getWheelColors = (index) => {
@@ -65,14 +57,14 @@ const SpinWheel = () => {
         if (spinning || books.length === 0) return;
         setSpinning(true);
 
-        const randomSpin = Math.floor(Math.random() * 360) + 1800; // Ensures multiple full spins
-        setAngle(randomSpin);
+        // Select a random book index
+        const randomIndex = Math.floor(Math.random() * books.length);
+        setPrizeIndex(randomIndex);
 
         setTimeout(() => {
-            const winningIndex = Math.floor((randomSpin % 360) / (360 / books.length));
-            setSelectedBook(books[winningIndex]);
+            setSelectedBook(books[randomIndex]);
             setSpinning(false);
-        }, 3000); // Matches animation duration
+        }, 4000); // Matches spin duration
     };
 
     return (
@@ -89,7 +81,12 @@ const SpinWheel = () => {
                             <h1 style={styles.title}>📖 Spin the Wheel!</h1>
                             {books.length > 0 ? (
                                 <div style={styles.wheelContainer}>
-                                    <div style={{ ...styles.wheel, transform: `rotate(${angle}deg)` }} />
+                                    <RoulettePro
+                                        prizes={books}
+                                        onPrizeDefined={spinWheel}
+                                        mustStartSpinning={spinning}
+                                        prizeIndex={prizeIndex}
+                                    />
                                     <button onClick={spinWheel} disabled={spinning} style={styles.spinButton}>
                                         {spinning ? "Spinning..." : "Spin"}
                                     </button>
@@ -108,7 +105,7 @@ const SpinWheel = () => {
                             ) : (
                                 <p style={{ fontSize: "18px", color: "gray" }}>No cover available</p>
                             )}
-                            <h3 style={styles.resultTitle}>{selectedBook.segmentText}</h3>
+                            <h3 style={styles.resultTitle}>{selectedBook.option}</h3>
                             <button style={styles.spinAgainButton} onClick={spinAgain}>🔄 Spin Again</button>
                         </div>
                     )}
@@ -182,14 +179,6 @@ const styles = {
         flexDirection: "column",
         alignItems: "center",
         position: "relative",
-    },
-    wheel: {
-        width: "200px",
-        height: "200px",
-        background: "conic-gradient(#C19A6B, #8B5E3C, #D2B48C, #A67B5B, #7D4E2D)",
-        borderRadius: "50%",
-        border: "5px solid #222",
-        transition: "transform 3s ease-out",
     },
     resultContainer: {
         textAlign: "center",
