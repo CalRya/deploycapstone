@@ -36,7 +36,7 @@ import ManageAdmin from './components/Pages/ADMIN/RealAdmin';
 const router = createBrowserRouter([
   { path: "/", element: <RegisterApp /> },
   { path: "register", element: <RegisterApp /> },
-  { path: "/login", element: <Login /> },
+  { path: "login", element: <Login /> },
   { path: "home", element: <HomePage /> },
   { path: "lib", element: <LibraryPage /> },
   { path: "gamesh", element: <GameHome /> },
