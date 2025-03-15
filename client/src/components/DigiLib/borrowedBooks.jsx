@@ -54,7 +54,7 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
       console.log(`📤 Submitting rating: ${rating} for borrow ID: ${borrowId}`);
 
       const response = await axios.put(
-        `${BASE_URL}/rate/${borrowId}`,
+        `${BASE_URL}/api/rate/${borrowId}`,
         { rating },
         {
           headers: {
@@ -66,6 +66,7 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
 
       console.log("✅ Rating submitted successfully:", response.data);
 
+      // Update the borrowedBooks state to reflect the new rating
       setBorrowedBooks((prevBooks) =>
         prevBooks.map((borrow) =>
           borrow._id === borrowId ? { ...borrow, rating } : borrow
@@ -80,7 +81,12 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
       alert(response.data.message || "Rating submitted successfully!");
     } catch (error) {
       console.error("❌ Error submitting rating:", error);
-      alert(error.response?.data?.message || "Error.");
+      // If the error indicates the user has already rated, show that message
+      if (error.response && error.response.data && error.response.data.message === "You have already rated this book.") {
+        alert("You have already rated this book.");
+      } else {
+        alert(error.response?.data?.message || "Error.");
+      }
     }
   };
 
@@ -131,7 +137,8 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
                     <strong>Author:</strong> {borrow.book?.bookAuthor || "Unknown Author"}
                   </p>
                   <p className="borrowed-date">
-                    <strong>Borrowed:</strong> {borrow.borrowDate ? new Date(borrow.borrowDate).toLocaleDateString() : "N/A"}
+                    <strong>Borrowed:</strong>{" "}
+                    {borrow.borrowDate ? new Date(borrow.borrowDate).toLocaleDateString() : "N/A"}
                   </p>
                   <p className="borrowed-date">
                     <strong>Due:</strong> {dueDate ? dueDate.toLocaleDateString() : "N/A"}
@@ -150,7 +157,9 @@ const BorrowedBooks = ({ id: propId, onRatingUpdate }) => {
                       </p>
                     ) : (
                       <div className="rating-container">
-                        <p><strong>Rate this book:</strong></p>
+                        <p>
+                          <strong>Rate this book:</strong>
+                        </p>
                         {[1, 2, 3, 4, 5].map((star) => (
                           <span
                             key={star}

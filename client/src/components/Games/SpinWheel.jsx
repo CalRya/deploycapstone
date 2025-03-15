@@ -44,14 +44,12 @@ const SpinWheel = () => {
   // Build a conic-gradient for slices
   const buildConicGradient = (slices) => {
     if (!slices || slices.length === 0) return "white";
-
     const sliceAngle = 360 / slices.length;
     const parts = slices.map((slice, i) => {
       const start = i * sliceAngle;
       const end = (i + 1) * sliceAngle;
       return `${slice.color} ${start}deg ${end}deg`;
     });
-
     return `conic-gradient(${parts.join(", ")})`;
   };
 
@@ -75,24 +73,21 @@ const SpinWheel = () => {
     await fetchRandomBooks();
   };
 
-  // Handle spinning the wheel with adjusted winning slice calculation
+  // Spin logic: the winning slice is determined by aligning the slice center with the arrow
   const spinWheel = () => {
     if (spinning || books.length === 0) return;
     setSpinning(true);
 
-    // Random angle between 2 and 5 full rotations (720° - 1800°)
+    // Random angle between 2 and 5 full rotations (720° to 1800°)
     const extraSpins = Math.floor(Math.random() * 1080) + 720;
     const newAngle = angle + extraSpins;
     setAngle(newAngle);
 
-    // Wait for the spin animation to complete (3s transition)
     setTimeout(() => {
       const sliceAngle = 360 / books.length;
-      // Add half a slice so we measure from the slice center
+      // Add half a slice so the slice center lines up with the arrow
       const adjustedAngle = (newAngle + sliceAngle / 2) % 360;
-      // Invert index so that the slice aligned with the arrow at top wins
-      const winningIndex = (books.length - Math.floor(adjustedAngle / sliceAngle)) % books.length;
-
+      const winningIndex = Math.floor(adjustedAngle / sliceAngle);
       setSelectedBook(books[winningIndex]);
       setSpinning(false);
     }, 3000);
@@ -100,7 +95,6 @@ const SpinWheel = () => {
 
   return (
     <div style={styles.container}>
-      {/* Start Screen */}
       {!gameStarted ? (
         <div style={styles.startScreen}>
           <h2 style={styles.title}>📚 Spin the Wheel & Get a Book Recommendation!</h2>
@@ -110,16 +104,14 @@ const SpinWheel = () => {
         </div>
       ) : (
         <>
-          {/* Show Wheel or Selected Book */}
           {!selectedBook ? (
             <>
               <h1 style={styles.title}>📖 Spin the Wheel!</h1>
               {books.length > 0 ? (
                 <div style={styles.wheelArea}>
-                  {/* Arrow (fixed at top center, pointing down) */}
+                  {/* Arrow (fixed above the wheel) */}
                   <div style={styles.arrow} />
-
-                  {/* Rotating Wheel */}
+                  {/* Rotating wheel with book covers (tilt with the wheel) */}
                   <div
                     style={{
                       ...styles.wheel,
@@ -135,7 +127,7 @@ const SpinWheel = () => {
                           key={i}
                           style={{
                             ...styles.sliceLabel,
-                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(100px)`,
+                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(90px)`,
                           }}
                         >
                           {book.bookCover ? (
@@ -151,7 +143,6 @@ const SpinWheel = () => {
                       );
                     })}
                   </div>
-
                   {/* Buttons arranged in a row */}
                   <div style={styles.buttonRow}>
                     <button style={styles.spinButton} onClick={spinWheel} disabled={spinning}>
@@ -169,16 +160,20 @@ const SpinWheel = () => {
               )}
             </>
           ) : (
-            // Show the chosen book
             <div style={styles.resultContainer}>
               <h2 style={styles.resultText}>📚 Your Recommendation:</h2>
               {selectedBook.bookCover ? (
-                <img src={selectedBook.bookCover} alt="Book Cover" style={styles.bookCover} />
+                <img
+                  src={selectedBook.bookCover}
+                  alt="Book Cover"
+                  style={styles.bookCover}
+                />
               ) : (
-                <p style={{ fontSize: "18px", color: "gray" }}>No cover available</p>
+                <p style={{ fontSize: "18px", color: "gray" }}>
+                  No cover available
+                </p>
               )}
               <h3 style={styles.resultTitle}>{selectedBook.bookTitle}</h3>
-
               <div style={styles.buttonRow}>
                 <button style={styles.spinAgainButton} onClick={spinAgain}>
                   🔄 Spin Again
@@ -208,7 +203,6 @@ const styles = {
     color: "#5a3e2b",
   },
   startScreen: {
-    textAlign: "center",
     padding: "20px",
   },
   title: {
@@ -251,7 +245,7 @@ const styles = {
     height: 0,
     borderLeft: "15px solid transparent",
     borderRight: "15px solid transparent",
-    borderTop: "35px solid #FF0000", // arrow now points down
+    borderTop: "35px solid #FF0000", // arrow points downward
   },
   sliceLabel: {
     position: "absolute",
@@ -260,8 +254,8 @@ const styles = {
     pointerEvents: "none",
   },
   sliceCover: {
-    width: "50px",
-    height: "80px", // portrait aspect ratio
+    width: "45px",   // narrower
+    height: "72px",  // taller => ~5:8 ratio
     objectFit: "cover",
     borderRadius: "4px",
     border: "2px solid #fff",

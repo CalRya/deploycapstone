@@ -14,8 +14,8 @@ const App = () => {
     <div>
       <Navbar />
       <Hero/>
-      <LibraryPreview/>
       <ArticlePreview/>
+      <LibraryPreview/>
     </div>
   );
 };
