@@ -7,7 +7,7 @@ const SpinWheel = () => {
   const [angle, setAngle] = useState(0);
   const [spinning, setSpinning] = useState(false);
 
-  // 1️⃣ Fetch random books from the database
+  // Fetch random books from the database
   const fetchRandomBooks = async () => {
     try {
       const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
@@ -35,13 +35,13 @@ const SpinWheel = () => {
     }
   };
 
-  // 2️⃣ Simple color palette for slices
+  // Simple color palette for slices
   const getWheelColor = (index) => {
     const colors = ["#C19A6B", "#8B5E3C", "#D2B48C", "#A67B5B", "#7D4E2D"];
     return colors[index % colors.length];
   };
 
-  // 3️⃣ Build a conic-gradient for slices
+  // Build a conic-gradient for slices
   const buildConicGradient = (slices) => {
     if (!slices || slices.length === 0) return "white";
 
@@ -55,7 +55,6 @@ const SpinWheel = () => {
     return `conic-gradient(${parts.join(", ")})`;
   };
 
-  // 4️⃣ Start the game
   const startGame = async () => {
     if (!gameStarted) {
       setGameStarted(true);
@@ -66,19 +65,17 @@ const SpinWheel = () => {
     }
   };
 
-  // 5️⃣ Exit the game
   const exitGame = () => {
     setGameStarted(false);
     setSelectedBook(null);
   };
 
-  // 6️⃣ Spin again
   const spinAgain = async () => {
     setSelectedBook(null);
     await fetchRandomBooks();
   };
 
-  // 7️⃣ Handle spinning the wheel
+  // Spin logic
   const spinWheel = () => {
     if (spinning || books.length === 0) return;
     setSpinning(true);
@@ -88,14 +85,12 @@ const SpinWheel = () => {
     const newAngle = angle + extraSpins;
     setAngle(newAngle);
 
-    // Determine winning slice (3s = transition)
+    // Determine winning slice after 3s transition
     setTimeout(() => {
       const sliceAngle = 360 / books.length;
       const normalizedAngle = newAngle % 360;
-      // Slice 0 covers [0..sliceAngle), slice 1 covers [sliceAngle..2*sliceAngle), etc.
       const winningIndex = Math.floor(normalizedAngle / sliceAngle);
 
-      // ✅ This picks exactly the slice at the arrow
       setSelectedBook(books[winningIndex]);
       setSpinning(false);
     }, 3000);
@@ -119,7 +114,7 @@ const SpinWheel = () => {
               <h1 style={styles.title}>📖 Spin the Wheel!</h1>
               {books.length > 0 ? (
                 <div style={styles.wheelArea}>
-                  {/* 🔺 Arrow (pointing down) */}
+                  {/* Arrow (pointing down) */}
                   <div style={styles.arrow} />
 
                   {/* Wheel with rotating covers */}
@@ -131,16 +126,14 @@ const SpinWheel = () => {
                     }}
                   >
                     {books.map((book, i) => {
-                      // The center angle of each slice
                       const sliceAngle = 360 / books.length;
                       const labelAngle = (i + 0.5) * sliceAngle;
-
                       return (
                         <div
                           key={i}
                           style={{
                             ...styles.sliceLabel,
-                            // Move images further out, but smaller => no overlap
+                            // Move images out so they appear near the edge
                             transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(110px)`,
                           }}
                         >
@@ -208,7 +201,7 @@ const styles = {
     padding: "30px",
     borderRadius: "12px",
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    maxWidth: "600px", // Increase container size
+    maxWidth: "600px", // container size
     margin: "40px auto",
     textAlign: "center",
     fontFamily: "Century Gothic, sans-serif",
@@ -237,11 +230,11 @@ const styles = {
   wheelArea: {
     position: "relative",
     margin: "20px auto",
-    width: "300px",   // Bigger wheel
+    width: "300px",
     height: "300px",
   },
   wheel: {
-    position: "relative", // so children rotate with it
+    position: "relative",
     width: "100%",
     height: "100%",
     borderRadius: "50%",
@@ -256,7 +249,7 @@ const styles = {
     transform: "translateX(-50%)",
     width: 0,
     height: 0,
-    // Pointing downward
+    // pointing down
     borderLeft: "15px solid transparent",
     borderRight: "15px solid transparent",
     borderBottom: "35px solid #FF0000",
@@ -267,9 +260,10 @@ const styles = {
     left: "50%",
     pointerEvents: "none",
   },
+  // ⚠ Adjust for a more portrait aspect ratio
   sliceCover: {
-    width: "45px",  // Slightly smaller => less overlap
-    height: "65px",
+    width: "50px",  // narrower width
+    height: "80px", // taller height => more portrait
     objectFit: "cover",
     borderRadius: "4px",
     border: "2px solid #fff",
