@@ -7,7 +7,7 @@ const SpinWheel = () => {
   const [angle, setAngle] = useState(0);
   const [spinning, setSpinning] = useState(false);
 
-  // Fetch random books from the database
+  // 1️⃣ Fetch random books from the database
   const fetchRandomBooks = async () => {
     try {
       const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
@@ -16,7 +16,6 @@ const SpinWheel = () => {
       let data = await response.json();
       if (!data || data.length === 0) throw new Error("No books received");
 
-      // Limit to 5
       data = data.slice(0, 5);
 
       // Prepare each slice with color + info
@@ -36,30 +35,27 @@ const SpinWheel = () => {
     }
   };
 
-  // Simple color palette for slices
+  // 2️⃣ Simple color palette for slices
   const getWheelColor = (index) => {
     const colors = ["#C19A6B", "#8B5E3C", "#D2B48C", "#A67B5B", "#7D4E2D"];
     return colors[index % colors.length];
   };
 
-  // Build a conic-gradient for slices
+  // 3️⃣ Build a conic-gradient for slices
   const buildConicGradient = (slices) => {
     if (!slices || slices.length === 0) return "white";
 
     const sliceAngle = 360 / slices.length;
-    let gradientParts = [];
-
-    slices.forEach((slice, i) => {
+    const parts = slices.map((slice, i) => {
       const start = i * sliceAngle;
       const end = (i + 1) * sliceAngle;
-      gradientParts.push(`${slice.color} ${start}deg ${end}deg`);
+      return `${slice.color} ${start}deg ${end}deg`;
     });
 
-    // Combine into a single conic gradient
-    return `conic-gradient(${gradientParts.join(", ")})`;
+    return `conic-gradient(${parts.join(", ")})`;
   };
 
-  // Start the game: fetch books + show wheel
+  // 4️⃣ Start the game
   const startGame = async () => {
     if (!gameStarted) {
       setGameStarted(true);
@@ -70,40 +66,37 @@ const SpinWheel = () => {
     }
   };
 
-  // Exit the game
+  // 5️⃣ Exit the game
   const exitGame = () => {
     setGameStarted(false);
     setSelectedBook(null);
   };
 
-  // Spin again (re-fetch or re-spin with same books)
+  // 6️⃣ Spin again
   const spinAgain = async () => {
     setSelectedBook(null);
     await fetchRandomBooks();
   };
 
-  // Handle spinning the wheel
+  // 7️⃣ Handle spinning the wheel
   const spinWheel = () => {
     if (spinning || books.length === 0) return;
     setSpinning(true);
 
-    // Add random angle between 2 and 5 full rotations (720° - 1800°)
+    // Random angle between 2 and 5 full rotations (720° - 1800°)
     const extraSpins = Math.floor(Math.random() * 1080) + 720;
     const newAngle = angle + extraSpins;
     setAngle(newAngle);
 
-    // Determine winning slice after spin completes (3s = transition time)
+    // Determine winning slice (3s = transition)
     setTimeout(() => {
       const sliceAngle = 360 / books.length;
-      const normalizedAngle = newAngle % 360; // 0-359
+      const normalizedAngle = newAngle % 360;
+      // Slice 0 covers [0..sliceAngle), slice 1 covers [sliceAngle..2*sliceAngle), etc.
       const winningIndex = Math.floor(normalizedAngle / sliceAngle);
 
-      // Because the wheel is spinning clockwise,
-      // the slice at the top is (books.length - 1 - winningIndex)
-      const actualIndex = books.length - 1 - winningIndex;
-      const finalIndex = (actualIndex + books.length) % books.length;
-
-      setSelectedBook(books[finalIndex]);
+      // ✅ This picks exactly the slice at the arrow
+      setSelectedBook(books[winningIndex]);
       setSpinning(false);
     }, 3000);
   };
@@ -120,16 +113,16 @@ const SpinWheel = () => {
         </div>
       ) : (
         <>
-          {/* If no book selected yet, show wheel */}
+          {/* Show Wheel or Selected Book */}
           {!selectedBook ? (
             <>
               <h1 style={styles.title}>📖 Spin the Wheel!</h1>
               {books.length > 0 ? (
                 <div style={styles.wheelArea}>
-                  {/* Arrow / Pointer */}
+                  {/* 🔺 Arrow (pointing down) */}
                   <div style={styles.arrow} />
 
-                  {/* Wheel itself (includes images so they rotate together) */}
+                  {/* Wheel with rotating covers */}
                   <div
                     style={{
                       ...styles.wheel,
@@ -137,10 +130,9 @@ const SpinWheel = () => {
                       background: buildConicGradient(books),
                     }}
                   >
-                    {/* Overlays for each slice (book covers or titles) */}
                     {books.map((book, i) => {
-                      const sliceAngle = 360 / books.length;
                       // The center angle of each slice
+                      const sliceAngle = 360 / books.length;
                       const labelAngle = (i + 0.5) * sliceAngle;
 
                       return (
@@ -148,7 +140,8 @@ const SpinWheel = () => {
                           key={i}
                           style={{
                             ...styles.sliceLabel,
-                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(80px)`,
+                            // Move images further out, but smaller => no overlap
+                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(110px)`,
                           }}
                         >
                           {book.bookCover ? (
@@ -165,13 +158,9 @@ const SpinWheel = () => {
                     })}
                   </div>
 
-                  {/* Buttons below the wheel */}
-                  <div style={styles.buttonColumn}>
-                    <button
-                      style={styles.spinButton}
-                      onClick={spinWheel}
-                      disabled={spinning}
-                    >
+                  {/* Buttons (side by side) */}
+                  <div style={styles.buttonRow}>
+                    <button style={styles.spinButton} onClick={spinWheel} disabled={spinning}>
                       {spinning ? "Spinning..." : "Spin"}
                     </button>
                     <button style={styles.exitButton} onClick={exitGame}>
@@ -195,12 +184,15 @@ const SpinWheel = () => {
                 <p style={{ fontSize: "18px", color: "gray" }}>No cover available</p>
               )}
               <h3 style={styles.resultTitle}>{selectedBook.bookTitle}</h3>
-              <button style={styles.spinAgainButton} onClick={spinAgain}>
-                🔄 Spin Again
-              </button>
-              <button style={styles.exitButton} onClick={exitGame}>
-                Exit Game
-              </button>
+
+              <div style={styles.buttonRow}>
+                <button style={styles.spinAgainButton} onClick={spinAgain}>
+                  🔄 Spin Again
+                </button>
+                <button style={styles.exitButton} onClick={exitGame}>
+                  Exit Game
+                </button>
+              </div>
             </div>
           )}
         </>
@@ -209,13 +201,14 @@ const SpinWheel = () => {
   );
 };
 
+/* 🎨 Styles */
 const styles = {
   container: {
     backgroundColor: "#F5E1C8",
     padding: "30px",
     borderRadius: "12px",
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    maxWidth: "500px",
+    maxWidth: "600px", // Increase container size
     margin: "40px auto",
     textAlign: "center",
     fontFamily: "Century Gothic, sans-serif",
@@ -244,17 +237,17 @@ const styles = {
   wheelArea: {
     position: "relative",
     margin: "20px auto",
-    width: "250px",
-    height: "250px",
+    width: "300px",   // Bigger wheel
+    height: "300px",
   },
   wheel: {
-    position: "relative", // So child elements rotate with it
+    position: "relative", // so children rotate with it
     width: "100%",
     height: "100%",
     borderRadius: "50%",
     border: "5px solid #222",
     transition: "transform 3s ease-out",
-    overflow: "hidden", // ensures anything large doesn't overflow
+    overflow: "hidden",
   },
   arrow: {
     position: "absolute",
@@ -263,19 +256,20 @@ const styles = {
     transform: "translateX(-50%)",
     width: 0,
     height: 0,
+    // Pointing downward
     borderLeft: "15px solid transparent",
     borderRight: "15px solid transparent",
-    borderBottom: "35px solid #FF0000", // arrow color
+    borderBottom: "35px solid #FF0000",
   },
   sliceLabel: {
     position: "absolute",
     top: "50%",
     left: "50%",
-    pointerEvents: "none", // let clicks pass through
+    pointerEvents: "none",
   },
   sliceCover: {
-    width: "50px",  // more portrait-like
-    height: "70px",
+    width: "45px",  // Slightly smaller => less overlap
+    height: "65px",
     objectFit: "cover",
     borderRadius: "4px",
     border: "2px solid #fff",
@@ -290,12 +284,12 @@ const styles = {
     color: "#333",
     whiteSpace: "nowrap",
   },
-  buttonColumn: {
+  buttonRow: {
     display: "flex",
-    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: "20px",
     gap: "10px",
+    marginTop: "20px",
   },
   spinButton: {
     border: "none",
@@ -306,6 +300,17 @@ const styles = {
     fontWeight: "bold",
     color: "white",
     background: "#D2B48C",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+  },
+  exitButton: {
+    border: "none",
+    padding: "10px 14px",
+    fontSize: "16px",
+    cursor: "pointer",
+    borderRadius: "20px",
+    fontWeight: "bold",
+    color: "white",
+    background: "#8B5E3C",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
   },
   resultContainer: {
@@ -329,7 +334,6 @@ const styles = {
     marginTop: "10px",
   },
   spinAgainButton: {
-    marginTop: "15px",
     border: "none",
     padding: "10px 14px",
     fontSize: "16px",
@@ -339,18 +343,6 @@ const styles = {
     fontWeight: "bold",
     color: "white",
     background: "#5A3E2B",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-  },
-  exitButton: {
-    border: "none",
-    padding: "10px 14px",
-    fontSize: "16px",
-    cursor: "pointer",
-    borderRadius: "20px",
-    transition: "all 0.3s ease",
-    fontWeight: "bold",
-    color: "white",
-    background: "#8B5E3C",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
   },
 };
