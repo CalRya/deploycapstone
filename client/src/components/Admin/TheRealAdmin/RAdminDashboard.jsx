@@ -6,14 +6,25 @@ const AdminDashboard = () => {
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
 
+    // Check for the current user in localStorage.
+    const currentUser = localStorage.getItem("currentUser");
+
     useEffect(() => {
-        fetchUsers();
-    }, []);
+        // Only fetch users if an admin is logged in.
+        if (currentUser) {
+            fetchUsers();
+        }
+    }, [currentUser]);
 
     const fetchUsers = async () => {
         try {
             const response = await fetch("https://deploycapstone.onrender.com/api/users");
             if (!response.ok) {
+                // Optionally, if you get a 404, set users to an empty array.
+                if (response.status === 404) {
+                    setUsers([]);
+                    return;
+                }
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
@@ -53,7 +64,7 @@ const AdminDashboard = () => {
         user.user && user.user.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Inline styles
+    // Inline styles remain unchanged
     const styles = {
         dashboard: {
             display: "flex",
@@ -101,6 +112,15 @@ const AdminDashboard = () => {
         },
     };
 
+    // If there's no current user (i.e. admin has logged out), show a friendly message.
+    if (!currentUser) {
+        return (
+          <div style={{ padding: "20px", textAlign: "center" }}>
+            <h2>Please log in to access the admin dashboard.</h2>
+          </div>
+        );
+    }
+
     return (
         <div style={styles.dashboard}>
             <h1 style={styles.header}>📊 Admin Dashboard</h1>
@@ -123,7 +143,7 @@ const AdminDashboard = () => {
                 onRoleChange={handleRoleChange} // Pass function to UserTable
             />
 
-            {/* Add User Section (Placed at the bottom) */}
+            {/* Add User Section */}
             <div style={styles.addUserSection}>
                 <AddUserForm refreshUsers={fetchUsers} />
             </div>

@@ -153,16 +153,16 @@ app.get("/api/borrow/:user", async (req, res) => {
     }
 });
 
-app.get("/api/users/:id", async (req, res) => {
+app.get("/api/users", async (req, res) => {
     try {
-        const user = await userModel.findById(req.params.id).select("user email role premium");
-        if (!user) return res.status(404).json({ message: "User not found" });
-        res.json(user);
+        const users = await userModel.find().select("user email role premium");
+        res.json(users);
     } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error fetching users:", error);
         res.status(500).json({ message: "Server error" });
     }
 });
+
 
 app.post("/api/borrow/:bookID", async (req, res) => {
     try {

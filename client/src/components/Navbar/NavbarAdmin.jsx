@@ -40,8 +40,8 @@ const NavbarAdmin = ({ onSearch }) => {
     setAuth({});
     // Remove stored user data.
     localStorage.removeItem("currentUser");
-    // Navigate to login page.
-    navigate("/login");
+    localStorage.removeItem("token");
+    navigate("/login", { replace: true });
   };
 
   return (
