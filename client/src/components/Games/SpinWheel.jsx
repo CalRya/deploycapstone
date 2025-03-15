@@ -76,11 +76,6 @@ const SpinWheel = () => {
 
   // Spin again (re-fetch or re-spin with same books)
   const spinAgain = async () => {
-    // Option 1: Spin again using the same books
-    // setSelectedBook(null);
-    // spinWheel();
-
-    // Option 2: Fetch new books each time
     setSelectedBook(null);
     await fetchRandomBooks();
   };
@@ -97,15 +92,11 @@ const SpinWheel = () => {
 
     // Determine winning slice after spin completes (3s = transition time)
     setTimeout(() => {
-      // Figure out which slice is at the top (arrow at 0°)
-      // We mod by 360 to get remainder, then see which slice it falls into
       const sliceAngle = 360 / books.length;
       const normalizedAngle = newAngle % 360; // 0-359
       const winningIndex = Math.floor(normalizedAngle / sliceAngle);
 
-      // Because the wheel is spinning clockwise,
-      // the slice at the top is actually (books.length - 1 - winningIndex)
-      // If you want a typical top arrow with clockwise spin, invert the index:
+      // The slice at the top is (books.length - 1 - winningIndex)
       const actualIndex = books.length - 1 - winningIndex;
       const finalIndex = (actualIndex + books.length) % books.length;
 
@@ -143,6 +134,35 @@ const SpinWheel = () => {
                       background: buildConicGradient(books),
                     }}
                   />
+
+                  {/* Overlays for each slice (book covers or titles) */}
+                  {books.map((book, i) => {
+                    const sliceAngle = 360 / books.length;
+                    const labelAngle = (i + 0.5) * sliceAngle;
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          ...styles.sliceLabel,
+                          transform: `translate(-50%, -50%) 
+                                      rotate(${labelAngle}deg) 
+                                      translate(90px) 
+                                      rotate(-${labelAngle}deg)`,
+                        }}
+                      >
+                        {book.bookCover ? (
+                          <img
+                            src={book.bookCover}
+                            alt={book.bookTitle}
+                            style={styles.sliceCover}
+                          />
+                        ) : (
+                          <span style={styles.sliceText}>{book.bookTitle}</span>
+                        )}
+                      </div>
+                    );
+                  })}
+
                   <button style={styles.spinButton} onClick={spinWheel} disabled={spinning}>
                     {spinning ? "Spinning..." : "Spin"}
                   </button>
@@ -224,14 +244,38 @@ const styles = {
   },
   arrow: {
     position: "absolute",
-    top: "-25px",
+    // Put the arrow at the top center of the wheel
+    top: "-35px",
     left: "50%",
     transform: "translateX(-50%)",
-    width: "0",
-    height: "0",
+    width: 0,
+    height: 0,
     borderLeft: "15px solid transparent",
     borderRight: "15px solid transparent",
-    borderBottom: "25px solid #FF0000", // arrow color
+    borderBottom: "35px solid #FF0000", // arrow color
+  },
+  sliceLabel: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    pointerEvents: "none", // let clicks pass through
+  },
+  sliceCover: {
+    width: "40px",
+    height: "60px",
+    objectFit: "cover",
+    borderRadius: "4px",
+    border: "2px solid #fff",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.3)",
+  },
+  sliceText: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    padding: "4px 6px",
+    borderRadius: "4px",
+    fontSize: "14px",
+    fontWeight: "bold",
+    color: "#333",
+    whiteSpace: "nowrap",
   },
   spinButton: {
     marginTop: "20px",
