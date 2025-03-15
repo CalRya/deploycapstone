@@ -148,7 +148,7 @@ const SpinWheel = () => {
                           key={i}
                           style={{
                             ...styles.sliceLabel,
-                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(90px)`,
+                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(80px)`,
                           }}
                         >
                           {book.bookCover ? (
@@ -165,13 +165,19 @@ const SpinWheel = () => {
                     })}
                   </div>
 
-                  <button
-                    style={styles.spinButton}
-                    onClick={spinWheel}
-                    disabled={spinning}
-                  >
-                    {spinning ? "Spinning..." : "Spin"}
-                  </button>
+                  {/* Buttons below the wheel */}
+                  <div style={styles.buttonColumn}>
+                    <button
+                      style={styles.spinButton}
+                      onClick={spinWheel}
+                      disabled={spinning}
+                    >
+                      {spinning ? "Spinning..." : "Spin"}
+                    </button>
+                    <button style={styles.exitButton} onClick={exitGame}>
+                      Exit Game
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <p style={{ color: "red", fontSize: "18px" }}>
@@ -192,11 +198,11 @@ const SpinWheel = () => {
               <button style={styles.spinAgainButton} onClick={spinAgain}>
                 🔄 Spin Again
               </button>
+              <button style={styles.exitButton} onClick={exitGame}>
+                Exit Game
+              </button>
             </div>
           )}
-          <button style={styles.exitButton} onClick={exitGame}>
-            Exit Game
-          </button>
         </>
       )}
     </div>
@@ -268,8 +274,8 @@ const styles = {
     pointerEvents: "none", // let clicks pass through
   },
   sliceCover: {
-    width: "40px",
-    height: "60px",
+    width: "50px",  // more portrait-like
+    height: "70px",
     objectFit: "cover",
     borderRadius: "4px",
     border: "2px solid #fff",
@@ -284,8 +290,14 @@ const styles = {
     color: "#333",
     whiteSpace: "nowrap",
   },
-  spinButton: {
+  buttonColumn: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
     marginTop: "20px",
+    gap: "10px",
+  },
+  spinButton: {
     border: "none",
     padding: "10px 14px",
     fontSize: "16px",
@@ -330,7 +342,6 @@ const styles = {
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
   },
   exitButton: {
-    marginTop: "20px",
     border: "none",
     padding: "10px 14px",
     fontSize: "16px",
