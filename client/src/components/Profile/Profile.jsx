@@ -8,21 +8,23 @@ export default function Profile() {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    console.log("✅ Received User Data:", user);
-  }, [user]);
+    if (!userId) {
+      console.error("⚠️ User ID is missing from localStorage!");
+      return;
+    }
 
-  useEffect(() => {
     const fetchUser = async () => {
       try {
+        console.log("🔍 Fetching user with ID:", userId);
         const res = await axios.get(`https://deploycapstone.onrender.com/api/users/${userId}`);
         setUser(res.data);
       } catch (err) {
-        console.error("Error fetching profile:", err);
+        console.error("❌ Error fetching profile:", err.response?.data || err.message);
       }
     };
 
-    if (userId) fetchUser();
-  }, [userId]); // Removed `user, isPremium` from dependencies (unnecessary re-renders)
+    fetchUser();
+  }, [userId]);
 
   const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
@@ -32,22 +34,21 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!user) return;
 
     const formData = new FormData();
-    formData.append("profilePic", profilePic);
-    formData.append("fullName", user.fullName);
-    formData.append("phone", user.phone);
-    formData.append("address", user.address);
+    if (profilePic) formData.append("profilePic", profilePic);
+    formData.append("fullName", user.fullName || "");
+    formData.append("phone", user.phone || "");
+    formData.append("address", user.address || "");
 
     try {
       await axios.put(`https://deploycapstone.onrender.com/api/users/${userId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Profile updated successfully!");
+      alert("✅ Profile updated successfully!");
     } catch (err) {
-      console.error("Error updating profile:", err);
+      console.error("❌ Error updating profile:", err.response?.data || err.message);
     }
   };
 
