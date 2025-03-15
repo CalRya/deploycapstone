@@ -5,15 +5,15 @@ import "../css/Navbar.css";
 import logo from "../../assets/logo.png";
 
 const NavbarAdmin = ({ onSearch }) => {
-  const authContext = useContext(AuthContext);
-  const setAuth = authContext?.setAuth; // Avoid errors if context is missing
-
+  const { setAuth } = useContext(AuthContext);
   const [sticky, setSticky] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => setSticky(window.scrollY > 50);
+    const handleScroll = () => {
+      setSticky(window.scrollY > 50);
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -21,20 +21,24 @@ const NavbarAdmin = ({ onSearch }) => {
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchInput(query);
-    if (query.trim()) onSearch?.(query);
+    onSearch && onSearch(query);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      navigate(searchInput.trim() ? `/lib?q=${encodeURIComponent(searchInput.trim())}` : "/lib");
+      if (searchInput.trim() === "") {
+        navigate("/lib");
+      } else {
+        navigate(`/lib?q=${encodeURIComponent(searchInput.trim())}`);
+      }
     }
   };
 
   const handleLogout = () => {
-    if (setAuth) setAuth({});
+    setAuth({});
     localStorage.removeItem("currentUser");
-    sessionStorage.clear(); // Clear all session data
-    window.location.href = "/login"; // Full reload to ensure session is reset
+    sessionStorage.clear();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -74,7 +78,9 @@ const NavbarAdmin = ({ onSearch }) => {
           </NavLink>
         </li>
         <li>
-          <button className="btn" onClick={handleLogout}>Log Out</button>
+          <button className="btn" onClick={handleLogout}>
+            Log Out
+          </button>
         </li>
       </ul>
     </nav>
