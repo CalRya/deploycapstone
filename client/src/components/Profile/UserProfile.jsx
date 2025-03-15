@@ -84,11 +84,11 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh",
+    height: "140vh",
   },
   profileContainer: {
     background: "linear-gradient(145deg, #fff8f3, #f2e1d5)",
-    padding: "30px",
+    padding: "110px",
     borderRadius: "15px",
     boxShadow: "5px 5px 15px rgba(0, 0, 0, 0.15)",
     maxWidth: "400px",

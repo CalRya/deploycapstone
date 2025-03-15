@@ -59,17 +59,22 @@ const ArticleList = () => {
                                             src={imageUrl}
                                             alt={`Article ${index + 1}`}
                                             style={styles.thumbnail}
-                                            onError={(e) => e.target.style.display = "none"}
+                                            onError={(e) => (e.target.style.display = "none")}
                                         />
                                     ))}
                                 </div>
                             )}
                             <div>
                                 <h3 style={styles.articleTitle}>{article.title}</h3>
-                                <p style={styles.articlePreview}>{article.content.substring(0, 120)}...</p>
+                                <p style={styles.articlePreview}>
+                                    {article.content.substring(0, 120)}...
+                                </p>
                                 <small style={styles.articleInfo}>
-                                    📝 Writer: {article.writer || "Unknown"} | 🎨 Illustrator: {article.illustrator || "Unknown"}
-                                    <br />📂 Category: <strong>{article.category || "Uncategorized"}</strong>
+                                    📝 Writer: {article.writer || "Unknown"} | 🎨 Illustrator:{" "}
+                                    {article.illustrator || "Unknown"}
+                                    <br />
+                                    📂 Category:{" "}
+                                    <strong>{article.category || "Uncategorized"}</strong>
                                 </small>
                             </div>
                         </div>
@@ -83,14 +88,17 @@ const ArticleList = () => {
             {selectedArticle && (
                 <div style={styles.modalOverlay}>
                     <div style={styles.modal}>
-                        <h2 style={styles.modalTitle}>
-                            {selectedArticle.title}
-                        </h2>
+                        <h2 style={styles.modalTitle}>{selectedArticle.title}</h2>
 
                         {selectedArticle.images?.length > 0 && (
                             <div style={styles.modalImageContainer}>
                                 {getImageUrls(selectedArticle.images).map((imageUrl, index) => (
-                                    <img key={index} src={imageUrl} alt={`Article ${index + 1}`} style={styles.modalImage} />
+                                    <img
+                                        key={index}
+                                        src={imageUrl}
+                                        alt={`Article ${index + 1}`}
+                                        style={styles.modalImage}
+                                    />
                                 ))}
                             </div>
                         )}
@@ -98,21 +106,24 @@ const ArticleList = () => {
                         <div style={styles.modalContent}>
                             <p style={styles.modalText}>{selectedArticle.content}</p>
                             <p style={styles.modalText}>
-                                <span style={styles.modalTextStrong}>Writer:</span> {selectedArticle.writer || "Unknown"}
+                                <span style={styles.modalTextStrong}>Writer:</span>{" "}
+                                {selectedArticle.writer || "Unknown"}
                             </p>
                             <p style={styles.modalText}>
-                                <span style={styles.modalTextStrong}>Illustrator:</span> {selectedArticle.illustrator || "Unknown"}
+                                <span style={styles.modalTextStrong}>Illustrator:</span>{" "}
+                                {selectedArticle.illustrator || "Unknown"}
                             </p>
                             <p style={styles.modalText}>
-                                <span style={styles.modalTextStrong}>Category:</span> {selectedArticle.category || "Uncategorized"}
+                                <span style={styles.modalTextStrong}>Category:</span>{" "}
+                                {selectedArticle.category || "Uncategorized"}
                             </p>
                         </div>
 
                         <button
                             onClick={() => setSelectedArticle(null)}
                             style={styles.closeButton}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = "#bf360c"}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = "#d84315"}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = "#bf360c")}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = "#d84315")}
                         >
                             Close
                         </button>
@@ -126,13 +137,15 @@ const ArticleList = () => {
 // CSS-in-JS styling
 const styles = {
     container: {
-        padding: "20px",
+        marginTop: "110px",
+        width: "100%",
         maxWidth: "850px",
-        margin: "auto",
+        padding: "40px",
         fontFamily: "'Merriweather', serif",
         backgroundColor: "#faf3e0",
         borderRadius: "12px",
         boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+        boxSizing: "border-box",
     },
     header: {
         textAlign: "center",
@@ -157,12 +170,14 @@ const styles = {
         cursor: "pointer",
     },
     articleList: {
+        width: "100%",
         maxHeight: "400px",
         overflowY: "auto",
         border: "2px solid #8d6e63",
         padding: "15px",
         borderRadius: "10px",
         backgroundColor: "#fff8f0",
+        boxSizing: "border-box",
     },
     articleItem: {
         padding: "15px",
@@ -173,10 +188,12 @@ const styles = {
         gap: "15px",
         borderRadius: "8px",
         transition: "background 0.3s, transform 0.2s",
+        flexWrap: "wrap", 
     },
     imageContainer: {
         display: "flex",
         gap: "10px",
+        flexWrap: "wrap",
     },
     thumbnail: {
         width: "80px",
@@ -195,6 +212,7 @@ const styles = {
         margin: "5px 0",
         fontSize: "14px",
         color: "#6d4c41",
+        textAlign: "justify",
     },
     articleInfo: {
         color: "#795548",
@@ -214,12 +232,15 @@ const styles = {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        padding: "10px",
+        boxSizing: "border-box",
     },
     modal: {
         backgroundColor: "#fffaf3",
         padding: "25px",
         borderRadius: "12px",
-        width: "60%",
+        width: "90%",
+        maxWidth: "600px",
         maxHeight: "80%",
         overflowY: "auto",
     },
@@ -228,12 +249,15 @@ const styles = {
         fontWeight: "600",
         color: "#4e342e",
         marginBottom: "20px",
+        textAlign: "center",
     },
     modalImageContainer: {
         display: "flex",
         gap: "10px",
         overflowX: "auto",
         paddingBottom: "10px",
+        flexWrap: "wrap",
+        justifyContent: "center",
     },
     modalImage: {
         maxWidth: "100%",
@@ -264,6 +288,9 @@ const styles = {
         backgroundColor: "#d84315",
         color: "white",
         borderRadius: "8px",
+        cursor: "pointer",
+        border: "none",
+        fontWeight: "bold",
     },
 };
 

@@ -48,13 +48,13 @@ const ArticlePreview = () => {
 
 const styles = {
   articlePreview: {
-    padding: "30px",
+    padding: "20px",
     backgroundColor: "#faf3e0",
     borderRadius: "12px",
     boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
     textAlign: "center",
     maxWidth: "1200px",
-    margin: "auto",
+    margin: "20px auto",
   },
   header: {
     fontSize: "32px",

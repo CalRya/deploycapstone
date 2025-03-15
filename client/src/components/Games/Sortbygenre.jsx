@@ -91,6 +91,7 @@ function SortbyGenre() {
       width: "90%",
       maxWidth: "500px",
       textAlign: "center",
+      margin: "0 auto", // Added to center the container horizontally
     },
     h1: {
       fontSize: "2rem",

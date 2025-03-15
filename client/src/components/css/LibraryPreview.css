@@ -47,9 +47,9 @@
 /* Book list */
 .book-preview-list {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 20px;
-    min-width: 100%;
+    max-width: 100%;
     align-items: center; /* Ensures alignment */
     justify-content: center; /* Centers content */
 }

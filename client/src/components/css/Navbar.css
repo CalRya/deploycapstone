@@ -1,13 +1,13 @@
-/* 🌟 Navbar Styling */
-nav {
+/* 🌟 NAVBAR BASE STYLING */
+.navbar {
     width: 100%;
-    height: 80px;
+    min-height: 5%;  /* Use min-height instead of fixed height */
     background-color: #5a3e2b;
     z-index: 1000;
     color: #fff;
-    padding: 10px 30px;
+    padding: 0px 30px;  /* Base vertical padding: 10px */
     position: fixed;
-    top: 0;
+    top: 0; 
     left: 0;
     display: flex;
     align-items: center;
@@ -16,177 +16,51 @@ nav {
     transition: background 0.3s ease-in-out, padding 0.3s ease-in-out;
 }
 
-/* 📌 Logo */
-.logo {
-    width: 120px;
-    height: auto;
-    margin-right: 20px; /* Adds space between logo and menu */
-    flex-shrink: 0; /* Prevents the logo from resizing */
-}
-
-/* 🔽 Navbar Container */
-.navbar-container {
-    display: flex;/* 🔹 Navbar Styling */
-.navbar {
-    width: 100%;
-    height: 80px;
-    background-color: #5a3e2b;
-    color: white;
-    padding: 10px 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease-in-out;
-}
-
-/* 🌑 Sticky Navbar */
 .dark-nav {
     background: #d39d7b;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* 🔹 Logo */
-.nav-left {
+/* 🌟 NAVBAR CONTAINER (OPTIONAL) */
+.navbar-container {
     display: flex;
-    align-items: center;
-}
-
-.logo {
-    width: 120px;
-    height: auto;
-}
-
-/* 🔍 Search Bar */
-.search-bar {
-    width: 250px;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: 2px solid transparent;
-    border-radius: 20px;
-    outline: none;
-    background: #fff;
-    color: #5a3e2b;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-}
-
-.search-bar::placeholder {
-    color: #b77b43;
-}
-
-.search-bar:focus {
-    width: 280px;
-    border-color: #b77b43;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* 🔹 Navigation Links */
-.nav-links {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 0;
-    margin: 0;
-}
-
-.nav-links li {
-    transition: transform 0.2s;
-}
-
-.nav-links li:hover {
-    transform: translateY(-2px);
-}
-
-.nav-links li a {
-    text-decoration: none;
-    color: white;
-    font-weight: 500;
-    padding: 6px 10px;
-    transition: color 0.3s ease-in-out;
-}
-
-.nav-links li a:hover {
-    color: #f5d0a9;
-}
-
-/* Profile Link */
-.profile-link {
-    color: rgb(186, 138, 114);
-}
-
-/* 🔘 Button Styling */
-.btn {
-    background-color: #e3a87c;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-    font-weight: bold;
-}
-
-.btn a {
-    text-decoration: none;
-    color: #5a3e2b;
-}
-
-.btn:hover {
-    background-color: #c97b50;
-}
-
-/* ✨ Responsive Design */
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        height: auto;
-        padding: 15px;
-    }
-
-    .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
-        text-align: center;
-        margin-top: 10px;
-    }
-
-    .search-bar {
-        width: 100%;
-        max-width: 280px;
-    }
-}
-
     align-items: center;
     justify-content: space-between;
     width: 100%;
 }
 
-/* 🔽 Navbar Links */
-nav ul {
+/* 🔹 LOGO */
+.logo {
+    width: 100px;
+    height: auto;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+/* 🔹 NAVIGATION LINKS */
+.nav-links {
     list-style: none;
     display: flex;
     align-items: center;
     gap: 25px;
     padding: 0;
     margin: 0;
-    flex-grow: 1; /* Allows the menu to take up space */
-    justify-content: center; /* Centers the menu */
+    flex-grow: 1; 
+    justify-content: center; 
 }
 
-nav ul li {
+/* Basic link styles */
+.nav-links li {
     font-size: 16px;
     transition: transform 0.2s, opacity 0.3s ease-in-out;
 }
 
-nav ul li:hover {
+.nav-links li:hover {
     transform: translateY(-2px);
     opacity: 0.9;
 }
 
-nav ul li a {
+.nav-links li a {
     text-decoration: none;
     color: white;
     font-weight: 500;
@@ -195,18 +69,18 @@ nav ul li a {
     transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-nav ul li a:hover {
+.nav-links li a:hover {
     background: rgba(255, 255, 255, 0.2);
     color: #f5d0a9;
 }
 
-/* 🌑 Darker Navbar on Scroll */
-.dark-nav {
-    background: #d39d7b;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+/* Active link styling */
+.nav-links li a.active {
+    background: rgba(255, 255, 255, 0.3);
+    color: #f5d0a9;
 }
 
-/* 🔍 Search Bar */
+/* 🌟 SEARCH BAR */
 .search-bar {
     width: 250px;
     padding: 8px 14px;
@@ -231,7 +105,7 @@ nav ul li a:hover {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* 🔘 Button Styling */
+/* 🌟 BUTTON STYLING */
 .btn {
     background: linear-gradient(to right, #e3a87c, #d08c6e);
     border: none;
@@ -258,41 +132,109 @@ nav ul li a:hover {
     transform: scale(1.05);
 }
 
-/* ✨ Responsive Design */
+/* 🔹 ALTERNATE BUTTON (If needed) */
+.btn a {
+    text-decoration: none;
+    color: #5a3e2b;
+}
+.btn:hover a {
+    color: white;
+}
+
+/* ======================= */
+/* HAMBURGER MENU STYLES  */
+/* ======================= */
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* ✨ RESPONSIVE DESIGN */
+
 @media (max-width: 900px) {
-    nav {
-        flex-direction: column;
-        height: auto;
-        padding: 15px;
-    }
-
-    .navbar-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    nav ul {
+    .navbar {
         flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 10px;
+        height: auto;
+        padding: 10px;
+    }
+
+    .hamburger {
+        display: flex;
+        order: 3;
     }
 
     .search-bar {
+        order: 2;
         width: 100%;
         max-width: 300px;
+        margin-top: 10px;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        margin-top: 10px;
+        order: 4;
+    }
+
+    .nav-links.nav-active {
+        display: flex;
+    }
+
+    .nav-left {
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        order: 1;
+    }
+
+    .logo {
+        margin-right: 0 !important;
     }
 }
 
 @media (max-width: 600px) {
-    nav ul {
-        flex-direction: column;
-        gap: 15px;
-    }
-
     .btn {
         width: 100%;
         max-width: 200px;
         text-align: center;
     }
 }
+
+/* ============ */
+/* BODY FIX: pushes content down so navbar doesn't overlap */
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+body {
+    padding-top: 50px; /* Adjust to match the new navbar height */
+}
+
+
+@media (hover: hover) and (pointer: fine) {
+    .navbar:hover {
+      background-color: #4a2f20; /* slightly darker shade */
+      padding: 12px 20px;  /* Increase vertical padding from 10px to 12px */
+      transition: background-color 0.5s ease-in-out, padding 0.5s ease-in-out;
+    }
+  }
+  

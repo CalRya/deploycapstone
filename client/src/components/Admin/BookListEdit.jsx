@@ -23,7 +23,7 @@ const BookListEdit = ({ onEdit, searchQuery }) => { // ✅ Accept searchQuery as
           <li key={book._id} style={styles.bookCard}>
             {book.bookCoverUrl && (
               <img
-              src={`https://deploycapstone.onrender.com/api${book.bookCoverUrl}`}
+              src={`https://deploycapstone.onrender.com${book.bookCoverUrl}`}
                 alt={`Cover of ${book.bookTitle}`}
                 style={styles.bookCover}
               />

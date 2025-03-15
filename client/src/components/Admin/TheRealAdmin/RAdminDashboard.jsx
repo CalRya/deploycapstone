@@ -62,7 +62,7 @@ const AdminDashboard = () => {
             width: "90%",
             maxWidth: "1200px",
             margin: "40px auto",
-            padding: "20px",
+            padding: "60px",
             backgroundColor: "#F5F5DC", // Beige background
             borderRadius: "10px",
             boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",

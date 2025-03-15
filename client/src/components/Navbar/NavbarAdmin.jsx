@@ -1,40 +1,55 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Ensures navigation works
+import React, { useContext, useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import AuthContext from "../Login/Context/AuthoProv";
 import '../css/Navbar.css';
 import logo from '../../assets/logo.png';
 
 const NavbarAdmin = ({ onSearch }) => {
+  const { setAuth } = useContext(AuthContext);
   const [sticky, setSticky] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.addEventListener('scroll', () => {
+    const handleScroll = () => {
       setSticky(window.scrollY > 50);
-    });
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchInput(query);
-    onSearch(query); // ✅ Live update search results
+    onSearch && onSearch(query);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       if (searchInput.trim() === "") {
-        navigate("/lib"); // ✅ Redirect to library if search is empty
+        navigate("/lib");
       } else {
-        navigate(`/lib?q=${encodeURIComponent(searchInput.trim())}`); // ✅ Redirect with search query
+        navigate(`/lib?q=${encodeURIComponent(searchInput.trim())}`);
       }
     }
   };
 
+  // NEW: Add a logout handler to clear auth and navigate to login.
+  const handleLogout = () => {
+    // Clear auth state from context.
+    setAuth({});
+    // Remove stored user data.
+    localStorage.removeItem("currentUser");
+    // Navigate to login page.
+    navigate("/login");
+  };
+
   return (
-    <nav className={`container ${sticky ? "dark-nav" : ""}`}>
-      <img src={logo} alt="Logo" className="logo" />
+    <nav className={`navbar ${sticky ? "dark-nav" : ""}`}>
+      <div className="nav-left">
+        <img src={logo} alt="Logo" className="logo" />
+      </div>
       
-      {/* 🔍 Search Bar */}
       <input
         type="text"
         placeholder="Search for books..."
@@ -44,12 +59,32 @@ const NavbarAdmin = ({ onSearch }) => {
         className="search-bar"
       />
 
-      <ul>
-        <li><a href="homeadmin">Home</a></li>
-        <li><a href="digilibadmin">Manage Books</a></li>
-        <li><a href="libadmin">Library</a></li>
-        <li> <a href="profadmin"> Profile </a> </li>
-        <li><button className="btn"><a href="login">Log Out</a></button></li>
+      <ul className="nav-links">
+        <li>
+          <NavLink to="/homeadmin" className={({ isActive }) => isActive ? "active" : ""}>
+            Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/digilibadmin" className={({ isActive }) => isActive ? "active" : ""}>
+            Manage Books
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/libadmin" className={({ isActive }) => isActive ? "active" : ""}>
+            Library
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/profadmin" className={({ isActive }) => isActive ? "active" : ""}>
+            Profile
+          </NavLink>
+        </li>
+        <li>
+          <button className="btn" onClick={handleLogout}>
+            Log Out
+          </button>
+        </li>
       </ul>
     </nav>
   );

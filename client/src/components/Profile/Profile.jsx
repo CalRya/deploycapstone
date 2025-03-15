@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function Profile() {
+export default function Profile({ userId }) {
   const [user, setUser] = useState(null);
+  // Retaining these states in case they're needed in future,
+  // but they are not used in the UI now.
   const [profilePic, setProfilePic] = useState(null);
   const [preview, setPreview] = useState(null);
-  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     if (!userId) {
-      console.error("⚠️ User ID is missing from localStorage!");
+      console.error("⚠️ User ID is missing from props!");
       return;
     }
 
@@ -26,17 +27,13 @@ export default function Profile() {
     fetchUser();
   }, [userId]);
 
-  const handleProfilePicChange = (e) => {
-    const file = e.target.files[0];
-    setProfilePic(file);
-    setPreview(URL.createObjectURL(file));
-  };
-
+  // Keeping handleSubmit as-is for now.
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) return;
 
     const formData = new FormData();
+    // Even though these fields remain in the submit, they are no longer in the UI.
     if (profilePic) formData.append("profilePic", profilePic);
     formData.append("fullName", user.fullName || "");
     formData.append("phone", user.phone || "");
@@ -57,41 +54,15 @@ export default function Profile() {
       <h2 className="text-2xl font-semibold text-center mb-4 text-brown-700">Profile</h2>
       {user ? (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="text-center">
-            <label className="cursor-pointer">
-              <input type="file" className="hidden" onChange={handleProfilePicChange} />
-              <img
-                src={preview || user.profilePic || "/default-avatar.png"}
-                alt="Profile"
-                className="w-24 h-24 mx-auto rounded-full border border-gray-400"
-              />
-            </label>
-          </div>
+          {/* Removed file input and related profile picture display */}
+          {/* Removed full name, phone, and address inputs */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">Full Name</label>
+            <label className="block text-sm font-medium text-gray-600">Email</label>
             <input
               type="text"
-              value={user.fullName || ""}
-              onChange={(e) => setUser({ ...user, fullName: e.target.value })}
-              className="mt-1 block w-full p-2 border rounded-md shadow-sm focus:ring-brown-500 focus:border-brown-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Phone</label>
-            <input
-              type="text"
-              value={user.phone || ""}
-              onChange={(e) => setUser({ ...user, phone: e.target.value })}
-              className="mt-1 block w-full p-2 border rounded-md shadow-sm focus:ring-brown-500 focus:border-brown-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600">Address</label>
-            <input
-              type="text"
-              value={user.address || ""}
-              onChange={(e) => setUser({ ...user, address: e.target.value })}
-              className="mt-1 block w-full p-2 border rounded-md shadow-sm focus:ring-brown-500 focus:border-brown-500"
+              value={user.email || ""}
+              disabled
+              className="mt-1 block w-full p-2 border rounded-md bg-gray-100"
             />
           </div>
           <div>

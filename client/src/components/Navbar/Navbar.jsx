@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // ✅ Use Link for navigation
+import { NavLink, useNavigate } from 'react-router-dom'; // Using NavLink for active highlighting
 import '../css/Navbar.css';
 import logo from '../../assets/logo.png';
 
 const Navbar = ({ onSearch }) => {
   const [sticky, setSticky] = useState(false);
   const [searchInput, setSearchInput] = useState('');
-  const navigate = useNavigate(); // ✅ Initialize navigation
+  const [menuOpen, setMenuOpen] = useState(false); // toggles mobile menu
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,13 +20,17 @@ const Navbar = ({ onSearch }) => {
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchInput(query);
-    onSearch && onSearch(query); // ✅ Calls live search if available
+    onSearch && onSearch(query);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       navigate(searchInput.trim() ? `/lib?q=${encodeURIComponent(searchInput.trim())}` : '/lib');
     }
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
   return (
@@ -43,16 +48,48 @@ const Navbar = ({ onSearch }) => {
         className="search-bar"
       />
 
-      <ul className="nav-links">
-        <li><Link to="/home">Home</Link></li>
-        <li><Link to="/lib">Library</Link></li>
-        <li><Link to="/bookhistory"> History</Link></li>
-        <li><Link to="/gamesh">Games</Link></li>
-        <li><Link to="/courierp">Courier</Link></li>
-        <li><Link to="/prof" className="profile-link">Profile</Link></li>
+      <div className="hamburger" onClick={toggleMenu}>
+        <div className="bar" />
+        <div className="bar" />
+        <div className="bar" />
+      </div>
+
+      <ul className={`nav-links ${menuOpen ? 'nav-active' : ''}`}>
+        <li>
+          <NavLink to="/home" className={({ isActive }) => isActive ? "active" : ""}>
+            Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/lib" className={({ isActive }) => isActive ? "active" : ""}>
+            Library
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/bookhistory" className={({ isActive }) => isActive ? "active" : ""}>
+            History
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/gamesh" className={({ isActive }) => isActive ? "active" : ""}>
+            Games
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/courierp" className={({ isActive }) => isActive ? "active" : ""}>
+            Courier
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/prof" className={({ isActive }) => isActive ? "active profile-link" : "profile-link"}>
+            Profile
+          </NavLink>
+        </li>
         <li>
           <button className="btn">
-            <Link to="/login">Log Out</Link>
+            <NavLink to="/login" className={({ isActive }) => isActive ? "active" : ""}>
+              Log Out
+            </NavLink>
           </button>
         </li>
       </ul>
