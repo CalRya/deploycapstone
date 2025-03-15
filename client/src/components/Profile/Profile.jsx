@@ -5,7 +5,7 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const [preview, setPreview] = useState(null);
-  const userId = "USER_ID_HERE"; // Replace this with the actual user ID source
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     console.log("✅ Received User Data:", user);
