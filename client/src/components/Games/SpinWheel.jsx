@@ -4,16 +4,16 @@ const SpinWheel = () => {
     const [books, setBooks] = useState([]);
     const [selectedBook, setSelectedBook] = useState(null);
     const [gameStarted, setGameStarted] = useState(false);
+    const [angle, setAngle] = useState(0);
+    const [spinning, setSpinning] = useState(false);
 
-    // Fetch random books from the database (limited to 5)
+    // Fetch random books from the database
     const fetchRandomBooks = async () => {
         try {
             const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
             if (!response.ok) throw new Error("Failed to fetch books");
 
             let data = await response.json();
-            console.log("Fetched books:", data);
-
             data = data.slice(0, 5);
 
             const formattedBooks = data.map((book, index) => ({
@@ -43,14 +43,6 @@ const SpinWheel = () => {
         return colors[index % colors.length];
     };
 
-    const handleSpinFinish = (selectedTitle) => {
-        console.log(`Spun to: ${selectedTitle}`);
-        const foundBook = books.find(book => book.segmentText === selectedTitle);
-        if (foundBook) {
-            setSelectedBook(foundBook);
-        }
-    };
-
     const startGame = async () => {
         if (!gameStarted) {
             setGameStarted(true);
@@ -69,26 +61,18 @@ const SpinWheel = () => {
         await fetchRandomBooks();
     };
 
-    const spinWheelProps = {
-        segments: books,
-        onFinished: handleSpinFinish,
-        primaryColor: "#8B5E3C",
-        contrastColor: "white",
-        buttonText: "Spin",
-        isOnlyOnce: false,
-        size: 240,
-        upDuration: 100,
-        downDuration: 600,
-        fontFamily: "Century Gothic",
-        arrowLocation: "top",
-        showTextOnSpin: false,
-        isSpinSound: true,
-        textStyle: { 
-            whiteSpace: "normal",
-            wordWrap: "break-word",
-            textAlign: "center",
-            fontSize: books.length > 0 ? books[0].fontSize : "16px",
-        },
+    const spinWheel = () => {
+        if (spinning || books.length === 0) return;
+        setSpinning(true);
+
+        const randomSpin = Math.floor(Math.random() * 360) + 1800; // Ensures multiple full spins
+        setAngle(randomSpin);
+
+        setTimeout(() => {
+            const winningIndex = Math.floor((randomSpin % 360) / (360 / books.length));
+            setSelectedBook(books[winningIndex]);
+            setSpinning(false);
+        }, 3000); // Matches animation duration
     };
 
     return (
@@ -105,13 +89,10 @@ const SpinWheel = () => {
                             <h1 style={styles.title}>📖 Spin the Wheel!</h1>
                             {books.length > 0 ? (
                                 <div style={styles.wheelContainer}>
-                                    {/* 
-                                      Replacing the problematic recursive reference with a placeholder.
-                                      Replace this placeholder with your actual spin wheel component later.
-                                    */}
-                                    <div style={{padding: "20px", backgroundColor: "#fff", borderRadius: "50%"}}>
-                                      Spin Wheel Placeholder
-                                    </div>
+                                    <div style={{ ...styles.wheel, transform: `rotate(${angle}deg)` }} />
+                                    <button onClick={spinWheel} disabled={spinning} style={styles.spinButton}>
+                                        {spinning ? "Spinning..." : "Spin"}
+                                    </button>
                                 </div>
                             ) : (
                                 <p style={{ color: "red", fontSize: "18px" }}>
@@ -198,10 +179,17 @@ const styles = {
     },
     wheelContainer: {
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
         alignItems: "center",
         position: "relative",
-        opacity: "0.8",
+    },
+    wheel: {
+        width: "200px",
+        height: "200px",
+        background: "conic-gradient(#C19A6B, #8B5E3C, #D2B48C, #A67B5B, #7D4E2D)",
+        borderRadius: "50%",
+        border: "5px solid #222",
+        transition: "transform 3s ease-out",
     },
     resultContainer: {
         textAlign: "center",
@@ -214,6 +202,17 @@ const styles = {
         borderRadius: "8px",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
         marginTop: "10px",
+    },
+    spinButton: {
+        marginTop: "20px",
+        border: "none",
+        padding: "10px 14px",
+        fontSize: "16px",
+        cursor: "pointer",
+        borderRadius: "20px",
+        fontWeight: "bold",
+        color: "white",
+        background: "#D2B48C",
     },
 };
 
