@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { RoulettePro } from "react-roulette-pro";
+import RoulettePro from "react-roulette-pro"; // Use default import instead of destructuring
 import "react-roulette-pro/dist/index.css";
 
 const SpinWheel = () => {
@@ -8,6 +8,9 @@ const SpinWheel = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [prizeIndex, setPrizeIndex] = useState(null);
+
+  // Debug: Log the imported component to ensure it's defined.
+  console.log("RoulettePro component:", RoulettePro);
 
   // Fetch random books from the database
   const fetchRandomBooks = async () => {
@@ -97,7 +100,6 @@ const SpinWheel = () => {
                   <RoulettePro
                     prizes={books}
                     mustStartSpinning={spinning}
-                    // Pass a valid prizeIndex (default to 0 if prizeIndex is null)
                     prizeIndex={prizeIndex !== null ? prizeIndex : 0}
                     onPrizeDefined={handlePrizeDefined}
                   />
