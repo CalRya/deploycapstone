@@ -9,7 +9,6 @@ const SpinWheel = () => {
     const [spinning, setSpinning] = useState(false);
     const [prizeIndex, setPrizeIndex] = useState(null);
 
-    // Fetch random books from the database
     const fetchRandomBooks = async () => {
         try {
             const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
@@ -21,15 +20,16 @@ const SpinWheel = () => {
             data = data.slice(0, 5);
 
             const formattedBooks = data.map((book, index) => ({
-                option: book.bookTitle || `Book ${index + 1}`, // Ensure option is always a string
+                option: book.bookTitle || `Book ${index + 1}`,
                 style: { backgroundColor: getWheelColors(index) },
                 coverImage: book.bookCoverUrl ? `https://deploycapstone.onrender.com${book.bookCoverUrl}` : null,
             }));
 
+            console.log("Fetched Books:", formattedBooks);
             setBooks(formattedBooks);
         } catch (error) {
             console.error("Error fetching books:", error);
-            setBooks([]); // Ensure books is not undefined
+            setBooks([]);
         }
     };
 
@@ -60,12 +60,18 @@ const SpinWheel = () => {
         if (spinning || books.length === 0) return;
         setSpinning(true);
 
-        // Select a random book index
         const randomIndex = Math.floor(Math.random() * books.length);
+        console.log("Selected Prize Index:", randomIndex);
         setPrizeIndex(randomIndex);
     };
 
     const handlePrizeDefined = () => {
+        if (prizeIndex === null || prizeIndex >= books.length) {
+            console.error("Invalid prize index:", prizeIndex);
+            setSpinning(false);
+            return;
+        }
+        console.log("Prize Selected:", books[prizeIndex]);
         setSelectedBook(books[prizeIndex]);
         setSpinning(false);
     };
@@ -85,9 +91,9 @@ const SpinWheel = () => {
                             {books.length > 0 ? (
                                 <div style={styles.wheelContainer}>
                                     <RoulettePro
-                                        prizes={books}
+                                        prizes={books.length > 0 ? books : [{ option: "No Books Available" }]}
                                         mustStartSpinning={spinning}
-                                        prizeIndex={prizeIndex}
+                                        prizeIndex={prizeIndex ?? 0}
                                         onPrizeDefined={handlePrizeDefined}
                                     />
                                     <button onClick={spinWheel} disabled={spinning} style={styles.spinButton}>
@@ -176,12 +182,6 @@ const styles = {
         color: "white",
         background: "#5A3E2B",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-    },
-    wheelContainer: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        position: "relative",
     },
     resultContainer: {
         textAlign: "center",
