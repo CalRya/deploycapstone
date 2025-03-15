@@ -16,10 +16,12 @@ const SpinWheel = () => {
             if (!response.ok) throw new Error("Failed to fetch books");
 
             let data = await response.json();
+            if (!data || data.length === 0) throw new Error("No books received");
+
             data = data.slice(0, 5);
 
             const formattedBooks = data.map((book, index) => ({
-                option: book.bookTitle,
+                option: book.bookTitle || `Book ${index + 1}`, // Ensure option is always a string
                 style: { backgroundColor: getWheelColors(index) },
                 coverImage: book.bookCoverUrl ? `https://deploycapstone.onrender.com${book.bookCoverUrl}` : null,
             }));
@@ -27,6 +29,7 @@ const SpinWheel = () => {
             setBooks(formattedBooks);
         } catch (error) {
             console.error("Error fetching books:", error);
+            setBooks([]); // Ensure books is not undefined
         }
     };
 
@@ -60,11 +63,11 @@ const SpinWheel = () => {
         // Select a random book index
         const randomIndex = Math.floor(Math.random() * books.length);
         setPrizeIndex(randomIndex);
+    };
 
-        setTimeout(() => {
-            setSelectedBook(books[randomIndex]);
-            setSpinning(false);
-        }, 4000); // Matches spin duration
+    const handlePrizeDefined = () => {
+        setSelectedBook(books[prizeIndex]);
+        setSpinning(false);
     };
 
     return (
@@ -83,9 +86,9 @@ const SpinWheel = () => {
                                 <div style={styles.wheelContainer}>
                                     <RoulettePro
                                         prizes={books}
-                                        onPrizeDefined={spinWheel}
                                         mustStartSpinning={spinning}
                                         prizeIndex={prizeIndex}
+                                        onPrizeDefined={handlePrizeDefined}
                                     />
                                     <button onClick={spinWheel} disabled={spinning} style={styles.spinButton}>
                                         {spinning ? "Spinning..." : "Spin"}
