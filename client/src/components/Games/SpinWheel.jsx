@@ -75,7 +75,7 @@ const SpinWheel = () => {
     await fetchRandomBooks();
   };
 
-  // Spin logic
+  // Handle spinning the wheel with adjusted winning slice calculation
   const spinWheel = () => {
     if (spinning || books.length === 0) return;
     setSpinning(true);
@@ -85,11 +85,13 @@ const SpinWheel = () => {
     const newAngle = angle + extraSpins;
     setAngle(newAngle);
 
-    // Determine winning slice after 3s transition
+    // Wait for the spin animation to complete (3s transition)
     setTimeout(() => {
       const sliceAngle = 360 / books.length;
-      const normalizedAngle = newAngle % 360;
-      const winningIndex = Math.floor(normalizedAngle / sliceAngle);
+      // Add half a slice so we measure from the slice center
+      const adjustedAngle = (newAngle + sliceAngle / 2) % 360;
+      // Invert index so that the slice aligned with the arrow at top wins
+      const winningIndex = (books.length - Math.floor(adjustedAngle / sliceAngle)) % books.length;
 
       setSelectedBook(books[winningIndex]);
       setSpinning(false);
@@ -114,10 +116,10 @@ const SpinWheel = () => {
               <h1 style={styles.title}>📖 Spin the Wheel!</h1>
               {books.length > 0 ? (
                 <div style={styles.wheelArea}>
-                  {/* Arrow (pointing down) */}
+                  {/* Arrow (fixed at top center, pointing down) */}
                   <div style={styles.arrow} />
 
-                  {/* Wheel with rotating covers */}
+                  {/* Rotating Wheel */}
                   <div
                     style={{
                       ...styles.wheel,
@@ -133,8 +135,7 @@ const SpinWheel = () => {
                           key={i}
                           style={{
                             ...styles.sliceLabel,
-                            // Move images out so they appear near the edge
-                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(110px)`,
+                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(100px)`,
                           }}
                         >
                           {book.bookCover ? (
@@ -151,7 +152,7 @@ const SpinWheel = () => {
                     })}
                   </div>
 
-                  {/* Buttons (side by side) */}
+                  {/* Buttons arranged in a row */}
                   <div style={styles.buttonRow}>
                     <button style={styles.spinButton} onClick={spinWheel} disabled={spinning}>
                       {spinning ? "Spinning..." : "Spin"}
@@ -194,14 +195,13 @@ const SpinWheel = () => {
   );
 };
 
-/* 🎨 Styles */
 const styles = {
   container: {
     backgroundColor: "#F5E1C8",
     padding: "30px",
     borderRadius: "12px",
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    maxWidth: "600px", // container size
+    maxWidth: "600px",
     margin: "40px auto",
     textAlign: "center",
     fontFamily: "Century Gothic, sans-serif",
@@ -249,10 +249,9 @@ const styles = {
     transform: "translateX(-50%)",
     width: 0,
     height: 0,
-    // pointing down
     borderLeft: "15px solid transparent",
     borderRight: "15px solid transparent",
-    borderBottom: "35px solid #FF0000",
+    borderTop: "35px solid #FF0000", // arrow now points down
   },
   sliceLabel: {
     position: "absolute",
@@ -260,10 +259,9 @@ const styles = {
     left: "50%",
     pointerEvents: "none",
   },
-  // ⚠ Adjust for a more portrait aspect ratio
   sliceCover: {
-    width: "50px",  // narrower width
-    height: "80px", // taller height => more portrait
+    width: "50px",
+    height: "80px", // portrait aspect ratio
     objectFit: "cover",
     borderRadius: "4px",
     border: "2px solid #fff",
@@ -282,8 +280,8 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    gap: "10px",
-    marginTop: "20px",
+    gap: "20px",
+    marginTop: "30px",
   },
   spinButton: {
     border: "none",
