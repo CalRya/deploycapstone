@@ -22,7 +22,9 @@ const SpinWheel = () => {
       // Prepare each slice with color + info
       const formattedBooks = data.map((book, i) => ({
         bookTitle: book.bookTitle || `Book ${i + 1}`,
-        bookCover: book.bookCoverUrl ? `https://deploycapstone.onrender.com${book.bookCoverUrl}` : null,
+        bookCover: book.bookCoverUrl
+          ? `https://deploycapstone.onrender.com${book.bookCoverUrl}`
+          : null,
         color: getWheelColor(i),
       }));
 
@@ -96,7 +98,8 @@ const SpinWheel = () => {
       const normalizedAngle = newAngle % 360; // 0-359
       const winningIndex = Math.floor(normalizedAngle / sliceAngle);
 
-      // The slice at the top is (books.length - 1 - winningIndex)
+      // Because the wheel is spinning clockwise,
+      // the slice at the top is (books.length - 1 - winningIndex)
       const actualIndex = books.length - 1 - winningIndex;
       const finalIndex = (actualIndex + books.length) % books.length;
 
@@ -126,44 +129,47 @@ const SpinWheel = () => {
                   {/* Arrow / Pointer */}
                   <div style={styles.arrow} />
 
-                  {/* Wheel itself */}
+                  {/* Wheel itself (includes images so they rotate together) */}
                   <div
                     style={{
                       ...styles.wheel,
                       transform: `rotate(${angle}deg)`,
                       background: buildConicGradient(books),
                     }}
-                  />
+                  >
+                    {/* Overlays for each slice (book covers or titles) */}
+                    {books.map((book, i) => {
+                      const sliceAngle = 360 / books.length;
+                      // The center angle of each slice
+                      const labelAngle = (i + 0.5) * sliceAngle;
 
-                  {/* Overlays for each slice (book covers or titles) */}
-                  {books.map((book, i) => {
-                    const sliceAngle = 360 / books.length;
-                    const labelAngle = (i + 0.5) * sliceAngle;
-                    return (
-                      <div
-                        key={i}
-                        style={{
-                          ...styles.sliceLabel,
-                          transform: `translate(-50%, -50%) 
-                                      rotate(${labelAngle}deg) 
-                                      translate(90px) 
-                                      rotate(-${labelAngle}deg)`,
-                        }}
-                      >
-                        {book.bookCover ? (
-                          <img
-                            src={book.bookCover}
-                            alt={book.bookTitle}
-                            style={styles.sliceCover}
-                          />
-                        ) : (
-                          <span style={styles.sliceText}>{book.bookTitle}</span>
-                        )}
-                      </div>
-                    );
-                  })}
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            ...styles.sliceLabel,
+                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(90px)`,
+                          }}
+                        >
+                          {book.bookCover ? (
+                            <img
+                              src={book.bookCover}
+                              alt={book.bookTitle}
+                              style={styles.sliceCover}
+                            />
+                          ) : (
+                            <span style={styles.sliceText}>{book.bookTitle}</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                  <button style={styles.spinButton} onClick={spinWheel} disabled={spinning}>
+                  <button
+                    style={styles.spinButton}
+                    onClick={spinWheel}
+                    disabled={spinning}
+                  >
                     {spinning ? "Spinning..." : "Spin"}
                   </button>
                 </div>
@@ -236,15 +242,16 @@ const styles = {
     height: "250px",
   },
   wheel: {
+    position: "relative", // So child elements rotate with it
     width: "100%",
     height: "100%",
     borderRadius: "50%",
     border: "5px solid #222",
     transition: "transform 3s ease-out",
+    overflow: "hidden", // ensures anything large doesn't overflow
   },
   arrow: {
     position: "absolute",
-    // Put the arrow at the top center of the wheel
     top: "-35px",
     left: "50%",
     transform: "translateX(-50%)",
