@@ -15,7 +15,7 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     bookAvailability: false,
     bookCoverUrl: "",
     bookPdfUrl: "",
-    bookCategory: "Non-Academic", // Default category
+    bookCategory: "non-academic", // Default category
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -31,7 +31,7 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
       bookAvailability: bookToEdit.bookAvailability ?? false,
       bookCoverUrl: bookToEdit.bookCoverUrl || "",
       bookPdfUrl: bookToEdit.bookPdfUrl || "",
-      bookCategory: bookToEdit.bookCategory || "Non-Academic",
+      bookCategory: bookToEdit.bookCategory || "non-academic",
     });
 
     if (bookToEdit.bookCoverUrl?.trim()) {
@@ -63,7 +63,6 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     e.preventDefault();
 
     if (!bookToEdit._id) {
-      console.log("📤 Sending data to backend:", Object.fromEntries(formData.entries()));
       console.error("❌ bookToEdit._id is missing! Cannot update book.");
       return;
     }
@@ -77,11 +76,12 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     formData.append("bookGenre", bookData.bookGenre);
     formData.append("bookPlatform", bookData.bookPlatform);
     formData.append("bookAvailability", bookData.bookAvailability ? "true" : "false");
-    formData.append("bookCategory", bookData.bookCategory); // ✅ Added category field
+    formData.append("bookCategory", bookData.bookCategory);
 
     if (selectedFile) {
       formData.append("bookCover", selectedFile);
     } else if (bookData.bookCoverUrl) {
+      // This field will simply pass along the current URL if no file is selected
       formData.append("bookCoverUrl", bookData.bookCoverUrl);
     }
 
@@ -94,7 +94,7 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
         `https://deploycapstone.onrender.com/api/books/${bookToEdit._id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          // Remove the Content-Type header so the browser can set it appropriately for FormData.
           body: formData,
         }
       );
@@ -127,38 +127,91 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
         <input type="file" accept="image/*" onChange={handleFileChange} style={styles.fileInput} />
 
         <label style={styles.label}>Title:</label>
-        <input type="text" name="bookTitle" value={bookData.bookTitle} onChange={handleChange} required style={styles.input} />
+        <input
+          type="text"
+          name="bookTitle"
+          value={bookData.bookTitle}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
         <label style={styles.label}>Author:</label>
-        <input type="text" name="bookAuthor" value={bookData.bookAuthor} onChange={handleChange} required style={styles.input} />
+        <input
+          type="text"
+          name="bookAuthor"
+          value={bookData.bookAuthor}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
         <label style={styles.label}>Description:</label>
-        <textarea name="bookDescription" value={bookData.bookDescription} onChange={handleChange} style={styles.textarea} />
+        <textarea
+          name="bookDescription"
+          value={bookData.bookDescription}
+          onChange={handleChange}
+          style={styles.textarea}
+        />
 
         <label style={styles.label}>Genre:</label>
-        <input type="text" name="bookGenre" value={bookData.bookGenre} onChange={handleChange} style={styles.input} />
+        <input
+          type="text"
+          name="bookGenre"
+          value={bookData.bookGenre}
+          onChange={handleChange}
+          style={styles.input}
+        />
 
         <label style={styles.label}>Platform:</label>
-        <input type="text" name="bookPlatform" value={bookData.bookPlatform} onChange={handleChange} style={styles.input} />
+        <input
+          type="text"
+          name="bookPlatform"
+          value={bookData.bookPlatform}
+          onChange={handleChange}
+          style={styles.input}
+        />
 
         <label style={styles.label}>
           Available:
-          <input type="checkbox" name="bookAvailability" checked={bookData.bookAvailability} onChange={handleChange} style={styles.checkbox} />
+          <input
+            type="checkbox"
+            name="bookAvailability"
+            checked={bookData.bookAvailability}
+            onChange={handleChange}
+            style={styles.checkbox}
+          />
         </label>
 
         <label style={styles.label}>PDF Link:</label>
-        <input type="text" name="bookPdfUrl" value={bookData.bookPdfUrl} onChange={handleChange} placeholder="https://example.com/book.pdf" style={styles.input} />
+        <input
+          type="text"
+          name="bookPdfUrl"
+          value={bookData.bookPdfUrl}
+          onChange={handleChange}
+          placeholder="https://example.com/book.pdf"
+          style={styles.input}
+        />
 
-        {/* ✅ Dropdown for Academic/Non-Academic */}
+        {/* Dropdown for Academic/Non-Academic */}
         <label style={styles.label}>Category:</label>
-        <select name="bookCategory" value={bookData.bookCategory} onChange={handleChange} style={styles.select}>
-          <option value="Academic">Academic</option>
-          <option value="Non-Academic">Non-Academic</option>
+        <select
+          name="bookCategory"
+          value={bookData.bookCategory}
+          onChange={handleChange}
+          style={styles.select}
+        >
+          <option value="academic">Academic</option>
+          <option value="non-academic">Non-Academic</option>
         </select>
 
         <div style={styles.buttonContainer}>
-          <button type="submit" style={styles.saveButton}>Save Changes</button>
-          <button type="button" onClick={onClose} style={styles.cancelButton}>Cancel</button>
+          <button type="submit" style={styles.saveButton}>
+            Save Changes
+          </button>
+          <button type="button" onClick={onClose} style={styles.cancelButton}>
+            Cancel
+          </button>
         </div>
       </form>
     </div>
@@ -215,6 +268,32 @@ const styles = {
     borderRadius: "6px",
     fontSize: "15px",
     outline: "none",
+    cursor: "pointer",
+  },
+  fileInput: {
+    marginBottom: "10px",
+  },
+  checkbox: {
+    marginLeft: "10px",
+  },
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  saveButton: {
+    padding: "10px 20px",
+    backgroundColor: "#5c3d2e",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  },
+  cancelButton: {
+    padding: "10px 20px",
+    backgroundColor: "#ccc",
+    color: "#333",
+    border: "none",
+    borderRadius: "6px",
     cursor: "pointer",
   },
 };

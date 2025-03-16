@@ -75,7 +75,6 @@ app.get("/borrow/:user", async (req, res) => {
         if (!user) return res.status(400).json({ message: "User ID is required" });
         const borrowedBooks = await Borrow.find({ user: user, status: { $in: ["pending", "approved", "returned"] } })
             .populate("book");
-        // Always return 200 with the borrowedBooks array (may be empty)
         res.status(200).json(borrowedBooks);
     } catch (error) {
         console.error("❌ Error fetching borrowed books:", error);
@@ -83,7 +82,7 @@ app.get("/borrow/:user", async (req, res) => {
     }
 });
 
-// Existing routes remain unchanged:
+// Existing routes:
 app.get("/books", async (req, res) => {
     try {
         const books = await Book.find();
@@ -146,7 +145,6 @@ app.get("/api/borrow/:user", async (req, res) => {
         if (!user) return res.status(400).json({ message: "User ID is required" });
         const borrowedBooks = await Borrow.find({ user: user, status: { $in: ["pending", "approved", "returned"] } })
             .populate("book");
-        // Always return 200 with the borrowedBooks array (may be empty)
         res.status(200).json(borrowedBooks);
     } catch (error) {
         console.error("❌ Error fetching borrowed books:", error);
@@ -154,7 +152,7 @@ app.get("/api/borrow/:user", async (req, res) => {
     }
 });
 
-// ***** NEW ROUTE for fetching all users (for admin dashboard) *****
+// NEW ROUTE for fetching all users (for admin dashboard)
 app.get("/api/users", async (req, res) => {
     try {
         const users = await userModel.find().select("user email role premium");
@@ -165,25 +163,19 @@ app.get("/api/users", async (req, res) => {
     }
 });
 
-// Existing route for fetching a single user by ID:
+// Route for fetching a single user by ID:
 app.get("/api/users/:userId", async (req, res) => {
     try {
-      const { userId } = req.params;
-      console.log("🔍 Searching for user with ID:", userId);
-  
-      // Attempt to find a single user by ID
-      const user = await userModel.findById(userId).select("user email role premium");
-  
-      // If not found, return 404
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      // Otherwise, return that user
-      res.json(user);
+        const { userId } = req.params;
+        console.log("🔍 Searching for user with ID:", userId);
+        const user = await userModel.findById(userId).select("user email role premium");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(user);
     } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Server error" });
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: "Server error" });
     }
 });  
 
@@ -297,6 +289,7 @@ const storageConfig = multer.diskStorage({
 });
 const uploadConfig = multer({ storage: storageConfig });
 
+// POST route to add a new book
 app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
     try {
       console.log("📥 Received book data:", req.body);
@@ -311,7 +304,7 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
         bookGenre,
         bookPlatform,
         bookAvailability,
-        bookPdfUrl, // ✅ NEW FIELD
+        bookPdfUrl, // Store PDF link if provided
         bookCategory, // NEW: Grab bookCategory from req.body
       } = req.body;
   
@@ -329,9 +322,9 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
         bookPlatform: bookPlatform || "",
         bookAvailability: isAvailable,
         bookCoverUrl,
-        bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "", // ✅ Store PDF link if provided
+        bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "",
         averageRating: 0,
-        bookCategory: bookCategory || "non-academic", // Use the provided category or default to "non-academic"
+        bookCategory: bookCategory || "non-academic", // Use provided category or default to "non-academic"
       });
   
       console.log("✅ Final book object before saving:", newBook);
@@ -342,7 +335,38 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
       console.error("❌ Error adding book:", error);
       res.status(500).json({ error: "Internal server error" });
     }
-});  
+});
+
+// NEW PUT endpoint for updating a book
+app.put("/api/books/:id", uploadConfig.single("bookCover"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Copy all fields from the body into updateData
+    const updateData = { ...req.body };
+
+    // If a file was uploaded, update the bookCoverUrl field
+    if (req.file) {
+      updateData.bookCoverUrl = `/uploads/${req.file.filename}`;
+    }
+    // Convert bookAvailability from string to boolean if present
+    if (typeof updateData.bookAvailability !== "undefined") {
+      updateData.bookAvailability = updateData.bookAvailability === "true";
+    }
+    // Trim the PDF URL if provided
+    if (updateData.bookPdfUrl) {
+      updateData.bookPdfUrl = updateData.bookPdfUrl.trim();
+    }
+    
+    const updatedBook = await Book.findByIdAndUpdate(id, updateData, { new: true });
+    if (!updatedBook) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+    res.status(200).json({ message: "Book updated successfully", book: updatedBook });
+  } catch (err) {
+    console.error("❌ Error updating book:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.patch("/api/users/:id", async (req, res) => {
     try {

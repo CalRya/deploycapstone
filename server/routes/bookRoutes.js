@@ -85,7 +85,7 @@ router.post("/", uploadConfig.single("bookCover"), async (req, res) => {
       bookCoverUrl,
       bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "",
       averageRating: 0,
-      bookCategory: bookCategory || "Non-Academic", // Default to "Non-Academic" if not provided
+      bookCategory: bookCategory || "non-academic", // Default to "Non-Academic" if not provided
     });
 
     console.log("✅ Final book object before saving:", newBook);
