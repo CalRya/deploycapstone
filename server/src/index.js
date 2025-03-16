@@ -328,6 +328,7 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
         bookCoverUrl,
         bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "", // ✅ Store PDF link if provided
         averageRating: 0,
+        bookCategory: bookCategory || "non-academic",
       });
   
       console.log("✅ Final book object before saving:", newBook);

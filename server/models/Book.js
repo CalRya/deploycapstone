@@ -13,6 +13,7 @@
         ratings: [{ user: mongoose.Schema.Types.ObjectId, rating: Number }], // ⭐ New Ratings Array
         averageRating: { type: Number, default: 0 },
         copiesAvailable: { type: Number, default: 1 },
+        bookCategory: { type: String, enum: ["Academic", "Non-Academic"], required: true},
     });
 
     const Book = mongoose.model("Book", bookSchema); // Create model

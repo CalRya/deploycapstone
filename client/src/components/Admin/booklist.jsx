@@ -10,6 +10,7 @@ const AddBook = ({ onBookAdded }) => {
     bookGenre: "",
     bookPlatform: "Physical",
     bookAvailability: true, // ✅ Boolean value
+    bookCategory: "Academic", // ✅ NEW field for Academic/Non-Academic
     bookCover: null,
     bookPdfUrl: "", // ✅ NEW field for PDF link
   });
@@ -43,6 +44,7 @@ const AddBook = ({ onBookAdded }) => {
     formData.append("bookGenre", book.bookGenre);
     formData.append("bookPlatform", book.bookPlatform);
     formData.append("bookAvailability", book.bookAvailability ? "true" : "false"); // ✅ Convert to string for backend
+    formData.append("bookCategory", book.bookCategory); // ✅ Add category field
 
     if (book.bookCover) {
       formData.append("bookCover", book.bookCover);
@@ -80,7 +82,8 @@ const AddBook = ({ onBookAdded }) => {
         bookDescription: "",
         bookGenre: "",
         bookPlatform: "Physical",
-        bookAvailability: true, // ✅ Reset to default available
+        bookAvailability: true, isAvailable,
+        bookCategory: "Academic", // ✅ Reset category
         bookCover: null,
         bookPdfUrl: "", // ✅ Reset PDF link
       });
@@ -145,6 +148,18 @@ const AddBook = ({ onBookAdded }) => {
           onChange={handleFileChange}
           required
         />
+
+        {/* 📌 NEW: Select Academic or Non-Academic */}
+        <label htmlFor="bookCategory">Book Category:</label>
+        <select
+          name="bookCategory"
+          value={book.bookCategory}
+          onChange={handleChange}
+          required
+        >
+          <option value="Academic">Academic</option>
+          <option value="Non-Academic">Non-Academic</option>
+        </select>
 
         <select
           name="bookPlatform"

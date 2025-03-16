@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 
 const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
+  if (!bookToEdit) {
+    console.warn("⚠ bookToEdit is missing! EditBook component will not render.");
+    return null;
+  }
+
   const [bookData, setBookData] = useState({
     bookTitle: "",
     bookAuthor: "",
@@ -9,60 +14,61 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     bookPlatform: "",
     bookAvailability: false,
     bookCoverUrl: "",
-    bookPdfUrl: "", // ✅ NEW FIELD
+    bookPdfUrl: "",
+    bookCategory: "Non-Academic", // Default category
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState("");
 
-  // When bookToEdit is updated, fill the form with book data
   useEffect(() => {
-    if (bookToEdit) {
-      console.log("Editing book:", bookToEdit); // Log book data for debugging
-      setBookData({
-        bookTitle: bookToEdit.bookTitle,
-        bookAuthor: bookToEdit.bookAuthor,
-        bookDescription: bookToEdit.bookDescription,
-        bookGenre: bookToEdit.bookGenre,
-        bookPlatform: bookToEdit.bookPlatform,
-        bookAvailability: bookToEdit.bookAvailability,
-        bookCoverUrl: bookToEdit.bookCoverUrl,
-        bookPdfUrl: bookToEdit.bookPdfUrl || "", // ✅ Populate if existing, else empty
-      });
+    setBookData({
+      bookTitle: bookToEdit.bookTitle || "",
+      bookAuthor: bookToEdit.bookAuthor || "",
+      bookDescription: bookToEdit.bookDescription || "",
+      bookGenre: bookToEdit.bookGenre || "",
+      bookPlatform: bookToEdit.bookPlatform || "",
+      bookAvailability: bookToEdit.bookAvailability ?? false,
+      bookCoverUrl: bookToEdit.bookCoverUrl || "",
+      bookPdfUrl: bookToEdit.bookPdfUrl || "",
+      bookCategory: bookToEdit.bookCategory || "Non-Academic",
+    });
 
+    if (bookToEdit.bookCoverUrl?.trim()) {
       setPreviewImage(
-        bookToEdit.bookCoverUrl?.startsWith("http")
+        bookToEdit.bookCoverUrl.startsWith("http")
           ? bookToEdit.bookCoverUrl
           : `https://deploycapstone.onrender.com${bookToEdit.bookCoverUrl}`
       );
     }
   }, [bookToEdit]);
 
-  // Handle form field changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    console.log(name, type === "checkbox" ? checked : value); // Log field changes for debugging
-    setBookData({
-      ...bookData,
-      [name]: type === "checkbox" ? checked : value, // Ensure checkbox is a boolean
-    });
+    setBookData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  // Handle file input changes (image upload)
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewImage(URL.createObjectURL(file)); // Show preview of selected image
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
-  // Submit the form to update the book
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Log form data before submitting for debugging
-    console.log("Form Data:", bookData);
+    if (!bookToEdit._id) {
+      console.log("📤 Sending data to backend:", Object.fromEntries(formData.entries()));
+      console.error("❌ bookToEdit._id is missing! Cannot update book.");
+      return;
+    }
+
+    console.log("📤 Submitting form with data:", bookData);
 
     const formData = new FormData();
     formData.append("bookTitle", bookData.bookTitle);
@@ -71,24 +77,27 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     formData.append("bookGenre", bookData.bookGenre);
     formData.append("bookPlatform", bookData.bookPlatform);
     formData.append("bookAvailability", bookData.bookAvailability ? "true" : "false");
+    formData.append("bookCategory", bookData.bookCategory); // ✅ Added category field
 
-    // Append book cover file if selected, otherwise keep the existing URL
     if (selectedFile) {
       formData.append("bookCover", selectedFile);
     } else if (bookData.bookCoverUrl) {
       formData.append("bookCoverUrl", bookData.bookCoverUrl);
     }
 
-    // ✅ Append the PDF link (if provided)
     if (bookData.bookPdfUrl?.trim()) {
       formData.append("bookPdfUrl", bookData.bookPdfUrl.trim());
     }
 
     try {
-      const response = await fetch(`https://deploycapstone.onrender.com/api/books/${bookToEdit._id}`, {
-        method: "PUT",
-        body: formData,
-      });
+      const response = await fetch(
+        `https://deploycapstone.onrender.com/api/books/${bookToEdit._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update book");
@@ -96,8 +105,9 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
 
       const updatedBook = await response.json();
       console.log("✅ Book updated:", updatedBook);
-      onBookUpdated(updatedBook); // Pass the updated book
-      onClose(); // Optionally close the form after updating
+      onBookUpdated(updatedBook);
+      window.location.reload();
+      onClose();
     } catch (error) {
       console.error("❌ Error updating book:", error);
     }
@@ -114,80 +124,37 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
         )}
 
         <label style={styles.label}>Change Cover:</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          style={styles.fileInput}
-        />
+        <input type="file" accept="image/*" onChange={handleFileChange} style={styles.fileInput} />
 
         <label style={styles.label}>Title:</label>
-        <input
-          type="text"
-          name="bookTitle"
-          value={bookData.bookTitle}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
+        <input type="text" name="bookTitle" value={bookData.bookTitle} onChange={handleChange} required style={styles.input} />
 
         <label style={styles.label}>Author:</label>
-        <input
-          type="text"
-          name="bookAuthor"
-          value={bookData.bookAuthor}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
+        <input type="text" name="bookAuthor" value={bookData.bookAuthor} onChange={handleChange} required style={styles.input} />
 
         <label style={styles.label}>Description:</label>
-        <textarea
-          name="bookDescription"
-          value={bookData.bookDescription}
-          onChange={handleChange}
-          style={styles.textarea}
-        />
+        <textarea name="bookDescription" value={bookData.bookDescription} onChange={handleChange} style={styles.textarea} />
 
         <label style={styles.label}>Genre:</label>
-        <input
-          type="text"
-          name="bookGenre"
-          value={bookData.bookGenre}
-          onChange={handleChange}
-          style={styles.input}
-        />
+        <input type="text" name="bookGenre" value={bookData.bookGenre} onChange={handleChange} style={styles.input} />
 
         <label style={styles.label}>Platform:</label>
-        <input
-          type="text"
-          name="bookPlatform"
-          value={bookData.bookPlatform}
-          onChange={handleChange}
-          style={styles.input}
-        />
+        <input type="text" name="bookPlatform" value={bookData.bookPlatform} onChange={handleChange} style={styles.input} />
 
         <label style={styles.label}>
           Available:
-          <input
-            type="checkbox"
-            name="bookAvailability"
-            checked={bookData.bookAvailability}
-            onChange={handleChange}
-            style={styles.checkbox}
-          />
+          <input type="checkbox" name="bookAvailability" checked={bookData.bookAvailability} onChange={handleChange} style={styles.checkbox} />
         </label>
 
-        {/* ✅ NEW: PDF Link Field */}
         <label style={styles.label}>PDF Link:</label>
-        <input
-          type="text"
-          name="bookPdfUrl"
-          value={bookData.bookPdfUrl}
-          onChange={handleChange}
-          placeholder="https://example.com/book.pdf"
-          style={styles.input}
-        />
+        <input type="text" name="bookPdfUrl" value={bookData.bookPdfUrl} onChange={handleChange} placeholder="https://example.com/book.pdf" style={styles.input} />
+
+        {/* ✅ Dropdown for Academic/Non-Academic */}
+        <label style={styles.label}>Category:</label>
+        <select name="bookCategory" value={bookData.bookCategory} onChange={handleChange} style={styles.select}>
+          <option value="Academic">Academic</option>
+          <option value="Non-Academic">Non-Academic</option>
+        </select>
 
         <div style={styles.buttonContainer}>
           <button type="submit" style={styles.saveButton}>Save Changes</button>
@@ -198,7 +165,6 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
   );
 };
 
-// ✨ **Improved Styles**
 const styles = {
   editBookForm: {
     background: "linear-gradient(145deg, #fff8f3, #f2e1d5)",
@@ -234,7 +200,6 @@ const styles = {
     borderRadius: "6px",
     fontSize: "15px",
     outline: "none",
-    transition: "border 0.3s ease-in-out",
   },
   textarea: {
     padding: "12px",
@@ -243,53 +208,13 @@ const styles = {
     fontSize: "15px",
     outline: "none",
     height: "100px",
-    resize: "none",
   },
-  fileInput: {
-    padding: "10px",
+  select: {
+    padding: "12px",
     border: "1px solid #c8a383",
     borderRadius: "6px",
-    fontSize: "14px",
+    fontSize: "15px",
     outline: "none",
-    cursor: "pointer",
-    background: "#f9f1ea",
-  },
-  imagePreviewContainer: {
-    display: "flex",
-    justifyContent: "center",
-    marginBottom: "15px",
-  },
-  previewImage: {
-    width: "100%",
-    maxHeight: "220px",
-    objectFit: "cover",
-    borderRadius: "8px",
-    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.2)",
-    border: "1px solid #ddd",
-  },
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "20px",
-    gap: "15px",
-  },
-  saveButton: {
-    padding: "12px 18px",
-    background: "#b77b43",
-    color: "white",
-    fontSize: "15px",
-    borderRadius: "8px",
-  },
-  cancelButton: {
-    padding: "12px 18px",
-    background: "#d32f2f",
-    color: "white",
-    fontSize: "15px",
-    borderRadius: "8px",
-  },
-  checkbox: {
-    marginLeft: "10px",
-    transform: "scale(1.2)",
     cursor: "pointer",
   },
 };

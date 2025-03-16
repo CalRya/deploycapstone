@@ -35,10 +35,16 @@ router.get("/count/:userId", authenticateUser, async (req, res) => {
   }
 });
 
-// NEW: Get All Books
+// ✅ Get All Books (with optional sorting by category)
 router.get("/", async (req, res) => {
   try {
-    const books = await Book.find();
+    const { category } = req.query;
+    let query = {};
+    if (category) {
+      query.bookCategory = category.toLowerCase(); // Ensure case-insensitive matching
+    }
+    
+    const books = await Book.find(query);
     res.json(books);
   } catch (error) {
     console.error("❌ Error fetching books:", error);
@@ -46,7 +52,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// NEW: POST route for adding a new book with PDF link support
+// ✅ Add New Book (POST)
 router.post("/", uploadConfig.single("bookCover"), async (req, res) => {
   try {
     console.log("📥 Received book data:", req.body);
@@ -59,7 +65,8 @@ router.post("/", uploadConfig.single("bookCover"), async (req, res) => {
       bookGenre,
       bookPlatform,
       bookAvailability,
-      bookPdfUrl, // NEW FIELD
+      bookPdfUrl,
+      bookCategory, // ✅ NEW FIELD
     } = req.body;
 
     const bookCoverUrl = req.file ? `/uploads/${req.file.filename}` : "";
@@ -76,8 +83,9 @@ router.post("/", uploadConfig.single("bookCover"), async (req, res) => {
       bookPlatform: bookPlatform || "",
       bookAvailability: isAvailable,
       bookCoverUrl,
-      bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "", // Store PDF link if provided
+      bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "",
       averageRating: 0,
+      bookCategory: bookCategory || "Non-Academic", // Default to "Non-Academic" if not provided
     });
 
     console.log("✅ Final book object before saving:", newBook);
@@ -90,7 +98,7 @@ router.post("/", uploadConfig.single("bookCover"), async (req, res) => {
   }
 });
 
-// NEW: PUT route for updating a book with PDF link support
+// ✅ Update Book (PUT)
 router.put("/:id", uploadConfig.single("bookCover"), async (req, res) => {
   try {
     const { id } = req.params;
@@ -103,8 +111,9 @@ router.put("/:id", uploadConfig.single("bookCover"), async (req, res) => {
       bookPlatform,
       bookAvailability,
       bookPdfUrl,
+      bookCategory, // ✅ NEW FIELD
     } = req.body;
-    
+
     const bookCoverUrl = req.file
       ? `/uploads/${req.file.filename}`
       : req.body.bookCoverUrl || "";
@@ -119,6 +128,7 @@ router.put("/:id", uploadConfig.single("bookCover"), async (req, res) => {
       bookAvailability: isAvailable,
       bookCoverUrl,
       bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "",
+      bookCategory: bookCategory ? bookCategory.toLowerCase() : "",
     };
 
     const updatedBook = await Book.findByIdAndUpdate(id, updatedFields, { new: true });
