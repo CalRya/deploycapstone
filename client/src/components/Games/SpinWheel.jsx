@@ -85,7 +85,7 @@ const SpinWheelGame = () => {
     contrastColor: "white",
     buttonText: "Spin",
     isOnlyOnce: false,
-    size: 240,
+    size: 150,
     upDuration: 100,
     downDuration: 600,
     fontFamily: "Century Gothic",
@@ -162,22 +162,22 @@ const SpinWheelGame = () => {
 const styles = {
   container: {
     backgroundColor: "#F5E1C8",
-    padding: "30px",
-    borderRadius: "12px",
+    padding: "40px",
+    borderRadius: "30px",
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    maxWidth: "500px",
-    margin: "40px auto",
+    maxWidth: "100%",
+    margin: "30px auto",
     textAlign: "center",
     fontFamily: "Century Gothic, sans-serif",
     color: "#5a3e2b",
   },
   startScreen: {
     textAlign: "center",
-    padding: "20px",
+    padding: "30px",
   },
   title: {
     fontSize: "24px",
-    marginBottom: "10px",
+    marginBottom: "20px",
   },
   button: {
     border: "none",
@@ -223,6 +223,8 @@ const styles = {
     alignItems: "center",
     position: "relative",
     opacity: "0.8",
+    width: "100%",
+    maxWidth: "600px",
   },
   resultContainer: {
     textAlign: "center",

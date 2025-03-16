@@ -97,10 +97,10 @@ const styles = {
   container: {
     textAlign: "center",
     backgroundColor: "#FAE5D3",
-    padding: "30px",
+    padding: "20px",
     border: "2px solid #5F3418",
-    borderRadius: "10px",
-    maxWidth: "600px",
+    borderRadius: "30px",
+    maxWidth: "100%",
     margin: "50px auto",
     fontFamily: "'Poppins', sans-serif",
   },

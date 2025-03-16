@@ -8,6 +8,7 @@ const NavbarAdmin = ({ onSearch }) => {
   const { setAuth } = useContext(AuthContext);
   const [sticky, setSticky] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false); // Added for hamburger menu
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,21 +27,19 @@ const NavbarAdmin = ({ onSearch }) => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      if (searchInput.trim() === "") {
-        navigate("/lib");
-      } else {
-        navigate(`/lib?q=${encodeURIComponent(searchInput.trim())}`);
-      }
+      navigate(searchInput.trim() ? `/lib?q=${encodeURIComponent(searchInput.trim())}` : "/lib");
     }
   };
 
-  // Logout function: clears auth context and storage, then forces an absolute navigation to /login
   const handleLogout = () => {
     setAuth({});
     localStorage.removeItem("currentUser");
     sessionStorage.clear();
-    // Force an absolute redirect to /login to avoid relative path issues
     window.location.assign("/login");
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
   return (
@@ -58,44 +57,18 @@ const NavbarAdmin = ({ onSearch }) => {
         className="search-bar"
       />
 
-      <ul className="nav-links">
-        <li>
-          <NavLink
-            to="/homeadmin"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Home
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/digilibadmin"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Manage Books
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/libadmin"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Library
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/profadmin"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Profile
-          </NavLink>
-        </li>
-        <li>
-          <button className="btn" onClick={handleLogout}>
-            Log Out
-          </button>
-        </li>
+      <div className="hamburger" onClick={toggleMenu}>
+        <div className="bar" />
+        <div className="bar" />
+        <div className="bar" />
+      </div>
+
+      <ul className={`nav-links ${menuOpen ? "nav-active" : ""}`}>
+        <li><NavLink to="/homeadmin">Home</NavLink></li>
+        <li><NavLink to="/digilibadmin">Manage Books</NavLink></li>
+        <li><NavLink to="/libadmin">Library</NavLink></li>
+        <li><NavLink to="/profadmin">Profile</NavLink></li>
+        <li><button className="btn" onClick={handleLogout}>Log Out</button></li>
       </ul>
     </nav>
   );
