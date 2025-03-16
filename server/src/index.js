@@ -75,9 +75,7 @@ app.get("/borrow/:user", async (req, res) => {
         if (!user) return res.status(400).json({ message: "User ID is required" });
         const borrowedBooks = await Borrow.find({ user: user, status: { $in: ["pending", "approved", "returned"] } })
             .populate("book");
-        if (!borrowedBooks.length) {
-            return res.status(404).json({ message: "No borrowed books found" });
-        }
+        // Always return 200 with the borrowedBooks array (may be empty)
         res.status(200).json(borrowedBooks);
     } catch (error) {
         console.error("❌ Error fetching borrowed books:", error);
@@ -142,19 +140,19 @@ app.post("/login", async (req, res) => {
     }
 });
 
-aapp.get("/api/borrow/:user", async (req, res) => {
+app.get("/api/borrow/:user", async (req, res) => {
     try {
         const { user } = req.params;
         if (!user) return res.status(400).json({ message: "User ID is required" });
         const borrowedBooks = await Borrow.find({ user: user, status: { $in: ["pending", "approved", "returned"] } })
             .populate("book");
+        // Always return 200 with the borrowedBooks array (may be empty)
         res.status(200).json(borrowedBooks);
     } catch (error) {
         console.error("❌ Error fetching borrowed books:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
-
 
 // ***** NEW ROUTE for fetching all users (for admin dashboard) *****
 app.get("/api/users", async (req, res) => {
