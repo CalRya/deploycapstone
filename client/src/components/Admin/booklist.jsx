@@ -11,6 +11,7 @@ const AddBook = ({ onBookAdded }) => {
     bookPlatform: "Physical",
     bookAvailability: true, // ✅ Boolean value
     bookCover: null,
+    bookPdfUrl: "", // ✅ NEW field for PDF link
   });
 
   // Handle input changes (text, select, checkbox)
@@ -47,6 +48,11 @@ const AddBook = ({ onBookAdded }) => {
       formData.append("bookCover", book.bookCover);
     }
 
+    // ✅ Append PDF link if provided
+    if (book.bookPdfUrl.trim()) {
+      formData.append("bookPdfUrl", book.bookPdfUrl.trim());
+    }
+
     console.log("📤 Sending data:", Object.fromEntries(formData)); // ✅ Debug log
 
     try {
@@ -76,6 +82,7 @@ const AddBook = ({ onBookAdded }) => {
         bookPlatform: "Physical",
         bookAvailability: true, // ✅ Reset to default available
         bookCover: null,
+        bookPdfUrl: "", // ✅ Reset PDF link
       });
     } catch (error) {
       console.error("❌ Failed to add book:", error);
@@ -86,11 +93,31 @@ const AddBook = ({ onBookAdded }) => {
     <div className="add-book-container">
       <h2>Add a New Book</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data" className="add-book-form">
-        <input type="text" name="bookID" value={book.bookID} onChange={handleChange} placeholder="Book ID" required />
-        <input type="text" name="bookTitle" value={book.bookTitle} onChange={handleChange} placeholder="Book Title" required />
-        <input type="text" name="bookAuthor" value={book.bookAuthor} onChange={handleChange} placeholder="Author" required />
-        
-        {/* Updated Description Input to Textarea */}
+        <input
+          type="text"
+          name="bookID"
+          value={book.bookID}
+          onChange={handleChange}
+          placeholder="Book ID"
+          required
+        />
+        <input
+          type="text"
+          name="bookTitle"
+          value={book.bookTitle}
+          onChange={handleChange}
+          placeholder="Book Title"
+          required
+        />
+        <input
+          type="text"
+          name="bookAuthor"
+          value={book.bookAuthor}
+          onChange={handleChange}
+          placeholder="Author"
+          required
+        />
+
         <textarea
           name="bookDescription"
           value={book.bookDescription}
@@ -101,12 +128,24 @@ const AddBook = ({ onBookAdded }) => {
           cols="50"
         ></textarea>
 
-        <input type="text" name="bookGenre" value={book.bookGenre} onChange={handleChange} placeholder="Genre" required />
+        <input
+          type="text"
+          name="bookGenre"
+          value={book.bookGenre}
+          onChange={handleChange}
+          placeholder="Genre"
+          required
+        />
 
         <label>Upload Book Cover:</label>
         <input type="file" accept="image/*" onChange={handleFileChange} required />
 
-        <select name="bookPlatform" value={book.bookPlatform} onChange={handleChange} required>
+        <select
+          name="bookPlatform"
+          value={book.bookPlatform}
+          onChange={handleChange}
+          required
+        >
           <option value="Physical">Physical</option>
           <option value="Digital">Digital</option>
         </select>
@@ -114,9 +153,23 @@ const AddBook = ({ onBookAdded }) => {
         <div className="checkbox-container">
           <label>
             Available:
-            <input type="checkbox" name="bookAvailability" checked={book.bookAvailability} onChange={handleChange} />
+            <input
+              type="checkbox"
+              name="bookAvailability"
+              checked={book.bookAvailability}
+              onChange={handleChange}
+            />
           </label>
         </div>
+
+        {/* ✅ NEW: PDF Link Input */}
+        <input
+          type="text"
+          name="bookPdfUrl"
+          value={book.bookPdfUrl}
+          onChange={handleChange}
+          placeholder="PDF Link (optional)"
+        />
 
         <button type="submit">Add Book</button>
       </form>

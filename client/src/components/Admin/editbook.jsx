@@ -9,6 +9,7 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
     bookPlatform: "",
     bookAvailability: false,
     bookCoverUrl: "",
+    bookPdfUrl: "", // ✅ NEW FIELD
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -26,10 +27,11 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
         bookPlatform: bookToEdit.bookPlatform,
         bookAvailability: bookToEdit.bookAvailability,
         bookCoverUrl: bookToEdit.bookCoverUrl,
+        bookPdfUrl: bookToEdit.bookPdfUrl || "", // ✅ Populate if existing, else empty
       });
 
       setPreviewImage(
-        bookToEdit.bookCoverUrl.startsWith("http")
+        bookToEdit.bookCoverUrl?.startsWith("http")
           ? bookToEdit.bookCoverUrl
           : `https://deploycapstone.onrender.com${bookToEdit.bookCoverUrl}`
       );
@@ -77,6 +79,11 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
       formData.append("bookCoverUrl", bookData.bookCoverUrl);
     }
 
+    // ✅ Append the PDF link (if provided)
+    if (bookData.bookPdfUrl?.trim()) {
+      formData.append("bookPdfUrl", bookData.bookPdfUrl.trim());
+    }
+
     try {
       const response = await fetch(`https://deploycapstone.onrender.com/api/books/${bookToEdit._id}`, {
         method: "PUT",
@@ -107,31 +114,84 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
         )}
 
         <label style={styles.label}>Change Cover:</label>
-        <input type="file" accept="image/*" onChange={handleFileChange} style={styles.fileInput} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          style={styles.fileInput}
+        />
 
         <label style={styles.label}>Title:</label>
-        <input type="text" name="bookTitle" value={bookData.bookTitle} onChange={handleChange} required style={styles.input} />
+        <input
+          type="text"
+          name="bookTitle"
+          value={bookData.bookTitle}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
         <label style={styles.label}>Author:</label>
-        <input type="text" name="bookAuthor" value={bookData.bookAuthor} onChange={handleChange} required style={styles.input} />
+        <input
+          type="text"
+          name="bookAuthor"
+          value={bookData.bookAuthor}
+          onChange={handleChange}
+          required
+          style={styles.input}
+        />
 
         <label style={styles.label}>Description:</label>
-        <textarea name="bookDescription" value={bookData.bookDescription} onChange={handleChange} style={styles.textarea} />
+        <textarea
+          name="bookDescription"
+          value={bookData.bookDescription}
+          onChange={handleChange}
+          style={styles.textarea}
+        />
 
         <label style={styles.label}>Genre:</label>
-        <input type="text" name="bookGenre" value={bookData.bookGenre} onChange={handleChange} style={styles.input} />
+        <input
+          type="text"
+          name="bookGenre"
+          value={bookData.bookGenre}
+          onChange={handleChange}
+          style={styles.input}
+        />
 
         <label style={styles.label}>Platform:</label>
-        <input type="text" name="bookPlatform" value={bookData.bookPlatform} onChange={handleChange} style={styles.input} />
+        <input
+          type="text"
+          name="bookPlatform"
+          value={bookData.bookPlatform}
+          onChange={handleChange}
+          style={styles.input}
+        />
 
         <label style={styles.label}>
           Available:
-          <input type="checkbox" name="bookAvailability" checked={bookData.bookAvailability} onChange={handleChange} style={styles.checkbox} />
+          <input
+            type="checkbox"
+            name="bookAvailability"
+            checked={bookData.bookAvailability}
+            onChange={handleChange}
+            style={styles.checkbox}
+          />
         </label>
 
+        {/* ✅ NEW: PDF Link Field */}
+        <label style={styles.label}>PDF Link:</label>
+        <input
+          type="text"
+          name="bookPdfUrl"
+          value={bookData.bookPdfUrl}
+          onChange={handleChange}
+          placeholder="https://example.com/book.pdf"
+          style={styles.input}
+        />
+
         <div style={styles.buttonContainer}>
-          <button type="submit" style={styles.saveButton}> Save Changes</button>
-          <button type="button" onClick={onClose} style={styles.cancelButton}> Cancel</button>
+          <button type="submit" style={styles.saveButton}>Save Changes</button>
+          <button type="button" onClick={onClose} style={styles.cancelButton}>Cancel</button>
         </div>
       </form>
     </div>
@@ -226,6 +286,11 @@ const styles = {
     color: "white",
     fontSize: "15px",
     borderRadius: "8px",
+  },
+  checkbox: {
+    marginLeft: "10px",
+    transform: "scale(1.2)",
+    cursor: "pointer",
   },
 };
 

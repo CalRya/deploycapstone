@@ -20,7 +20,7 @@ const ArticlePreview = () => {
 
   return (
     <div style={styles.articlePreview}>
-      <h2 style={styles.header}>Explore Our Articles</h2>
+      <h2 style={styles.header}>Explore Latest Articles</h2>
       <div style={styles.articlePreviewContainer}>
         <div style={styles.articlePreviewList}>
           {articles.map((article) => (

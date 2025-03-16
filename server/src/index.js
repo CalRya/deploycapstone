@@ -299,30 +299,45 @@ const uploadConfig = multer({ storage: storageConfig });
 
 app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
     try {
-        console.log("📥 Received book data:", req.body);
-        const { bookID, bookTitle, bookAuthor, bookDescription, bookGenre, bookPlatform, bookAvailability } = req.body;
-        const bookCoverUrl = req.file ? `/uploads/${req.file.filename}` : "";
-        const isAvailable = bookAvailability === "true";
-        console.log("📌 Processed bookAvailability:", isAvailable);
-        const newBook = new Book({
-            bookID,
-            bookTitle,
-            bookAuthor,
-            bookDescription: bookDescription || "",
-            bookGenre: bookGenre || "",
-            bookPlatform: bookPlatform || "",
-            bookAvailability: isAvailable,
-            bookCoverUrl,
-            averageRating: 0,
-        });
-        console.log("✅ Final book object before saving:", newBook);
-        await newBook.save();
-        res.status(201).json({ message: "✅ Book added successfully!", book: newBook });
+      console.log("📥 Received book data:", req.body);
+      const {
+        bookID,
+        bookTitle,
+        bookAuthor,
+        bookDescription,
+        bookGenre,
+        bookPlatform,
+        bookAvailability,
+        bookPdfUrl, // ✅ NEW FIELD
+      } = req.body;
+  
+      const bookCoverUrl = req.file ? `/uploads/${req.file.filename}` : "";
+      const isAvailable = bookAvailability === "true";
+  
+      console.log("📌 Processed bookAvailability:", isAvailable);
+  
+      const newBook = new Book({
+        bookID,
+        bookTitle,
+        bookAuthor,
+        bookDescription: bookDescription || "",
+        bookGenre: bookGenre || "",
+        bookPlatform: bookPlatform || "",
+        bookAvailability: isAvailable,
+        bookCoverUrl,
+        bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "", // ✅ Store PDF link if provided
+        averageRating: 0,
+      });
+  
+      console.log("✅ Final book object before saving:", newBook);
+      await newBook.save();
+  
+      res.status(201).json({ message: "✅ Book added successfully!", book: newBook });
     } catch (error) {
-        console.error("❌ Error adding book:", error);
-        res.status(500).json({ error: "Internal server error" });
+      console.error("❌ Error adding book:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
-});
+  });  
 
 app.patch("/api/users/:id", async (req, res) => {
     try {

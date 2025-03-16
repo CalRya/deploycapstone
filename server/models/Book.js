@@ -9,8 +9,10 @@
         bookPlatform: { type: String },
         bookAvailability: { type: Boolean, default: true }, // Default is AVAILABLE
         bookCoverUrl: { type: String },
+        bookPdfUrl: { type: String },
         ratings: [{ user: mongoose.Schema.Types.ObjectId, rating: Number }], // ⭐ New Ratings Array
         averageRating: { type: Number, default: 0 },
+        copiesAvailable: { type: Number, default: 1 },
     });
 
     const Book = mongoose.model("Book", bookSchema); // Create model

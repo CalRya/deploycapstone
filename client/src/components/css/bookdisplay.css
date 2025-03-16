@@ -87,6 +87,22 @@
     border-radius: 10px;
 }
 
+.pdf-button {
+    background-color: #8B4513; /* or your preferred color */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .pdf-button:hover {
+    background-color: #A0522D; /* Slightly lighter brown on hover */
+  }
+  
+
 /* 📌 Modal Overlay */
 .modal-overlay {
     position: fixed;
