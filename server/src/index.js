@@ -107,7 +107,12 @@ app.post("/register", async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await userModel.create({ user, email, password: hashedPassword });
-        res.status(201).json({ message: "User registered successfully", email: newUser.email });
+        res.status(201).json({
+            message: "User registered successfully",
+            id: newUser._id,
+            email: newUser.email,
+            role: newUser.role
+        });
     } catch (err) {
         console.error("❌ Error inserting user:", err);
         res.status(500).json({ error: "Internal server error" });

@@ -48,6 +48,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("handleSubmit triggered"); // Debug log
         if (!validName || !validPwd || !validMatch) {
             setErrMsg("Invalid input, please check your details.");
             return;
@@ -59,12 +60,20 @@ const Register = () => {
         try {
             const result = await axios.post(REGISTER_URL, formData, { withCredentials: true });
             console.log("Response from backend: ", result.data);
+
+            // If backend returns user details, store them in localStorage to "auto-login"
+            const { id, email: newEmail, role } = result.data;
+            if (id && newEmail && role) {
+                localStorage.setItem("currentUser", JSON.stringify({ id, email: newEmail, role }));
+            }
+
             setSuccess(true);
         } catch (err) {
             console.error("❌ Registration Error:", err);
             setErrMsg("Failed to create user. Please try again.");
         }
 
+        // Clear the form fields
         setEmail("");
         setUser("");
         setPwd("");
@@ -123,8 +132,26 @@ const Register = () => {
                             required
                         />
 
-                        {/* Explicitly set the button type to submit */}
-                        <button type="submit" disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
+                        {/* Explicitly set type, onClick for debugging, and mobile-friendly styling */}
+                        <button
+                            type="submit"
+                            disabled={!validName || !validPwd || !validMatch}
+                            onClick={() =>
+                                console.log("Sign Up button clicked", {
+                                    validName,
+                                    validPwd,
+                                    validMatch,
+                                })
+                            }
+                            style={{
+                                padding: "15px",
+                                fontSize: "18px",
+                                width: "100%",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Sign Up
+                        </button>
                     </form>
 
                     <p>Already registered? <Link to="/login">Sign In</Link></p>
