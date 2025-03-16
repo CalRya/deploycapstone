@@ -15,11 +15,13 @@ function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Clear any stored user data on mount
+        localStorage.removeItem("currentUser");
         userRef.current?.focus();
     }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // ✅ Prevents default form navigation
+        e.preventDefault(); // Prevents default form navigation
 
         console.log("📨 Sending POST request to:", LOGIN_URL);
 
@@ -29,9 +31,11 @@ function Login() {
         }
 
         try {
-            const result = await axios.post(LOGIN_URL, { email, password }, {
-                withCredentials: true, // ✅ Ensures cookies are sent
-            });
+            const result = await axios.post(
+                LOGIN_URL,
+                { email, password },
+                { withCredentials: true } // Ensures cookies are sent
+            );
 
             console.log("✅ Server Response:", result.data);
 
@@ -46,12 +50,19 @@ function Login() {
                 const userData = { id, email, role };
                 localStorage.setItem("currentUser", JSON.stringify(userData));
 
-                // ✅ Redirect based on role
+                // Redirect based on role
                 switch (userData.role) {
-                    case "admin": navigate("/adminmanage"); break;
-                    case "librarian": navigate("/homeadmin"); break;
-                    case "courier": navigate("/courierhome"); break;
-                    default: navigate("/home");
+                    case "admin":
+                        navigate("/home");
+                        break;
+                    case "librarian":
+                        navigate("/homeadmin");
+                        break;
+                    case "courier":
+                        navigate("/courierhome");
+                        break;
+                    default:
+                        navigate("/home");
                 }
             } else {
                 setErrMsg("Invalid credentials.");
@@ -66,7 +77,7 @@ function Login() {
         <section>
             {errMsg && <p ref={errRef} className="errmsg">{errMsg}</p>}
             <h1>Sign In</h1>
-            <form onSubmit={handleSubmit} noValidate> {/* ✅ Prevents default validation */}
+            <form onSubmit={handleSubmit} noValidate>
                 <label htmlFor="email">Email:</label>
                 <input
                     type="email"

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import NavbarCourier from '../../Navbar/NavbarCourier';
-import UserProfile from "../../Profile/Profile";
 import Premium from "../../Profile/Premium";
 
 function Prof() {
@@ -38,9 +37,7 @@ function Prof() {
                     <p>Role: {currentUser.role}</p>
                 </section>
 
-                <section style={{ marginTop: "20px" }}>
-                    <UserProfile userId={currentUser.id} />
-                </section>
+                {/* Removed the UserProfile component that had the "save changes" button */}
 
                 <section style={{ marginTop: "20px" }}>
                     <Premium userId={currentUser.id} />
