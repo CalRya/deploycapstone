@@ -123,7 +123,8 @@ const Register = () => {
                             required
                         />
 
-                        <button disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
+                        {/* Explicitly set the button type to submit */}
+                        <button type="submit" disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
                     </form>
 
                     <p>Already registered? <Link to="/login">Sign In</Link></p>
