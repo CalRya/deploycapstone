@@ -53,7 +53,7 @@ function Login() {
                 // Redirect based on role
                 switch (userData.role) {
                     case "admin":
-                        navigate("/home");
+                        navigate("/adminmanage");
                         break;
                     case "librarian":
                         navigate("/homeadmin");

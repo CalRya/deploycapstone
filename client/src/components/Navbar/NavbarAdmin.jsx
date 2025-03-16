@@ -21,7 +21,7 @@ const NavbarAdmin = ({ onSearch }) => {
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchInput(query);
-    onSearch && onSearch(query);
+    if (onSearch) onSearch(query);
   };
 
   const handleKeyPress = (e) => {
@@ -34,11 +34,13 @@ const NavbarAdmin = ({ onSearch }) => {
     }
   };
 
+  // Logout function: clears auth context and storage, then forces an absolute navigation to /login
   const handleLogout = () => {
     setAuth({});
     localStorage.removeItem("currentUser");
     sessionStorage.clear();
-    navigate("/login", { replace: true });
+    // Force an absolute redirect to /login to avoid relative path issues
+    window.location.assign("/login");
   };
 
   return (
@@ -58,22 +60,34 @@ const NavbarAdmin = ({ onSearch }) => {
 
       <ul className="nav-links">
         <li>
-          <NavLink to="/homeadmin" className={({ isActive }) => (isActive ? "active" : "")}>
+          <NavLink
+            to="/adminmanage"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Home
           </NavLink>
         </li>
         <li>
-          <NavLink to="/digilibadmin" className={({ isActive }) => (isActive ? "active" : "")}>
+          <NavLink
+            to="/digilibadmin"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Manage Books
           </NavLink>
         </li>
         <li>
-          <NavLink to="/libadmin" className={({ isActive }) => (isActive ? "active" : "")}>
+          <NavLink
+            to="/libadmin"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Library
           </NavLink>
         </li>
         <li>
-          <NavLink to="/profadmin" className={({ isActive }) => (isActive ? "active" : "")}>
+          <NavLink
+            to="/profadmin"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
             Profile
           </NavLink>
         </li>
