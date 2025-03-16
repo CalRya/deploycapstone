@@ -153,27 +153,38 @@ app.get("/api/borrow/:user", async (req, res) => {
     }
 });
 
+// ***** NEW ROUTE for fetching all users (for admin dashboard) *****
+app.get("/api/users", async (req, res) => {
+    try {
+        const users = await userModel.find().select("user email role premium");
+        res.json(users);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Existing route for fetching a single user by ID:
 app.get("/api/users/:userId", async (req, res) => {
     try {
       const { userId } = req.params;
       console.log("🔍 Searching for user with ID:", userId);
   
-      // 1. Attempt to find a single user by ID
+      // Attempt to find a single user by ID
       const user = await userModel.findById(userId).select("user email role premium");
   
-      // 2. If not found, return 404
+      // If not found, return 404
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
   
-      // 3. Otherwise, return that user
+      // Otherwise, return that user
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Server error" });
     }
-  });  
-
+});  
 
 app.post("/api/borrow/:bookID", async (req, res) => {
     try {
