@@ -1,103 +1,112 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+// Use React.lazy to load the SpinWheel component
+const SpinWheel = React.lazy(() =>
+  import("spin-wheel-game").then(module => ({ default: module.SpinWheel }))
+);
 
-const SpinWheel = () => {
+const SpinWheelGame = () => {
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
-  const [angle, setAngle] = useState(0);
-  const [spinning, setSpinning] = useState(false);
 
-  // Fetch random books from the database
+  // Fetch random books from the database (limited to 5)
   const fetchRandomBooks = async () => {
     try {
-      const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
+      const response = await fetch("http://localhost:3004/api/books/random?limit=5"); // If API supports limits
       if (!response.ok) throw new Error("Failed to fetch books");
 
       let data = await response.json();
-      if (!data || data.length === 0) throw new Error("No books received");
+      console.log("Fetched books:", data); // Debugging log
 
-      data = data.slice(0, 5);
+      data = data.slice(0, 5); // Guarantee only 5 books
 
-      // Prepare each slice with color + info
-      const formattedBooks = data.map((book, i) => ({
-        bookTitle: book.bookTitle || `Book ${i + 1}`,
-        bookCover: book.bookCoverUrl
-          ? `https://deploycapstone.onrender.com${book.bookCoverUrl}`
-          : null,
-        color: getWheelColor(i),
+      const formattedBooks = data.map((book, index) => ({
+        segmentText: book.bookTitle, // Full title
+        segColor: getWheelColors(index),
+        coverImage: book.bookCoverUrl ? `http://localhost:3004${book.bookCoverUrl}` : null,
+        fontSize: adjustFontSize(book.bookTitle),
       }));
 
       setBooks(formattedBooks);
-      setSelectedBook(null);
     } catch (error) {
       console.error("Error fetching books:", error);
-      setBooks([]);
     }
   };
 
-  // Simple color palette for slices
-  const getWheelColor = (index) => {
+  // Adjust font size based on title length
+  const adjustFontSize = (title) => {
+    if (!title) return "16px";
+    const length = title.length;
+    if (length < 15) return "16px";
+    if (length < 25) return "14px";
+    if (length < 35) return "12px";
+    return "10px";
+  };
+
+  // Generate colors that fit the brown motif
+  const getWheelColors = (index) => {
     const colors = ["#C19A6B", "#8B5E3C", "#D2B48C", "#A67B5B", "#7D4E2D"];
     return colors[index % colors.length];
   };
 
-  // Build a conic-gradient for slices
-  const buildConicGradient = (slices) => {
-    if (!slices || slices.length === 0) return "white";
-    const sliceAngle = 360 / slices.length;
-    const parts = slices.map((slice, i) => {
-      const start = i * sliceAngle;
-      const end = (i + 1) * sliceAngle;
-      return `${slice.color} ${start}deg ${end}deg`;
-    });
-    return `conic-gradient(${parts.join(", ")})`;
-  };
-
-  const startGame = async () => {
-    if (!gameStarted) {
-      setGameStarted(true);
-      setAngle(0);
-      setSpinning(false);
-      setSelectedBook(null);
-      await fetchRandomBooks();
+  // Handle spin result
+  const handleSpinFinish = (selectedTitle) => {
+    console.log(`Spun to: ${selectedTitle}`);
+    const foundBook = books.find(book => book.segmentText === selectedTitle);
+    if (foundBook) {
+      setSelectedBook(foundBook);
     }
   };
 
+  // Start the game
+  const startGame = async () => {
+    setGameStarted(true);
+    setSelectedBook(null);
+    await fetchRandomBooks();
+  };
+
+  // Exit the game
   const exitGame = () => {
     setGameStarted(false);
     setSelectedBook(null);
   };
 
+  // Spin again and fetch new books
   const spinAgain = async () => {
     setSelectedBook(null);
     await fetchRandomBooks();
   };
 
-  // Spin logic: the winning slice is determined by aligning the slice center with the arrow
-  const spinWheel = () => {
-    if (spinning || books.length === 0) return;
-    setSpinning(true);
-
-    // Random angle between 2 and 5 full rotations (720° to 1800°)
-    const extraSpins = Math.floor(Math.random() * 1080) + 720;
-    const newAngle = angle + extraSpins;
-    setAngle(newAngle);
-
-    setTimeout(() => {
-      const sliceAngle = 360 / books.length;
-      // Add half a slice so the slice center lines up with the arrow
-      const adjustedAngle = (newAngle + sliceAngle / 2) % 360;
-      const winningIndex = Math.floor(adjustedAngle / sliceAngle);
-      setSelectedBook(books[winningIndex]);
-      setSpinning(false);
-    }, 3000);
+  // Spin Wheel settings
+  const spinWheelProps = {
+    segments: books,
+    onFinished: handleSpinFinish,
+    primaryColor: "#8B5E3C",
+    contrastColor: "white",
+    buttonText: "Spin",
+    isOnlyOnce: false,
+    size: 240,
+    upDuration: 100,
+    downDuration: 600,
+    fontFamily: "Century Gothic",
+    arrowLocation: "top",
+    showTextOnSpin: false,
+    isSpinSound: true,
+    textStyle: { 
+      whiteSpace: "normal",
+      wordWrap: "break-word",
+      textAlign: "center",
+      fontSize: books.length > 0 ? books[0].fontSize : "16px",
+    },
   };
 
   return (
     <div style={styles.container}>
       {!gameStarted ? (
         <div style={styles.startScreen}>
-          <h2 style={styles.title}>📚 Spin the Wheel & Get a Book Recommendation!</h2>
+          <h2 style={styles.title}>
+            📚 Spin the Wheel & Get a Book Recommendation!
+          </h2>
           <button style={styles.button} onClick={startGame}>
             Start Game
           </button>
@@ -108,50 +117,11 @@ const SpinWheel = () => {
             <>
               <h1 style={styles.title}>📖 Spin the Wheel!</h1>
               {books.length > 0 ? (
-                <div style={styles.wheelArea}>
-                  {/* Arrow (fixed above the wheel) */}
-                  <div style={styles.arrow} />
-                  {/* Rotating wheel with book covers (tilt with the wheel) */}
-                  <div
-                    style={{
-                      ...styles.wheel,
-                      transform: `rotate(${angle}deg)`,
-                      background: buildConicGradient(books),
-                    }}
-                  >
-                    {books.map((book, i) => {
-                      const sliceAngle = 360 / books.length;
-                      const labelAngle = (i + 0.5) * sliceAngle;
-                      return (
-                        <div
-                          key={i}
-                          style={{
-                            ...styles.sliceLabel,
-                            transform: `translate(-50%, -50%) rotate(${labelAngle}deg) translate(90px)`,
-                          }}
-                        >
-                          {book.bookCover ? (
-                            <img
-                              src={book.bookCover}
-                              alt={book.bookTitle}
-                              style={styles.sliceCover}
-                            />
-                          ) : (
-                            <span style={styles.sliceText}>{book.bookTitle}</span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {/* Buttons arranged in a row */}
-                  <div style={styles.buttonRow}>
-                    <button style={styles.spinButton} onClick={spinWheel} disabled={spinning}>
-                      {spinning ? "Spinning..." : "Spin"}
-                    </button>
-                    <button style={styles.exitButton} onClick={exitGame}>
-                      Exit Game
-                    </button>
-                  </div>
+                <div style={styles.wheelContainer}>
+                  {/* Wrap the SpinWheel in Suspense */}
+                  <Suspense fallback={<div>Loading Spin Wheel...</div>}>
+                    <SpinWheel {...spinWheelProps} />
+                  </Suspense>
                 </div>
               ) : (
                 <p style={{ color: "red", fontSize: "18px" }}>
@@ -162,9 +132,9 @@ const SpinWheel = () => {
           ) : (
             <div style={styles.resultContainer}>
               <h2 style={styles.resultText}>📚 Your Recommendation:</h2>
-              {selectedBook.bookCover ? (
+              {selectedBook.coverImage ? (
                 <img
-                  src={selectedBook.bookCover}
+                  src={selectedBook.coverImage}
                   alt="Book Cover"
                   style={styles.bookCover}
                 />
@@ -173,36 +143,36 @@ const SpinWheel = () => {
                   No cover available
                 </p>
               )}
-              <h3 style={styles.resultTitle}>{selectedBook.bookTitle}</h3>
-              <div style={styles.buttonRow}>
-                <button style={styles.spinAgainButton} onClick={spinAgain}>
-                  🔄 Spin Again
-                </button>
-                <button style={styles.exitButton} onClick={exitGame}>
-                  Exit Game
-                </button>
-              </div>
+              <h3 style={styles.resultTitle}>{selectedBook.segmentText}</h3>
+              <button style={styles.spinAgainButton} onClick={spinAgain}>
+                🔄 Spin Again
+              </button>
             </div>
           )}
+          <button style={styles.exitButton} onClick={exitGame}>
+            Exit Game
+          </button>
         </>
       )}
     </div>
   );
 };
 
+// Styling
 const styles = {
   container: {
     backgroundColor: "#F5E1C8",
     padding: "30px",
     borderRadius: "12px",
     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-    maxWidth: "600px",
+    maxWidth: "500px",
     margin: "40px auto",
     textAlign: "center",
     fontFamily: "Century Gothic, sans-serif",
     color: "#5a3e2b",
   },
   startScreen: {
+    textAlign: "center",
     padding: "20px",
   },
   title: {
@@ -221,105 +191,21 @@ const styles = {
     background: "linear-gradient(145deg, #D2B48C, #8B5E3C)",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
   },
-  wheelArea: {
-    position: "relative",
-    margin: "20px auto",
-    width: "300px",
-    height: "300px",
-  },
-  wheel: {
-    position: "relative",
-    width: "100%",
-    height: "100%",
-    borderRadius: "50%",
-    border: "5px solid #222",
-    transition: "transform 3s ease-out",
-    overflow: "hidden",
-  },
-  arrow: {
-    position: "absolute",
-    top: "-35px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    width: 0,
-    height: 0,
-    borderLeft: "15px solid transparent",
-    borderRight: "15px solid transparent",
-    borderTop: "35px solid #FF0000", // arrow points downward
-  },
-  sliceLabel: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    pointerEvents: "none",
-  },
-  sliceCover: {
-    width: "45px",   // narrower
-    height: "72px",  // taller => ~5:8 ratio
-    objectFit: "cover",
-    borderRadius: "4px",
-    border: "2px solid #fff",
-    boxShadow: "0 2px 5px rgba(0,0,0,0.3)",
-  },
-  sliceText: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    padding: "4px 6px",
-    borderRadius: "4px",
-    fontSize: "14px",
-    fontWeight: "bold",
-    color: "#333",
-    whiteSpace: "nowrap",
-  },
-  buttonRow: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "20px",
-    marginTop: "30px",
-  },
-  spinButton: {
-    border: "none",
-    padding: "10px 14px",
-    fontSize: "16px",
-    cursor: "pointer",
-    borderRadius: "20px",
-    fontWeight: "bold",
-    color: "white",
-    background: "#D2B48C",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-  },
   exitButton: {
+    marginTop: "20px",
     border: "none",
     padding: "10px 14px",
     fontSize: "16px",
     cursor: "pointer",
     borderRadius: "20px",
+    transition: "all 0.3s ease",
     fontWeight: "bold",
     color: "white",
     background: "#8B5E3C",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
   },
-  resultContainer: {
-    textAlign: "center",
-    marginTop: "20px",
-  },
-  resultText: {
-    fontSize: "20px",
-    marginBottom: "10px",
-  },
-  bookCover: {
-    width: "180px",
-    height: "250px",
-    objectFit: "cover",
-    borderRadius: "8px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
-    marginTop: "10px",
-  },
-  resultTitle: {
-    fontSize: "18px",
-    marginTop: "10px",
-  },
   spinAgainButton: {
+    marginTop: "15px",
     border: "none",
     padding: "10px 14px",
     fontSize: "16px",
@@ -331,6 +217,25 @@ const styles = {
     background: "#5A3E2B",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
   },
+  wheelContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    opacity: "0.8",
+  },
+  resultContainer: {
+    textAlign: "center",
+    marginTop: "20px",
+  },
+  bookCover: {
+    width: "180px",
+    height: "250px",
+    objectFit: "cover",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+    marginTop: "10px",
+  },
 };
 
-export default SpinWheel;
+export default SpinWheelGame;
