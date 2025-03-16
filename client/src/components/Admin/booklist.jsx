@@ -138,7 +138,13 @@ const AddBook = ({ onBookAdded }) => {
         />
 
         <label>Upload Book Cover:</label>
-        <input type="file" accept="image/*" onChange={handleFileChange} required />
+        <input
+          type="file"
+          name="bookCover" // ✅ Added name attribute so Multer recognizes the file field
+          accept="image/*"
+          onChange={handleFileChange}
+          required
+        />
 
         <select
           name="bookPlatform"

@@ -3,7 +3,7 @@ import '../css/DigiLib.css'
 
 const AboutUs = () => {
   return (
-    <div classname= 'digilib'>
+    <div className= 'digilib'>
         <h1  style={{color: 'rgb(186, 138, 114)'}}> ABOUT US! </h1> <br/>
         <p> Insert CompanyInfo
         </p>

@@ -300,6 +300,7 @@ const uploadConfig = multer({ storage: storageConfig });
 app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
     try {
       console.log("📥 Received book data:", req.body);
+      console.log("File data:", req.file);
       const {
         bookID,
         bookTitle,

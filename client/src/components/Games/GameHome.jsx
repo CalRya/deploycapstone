@@ -7,7 +7,7 @@ import SortbyGenre from './Sortbygenre';
 
 const GameHome = () => {
   return (
-    <div classname= 'digilib'>
+    <div className= 'digilib'>
         <h1  style={{color: 'rgb(186, 138, 114)'}}> GAMES HERE! </h1> <br/>
         <QuoteGame/>
         <SpinWheel/>
