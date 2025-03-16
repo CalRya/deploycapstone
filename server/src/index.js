@@ -486,7 +486,7 @@ app.get("/", (req, res) => {
     res.send("📚 Library Management API is running.");
 });
 
-app.use("/api", bookRoutes);
+app.use("/api/books", bookRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/borrow", borrowRoutes);
 app.use("/api/admin", adminRoutes);

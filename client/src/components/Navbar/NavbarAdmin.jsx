@@ -61,7 +61,7 @@ const NavbarAdmin = ({ onSearch }) => {
       <ul className="nav-links">
         <li>
           <NavLink
-            to="/adminmanage"
+            to="/homeadmin"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Home
