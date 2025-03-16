@@ -6,11 +6,9 @@ const Profile = ({ userId }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("🔍 userId received in Profile component:", userId);
+    console.log("🔍 userId received:", userId);
 
-    const cleanUserId = typeof userId === "string" ? userId.trim() : null;
-
-    if (!cleanUserId) {
+    if (!userId || typeof userId !== "string" || userId.trim() === "") {
       console.error("❌ Invalid userId detected!");
       setError("Invalid user ID");
       setLoading(false);
@@ -19,21 +17,24 @@ const Profile = ({ userId }) => {
 
     const fetchUserData = async () => {
       try {
-        console.log("📢 Fetching user data for:", cleanUserId);
-        const response = await fetch(`https://deploycapstone.onrender.com/api/users/${cleanUserId}`);
+        console.log("📢 Fetching user data for:", userId);
+        const response = await fetch(`https://deploycapstone.onrender.com/api/users/${userId}`);
 
-        if (!response.ok) throw new Error("Failed to fetch user data");
+        if (!response.ok) {
+          throw new Error(`Failed to fetch user data: ${response.status} ${response.statusText}`);
+        }
 
         const data = await response.json();
         console.log("✅ User Data Received:", data);
 
-        if (!data || !data.user || !data.email || !data.role)
-          throw new Error("Incomplete user data");
+        if (!data?.user || !data?.email || !data?.role) {
+          throw new Error("Incomplete user data received.");
+        }
 
         setUserData(data);
         setError(null);
       } catch (err) {
-        console.error("❌ Error fetching user data:", err);
+        console.error("❌ Error fetching user data:", err.message);
         setError(err.message);
         setUserData(null);
       } finally {
@@ -44,7 +45,6 @@ const Profile = ({ userId }) => {
     fetchUserData();
   }, [userId]);
 
-  // 📌 Determine user plan
   const userPlan = userData?.premium?.status === "lifetime" ? "Lifetime Premium" : "Basic User";
 
   return (
@@ -65,10 +65,10 @@ const Profile = ({ userId }) => {
             <p style={styles.text}>{userData.email}</p>
 
             <label style={styles.label}>Role:</label>
-            <p style={styles.text}>{userData.role}</p> {/* ✅ Shows user role */}
+            <p style={styles.text}>{userData.role}</p>
 
             <label style={styles.label}>Plan:</label>
-            <p style={styles.text}>{userPlan}</p> {/* ✅ Shows premium/basic status */}
+            <p style={styles.text}>{userPlan}</p>
           </div>
         ) : (
           <p style={styles.error}>No user data available.</p>
@@ -78,7 +78,6 @@ const Profile = ({ userId }) => {
   );
 };
 
-// 🔹 Styles
 const styles = {
   pageContainer: {
     display: "flex",
