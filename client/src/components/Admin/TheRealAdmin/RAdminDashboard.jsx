@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import NavbarAdmin from "../../Navbar/NavbarAdmin"; // <-- Adjust path if needed
+import NavbarReal from "../../Navbar/NavbarReal"; // Make sure NavbarReal is correctly referenced
 import UserTable from "./UserTable";
 import AddUserForm from "./AddUserForm";
 
@@ -19,10 +19,9 @@ const AdminDashboard = () => {
       }
       const data = await response.json();
 
-      // ✅ Ensure premium status is included
       const updatedUsers = data.map((user) => ({
         ...user,
-        premium: user.premium || { status: "basic" }, // Default to "basic" if missing
+        premium: user.premium || { status: "basic" },
       }));
 
       setUsers(updatedUsers);
@@ -35,7 +34,6 @@ const AdminDashboard = () => {
     setSearchQuery(e.target.value);
   };
 
-  // 🔄 Handle Role Change
   const handleRoleChange = async (userId, newRole) => {
     try {
       const response = await fetch(`http://localhost:3004/api/users/${userId}`, {
@@ -51,7 +49,7 @@ const AdminDashboard = () => {
       }
 
       console.log(`✅ Role updated for user ${userId} to ${newRole}`);
-      fetchUsers(); // Refresh user list after update
+      fetchUsers();
     } catch (error) {
       console.error("❌ Error updating role:", error.message);
     }
@@ -61,23 +59,25 @@ const AdminDashboard = () => {
     user.user && user.user.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Inline styles
+  // ✅ Updated styles to improve responsiveness
   const styles = {
     dashboard: {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      width: "90%",
+      width: "100%",
       maxWidth: "1200px",
-      margin: "40px auto",
-      padding: "60px",
-      backgroundColor: "#F5F5DC", // Beige background
+      margin: "120px auto",
+      padding: "10px",
+      backgroundColor: "#F5F5DC",
       borderRadius: "10px",
       boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+      transform: "scale(0.95)", // Scales down everything slightly
+      transformOrigin: "top center",
     },
     header: {
       fontSize: "28px",
-      color: "#5A3E2B", // Dark brown
+      color: "#5A3E2B",
       marginBottom: "20px",
       textAlign: "center",
     },
@@ -88,8 +88,9 @@ const AdminDashboard = () => {
       width: "100%",
       marginBottom: "20px",
       padding: "10px",
-      backgroundColor: "#8B5A2B", // Brown
+      backgroundColor: "#8B5A2B",
       borderRadius: "8px",
+      flexWrap: "wrap", // Makes it mobile-friendly
     },
     input: {
       padding: "10px",
@@ -111,13 +112,13 @@ const AdminDashboard = () => {
 
   return (
     <>
-      {/* Admin Navbar at the top */}
-      <NavbarAdmin />
-      
+      {/* ✅ Updated Navbar to ensure correct styling */}
+      <NavbarReal />
+
       <div style={styles.dashboard}>
         <h1 style={styles.header}>📊 Admin Dashboard</h1>
 
-        {/* Search Users Section */}
+        {/* ✅ Search Users Section */}
         <div style={styles.controls}>
           <input
             type="text"
@@ -128,14 +129,10 @@ const AdminDashboard = () => {
           />
         </div>
 
-        {/* User Table (Now includes Premium Status) */}
-        <UserTable
-          users={filteredUsers}
-          refreshUsers={fetchUsers}
-          onRoleChange={handleRoleChange}
-        />
+        {/* ✅ User Table */}
+        <UserTable users={filteredUsers} refreshUsers={fetchUsers} onRoleChange={handleRoleChange} />
 
-        {/* Add User Section */}
+        {/* ✅ Add User Section */}
         <div style={styles.addUserSection}>
           <AddUserForm refreshUsers={fetchUsers} />
         </div>

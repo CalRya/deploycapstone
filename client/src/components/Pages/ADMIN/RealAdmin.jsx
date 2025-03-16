@@ -6,7 +6,7 @@ function AdminAbout() {
 
   return (
     <main className="App">
-        <NavbarReal/>
+      <NavbarReal/>
       <WholePage/>
     </main>
   );
