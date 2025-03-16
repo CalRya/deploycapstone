@@ -38,9 +38,7 @@ const BookList = () => {
 
   // Filter the books based on the selected category
   const filteredBooks = books.filter((b) => {
-    // If no category is selected, show all
     if (!selectedCategory) return true;
-    // Otherwise, only show books whose category matches selectedCategory
     return b.bookCategory === selectedCategory;
   });
 
@@ -225,13 +223,17 @@ const BookList = () => {
       <hr />
 
       <h2>Book List</h2>
-      {/* Dropdown to filter by category */}
-      <div className="filter-container">
+      {/* Center the filter dropdown */}
+      <div
+        className="filter-container"
+        style={{ textAlign: "center" }}
+      >
         <label htmlFor="filterCategory">Filter by Category:</label>
         <select
           id="filterCategory"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
+          style={{ marginLeft: "10px" }}
         >
           <option value="">All</option>
           <option value="academic">academic</option>
@@ -239,8 +241,15 @@ const BookList = () => {
         </select>
       </div>
 
-      {/* Render filtered books */}
-      <div className="books-container">
+      {/* Center the books */}
+      <div
+        className="books-container"
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
         {filteredBooks.map((b) => (
           <div key={b._id} className="book-card">
             <img
