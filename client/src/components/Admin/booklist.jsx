@@ -11,17 +11,17 @@ const BookList = () => {
     bookGenre: "",
     bookPlatform: "Physical",
     bookAvailability: true, // Boolean value
-    bookCategory: "academic", // NEW field for Academic/Non-Academic (stored lowercase)
+    bookCategory: "academic", // stored lowercase by default
     bookCover: null,
-    bookPdfUrl: "", // NEW field for PDF link
+    bookPdfUrl: "",
   });
 
   // State for filter and list of books
   const [books, setBooks] = useState([]);
-  // Selected category filter: "" (all), "academic", or "non-academic"
+  // "" => show all books, otherwise only show "academic" or "non-academic"
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Fetch books from the backend when the component mounts and after adding a new book
+  // Fetch books from the backend on mount / refresh
   const fetchBooks = async () => {
     try {
       const response = await fetch("https://deploycapstone.onrender.com/api/books");
@@ -38,7 +38,9 @@ const BookList = () => {
 
   // Filter the books based on the selected category
   const filteredBooks = books.filter((b) => {
+    // If no category is selected, show all
     if (!selectedCategory) return true;
+    // Otherwise, only show books whose category matches selectedCategory
     return b.bookCategory === selectedCategory;
   });
 
@@ -70,14 +72,13 @@ const BookList = () => {
     formData.append("bookDescription", book.bookDescription);
     formData.append("bookGenre", book.bookGenre);
     formData.append("bookPlatform", book.bookPlatform);
-    formData.append("bookAvailability", book.bookAvailability ? "true" : "false"); // Convert to string for backend
-    formData.append("bookCategory", book.bookCategory); // Add category field
+    formData.append("bookAvailability", book.bookAvailability ? "true" : "false");
+    formData.append("bookCategory", book.bookCategory);
 
     if (book.bookCover) {
       formData.append("bookCover", book.bookCover);
     }
 
-    // Append PDF link if provided
     if (book.bookPdfUrl.trim()) {
       formData.append("bookPdfUrl", book.bookPdfUrl.trim());
     }
@@ -109,7 +110,7 @@ const BookList = () => {
         bookGenre: "",
         bookPlatform: "Physical",
         bookAvailability: true,
-        bookCategory: "academic", // Reset category
+        bookCategory: "academic",
         bookCover: null,
         bookPdfUrl: "",
       });
@@ -155,7 +156,7 @@ const BookList = () => {
           required
           rows="6"
           cols="50"
-        ></textarea>
+        />
 
         <input
           type="text"
@@ -183,8 +184,8 @@ const BookList = () => {
           onChange={handleChange}
           required
         >
-          <option value="academic">Academic</option>
-          <option value="non-academic">Non-Academic</option>
+          <option value="academic">academic</option>
+          <option value="non-academic">non-academic</option>
         </select>
 
         <select
@@ -233,8 +234,8 @@ const BookList = () => {
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
           <option value="">All</option>
-          <option value="academic">Academic</option>
-          <option value="non-academic">Non-Academic</option>
+          <option value="academic">academic</option>
+          <option value="non-academic">non-academic</option>
         </select>
       </div>
 

@@ -80,9 +80,9 @@ const BookDisplay = ({ searchQuery, bookAdded }) => {
         case "genre":
           return getValue(a, "bookGenre").localeCompare(getValue(b, "bookGenre"));
         case "academic":
-          return a.bookCategory === "Academic" ? -1 : 1;
+          return a.bookCategory === "academic" ? -1 : 1;
         case "non-academic":
-          return a.bookCategory === "Non-Academic" ? -1 : 1;
+          return a.bookCategory === "non-ncademic" ? -1 : 1;
         default:
           return 0;
       }
@@ -118,8 +118,8 @@ const BookDisplay = ({ searchQuery, bookAdded }) => {
           <option value="title">Alphabetical (Title)</option>
           <option value="author">Author</option>
           <option value="genre">Genre</option>
-          <option value="academic">Academic</option>
-          <option value="non-academic">Non-Academic</option>
+          <option value="academic">academic</option>
+          <option value="non-academic">non-academic</option>
         </select>
       </div>
 

@@ -201,8 +201,8 @@ const EditBook = ({ bookToEdit, onClose, onBookUpdated }) => {
           onChange={handleChange}
           style={styles.select}
         >
-          <option value="academic">Academic</option>
-          <option value="non-academic">Non-Academic</option>
+          <option value="academic">academic</option>
+          <option value="non-academic">non-academic</option>
         </select>
 
         <div style={styles.buttonContainer}>
