@@ -46,7 +46,7 @@ const allowedOrigins = [
 ];
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        if (!origin || allowedOrigins.includes(origin) || (origin && origin.endsWith(".vercel.app"))) {
             callback(null, true);
         } else {
             callback(new Error("Not allowed by CORS"));
@@ -301,6 +301,8 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
     try {
       console.log("📥 Received book data:", req.body);
       console.log("File data:", req.file);
+      
+      // Destructure bookCategory along with other fields from the request body
       const {
         bookID,
         bookTitle,
@@ -310,6 +312,7 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
         bookPlatform,
         bookAvailability,
         bookPdfUrl, // ✅ NEW FIELD
+        bookCategory, // NEW: Grab bookCategory from req.body
       } = req.body;
   
       const bookCoverUrl = req.file ? `/uploads/${req.file.filename}` : "";
@@ -328,7 +331,7 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
         bookCoverUrl,
         bookPdfUrl: bookPdfUrl ? bookPdfUrl.trim() : "", // ✅ Store PDF link if provided
         averageRating: 0,
-        bookCategory: bookCategory || "non-academic",
+        bookCategory: bookCategory || "non-academic", // Use the provided category or default to "non-academic"
       });
   
       console.log("✅ Final book object before saving:", newBook);
@@ -339,7 +342,7 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
       console.error("❌ Error adding book:", error);
       res.status(500).json({ error: "Internal server error" });
     }
-  });  
+});  
 
 app.patch("/api/users/:id", async (req, res) => {
     try {
