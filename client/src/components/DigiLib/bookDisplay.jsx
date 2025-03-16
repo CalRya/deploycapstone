@@ -141,6 +141,9 @@ const BookDisplay = ({ searchQuery }) => {
               <p>
                 <strong>Average Rating:</strong> {book.averageRating} ⭐
               </p>
+              <p>
+                <strong>Copies Available:</strong> {book.copiesAvailable}
+              </p>
             </li>
           ))}
         </ul>
@@ -182,6 +185,9 @@ const BookDisplay = ({ searchQuery }) => {
               }`}
             >
               {selectedBook.bookAvailability ? "Available" : "Not Available"}
+            </p>
+            <p>
+              <strong>Copies Available:</strong> {selectedBook.copiesAvailable}
             </p>
             {/* PDF Button */}
             {selectedBook.bookPdfUrl && selectedBook.bookPdfUrl.trim() !== "" ? (
