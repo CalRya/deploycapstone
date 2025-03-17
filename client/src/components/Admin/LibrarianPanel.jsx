@@ -8,16 +8,13 @@ const LibrarianPanel = () => {
         const fetchRequests = async () => {
             try {
                 console.log("📡 Requesting premium requests...");
-                
                 const response = await fetch("https://deploycapstone.onrender.com/api/premium/premium-requests");
-                
+
                 console.log("🔄 Response Status:", response.status);
-                
                 if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
-                
+
                 const data = await response.json();
                 console.log("📥 Fetched Data:", JSON.stringify(data, null, 2));
-                
                 setRequests(data);
             } catch (error) {
                 console.error("❌ Error fetching requests:", error);
@@ -47,6 +44,24 @@ const LibrarianPanel = () => {
         }
     };
 
+    const handleDeny = async (id) => {
+        try {
+            const response = await fetch(`https://deploycapstone.onrender.com/api/premium/reject-premium/${id}`, { 
+                method: "PUT",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            if (!response.ok) throw new Error("Rejection failed");
+            alert("❌ Request denied!");
+
+            // Update state to remove the denied request
+            setRequests((prev) => prev.filter(req => req._id !== id));
+        } catch (error) {
+            alert("❌ Error denying request");
+            console.error(error);
+        }
+    };
+
     return (
         <div style={styles.container}>
             <h2 style={styles.heading}>Librarian Panel - Premium Requests</h2>
@@ -70,6 +85,13 @@ const LibrarianPanel = () => {
                         >
                             Approve
                         </button>
+                        <button 
+                            onClick={() => handleDeny(request._id)} 
+                            disabled={request.status !== "pending"}
+                            style={request.status === "pending" ? styles.denyButton : styles.disabledButton}
+                        >
+                            Deny
+                        </button>
                     </div>
                 ))
             )}
@@ -83,7 +105,7 @@ const styles = {
         maxWidth: "600px",
         margin: "40px auto",
         padding: "20px",
-        backgroundColor: "#F5E6C8", // Soft beige
+        backgroundColor: "#F5E6C8",
         borderRadius: "12px",
         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
         textAlign: "center",
@@ -92,12 +114,12 @@ const styles = {
     heading: {
         fontSize: "22px",
         fontWeight: "bold",
-        color: "#5D4037", // Dark brown
+        color: "#5D4037",
         marginBottom: "15px",
     },
     loadingText: {
         fontSize: "16px",
-        color: "#795548", // Medium brown
+        color: "#795548",
     },
     noRequests: {
         fontSize: "16px",
@@ -105,7 +127,7 @@ const styles = {
         fontStyle: "italic",
     },
     requestCard: {
-        backgroundColor: "#FFF", // White card
+        backgroundColor: "#FFF",
         padding: "15px",
         borderRadius: "8px",
         margin: "10px 0",
@@ -119,14 +141,26 @@ const styles = {
     },
     userName: {
         fontWeight: "bold",
-        color: "#3E2723", // Darker brown
+        color: "#3E2723",
     },
     statusText: {
         fontSize: "14px",
         color: "#795548",
     },
     approveButton: {
-        backgroundColor: "#8D6E63", // Warm brown
+        backgroundColor: "#8D6E63",
+        color: "#FFF",
+        border: "none",
+        padding: "8px 15px",
+        borderRadius: "5px",
+        cursor: "pointer",
+        fontSize: "14px",
+        fontWeight: "bold",
+        marginRight: "10px",
+        transition: "background 0.3s",
+    },
+    denyButton: {
+        backgroundColor: "#D32F2F",
         color: "#FFF",
         border: "none",
         padding: "8px 15px",
@@ -136,11 +170,8 @@ const styles = {
         fontWeight: "bold",
         transition: "background 0.3s",
     },
-    approveButtonHover: {
-        backgroundColor: "#6D4C41", // Darker brown
-    },
     disabledButton: {
-        backgroundColor: "#D7CCC8", // Grayish brown for disabled
+        backgroundColor: "#D7CCC8",
         color: "#5D4037",
         border: "none",
         padding: "8px 15px",
