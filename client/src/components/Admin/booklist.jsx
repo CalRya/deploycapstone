@@ -16,11 +16,6 @@ const BookList = () => {
     bookPdfUrl: "",
   });
 
-  // State for filter and list of books
-  const [books, setBooks] = useState([]);
-  // "" => show all books, otherwise only show "academic" or "non-academic"
-  const [selectedCategory, setSelectedCategory] = useState("");
-
   // Fetch books from the backend on mount / refresh
   const fetchBooks = async () => {
     try {
@@ -35,12 +30,6 @@ const BookList = () => {
   useEffect(() => {
     fetchBooks();
   }, []);
-
-  // Filter the books based on the selected category
-  const filteredBooks = books.filter((b) => {
-    if (!selectedCategory) return true;
-    return b.bookCategory === selectedCategory;
-  });
 
   // Handle input changes (text, select, checkbox)
   const handleChange = (e) => {
@@ -174,7 +163,6 @@ const BookList = () => {
           required
         />
 
-        {/* Select Academic or Non-Academic */}
         <label htmlFor="bookCategory">Book Category:</label>
         <select
           name="bookCategory"
@@ -208,7 +196,6 @@ const BookList = () => {
           </label>
         </div>
 
-        {/* PDF Link Input */}
         <input
           type="text"
           name="bookPdfUrl"
@@ -219,54 +206,6 @@ const BookList = () => {
 
         <button type="submit">Add Book</button>
       </form>
-
-      <hr />
-
-      <h2>Book List</h2>
-      {/* Center the filter dropdown */}
-      <div
-        className="filter-container"
-        style={{ textAlign: "center" }}
-      >
-        <label htmlFor="filterCategory">Filter by Category:</label>
-        <select
-          id="filterCategory"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          style={{ marginLeft: "10px" }}
-        >
-          <option value="">All</option>
-          <option value="academic">academic</option>
-          <option value="non-academic">non-academic</option>
-        </select>
-      </div>
-
-      {/* Center the books */}
-      <div
-        className="books-container"
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
-        {filteredBooks.map((b) => (
-          <div key={b._id} className="book-card">
-            <img
-              src={
-                b.bookCoverUrl && b.bookCoverUrl.startsWith("http")
-                  ? b.bookCoverUrl
-                  : `https://deploycapstone.onrender.com${b.bookCoverUrl}`
-              }
-              alt="Book Cover"
-              className="book-cover"
-            />
-            <h3>{b.bookTitle}</h3>
-            <p>Author: {b.bookAuthor}</p>
-            <p>Category: {b.bookCategory}</p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

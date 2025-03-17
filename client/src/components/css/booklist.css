@@ -3,7 +3,7 @@
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  max-width: 600px; /* Increased max-width for a more spacious form */
   margin: 140px auto 40px; /* Increased margin-top & margin-bottom */
   font-family: "Georgia", serif;
   position: relative;
@@ -12,6 +12,9 @@
   justify-content: center;
   align-items: center;
   min-height: auto; /* Removed fixed height to prevent cutting off */
+  background-color: #f5f1e6; /* Light background for a cozy feel */
+  overflow: hidden; /* Prevents content from overflowing */
+  padding-bottom: 30px; /* Adds padding to the bottom to prevent overlap */
 }
 
 /* Ensures full page is scrollable when needed */
@@ -25,6 +28,8 @@ body {
 .add-book-container h2 {
   text-align: center;
   color: #5a3e2b; /* Rich brown */
+  margin-bottom: 20px; /* Added margin for spacing */
+  font-size: 24px; /* Slightly larger font for heading */
 }
 
 /* Form Layout */
@@ -32,6 +37,8 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 500px; /* Prevents the form from stretching too much */
+  margin: 0 auto; /* Centers the form */
 }
 
 /* Input Fields & Select Dropdown */
@@ -44,6 +51,7 @@ body {
   border-radius: 5px;
   font-size: 16px;
   resize: vertical; /* Allows resizing of the textarea vertically */
+  width: 100%; /* Ensures full width */
 }
 
 /* Focused Input */
@@ -60,6 +68,7 @@ body {
   align-items: center;
   font-size: 16px;
   color: #5a3e2b;
+  margin-bottom: 5px; /* Added margin for spacing between label and input */
 }
 
 /* Checkbox */
@@ -91,5 +100,17 @@ body {
   .add-book-container {
     max-width: 90%;
     margin-top: 160px; /* Increased spacing on small screens */
+    padding: 20px; /* Adds more padding on small screens */
+  }
+
+  .add-book-form input,
+  .add-book-form select,
+  .add-book-form textarea {
+    font-size: 14px; /* Slightly smaller font size on small screens */
+  }
+
+  .add-book-form button {
+    padding: 10px;
+    font-size: 14px;
   }
 }
