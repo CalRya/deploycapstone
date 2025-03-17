@@ -14,7 +14,7 @@ const nodemailer = require("nodemailer");
 const userModel = require("../models/User");
 const Book = require("../models/Book");
 const Borrow = require("../models/Borrow");
-const BorrowRequest = require("./models/BorrowRequest");
+const BorrowRequest = require("../models/BorrowRequest");
 const Quote = require("../models/Quotes");
 
 // Import Routes
