@@ -49,17 +49,18 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("handleSubmit triggered"); // Debug log
+
         if (!validName || !validPwd || !validMatch) {
             setErrMsg("Invalid input, please check your details.");
             return;
         }
 
         const formData = { email, user, password: pwd };
-        console.log("Submitting data: ", formData);
+        console.log("Submitting data: ", formData); // Debug log
 
         try {
             const result = await axios.post(REGISTER_URL, formData, { withCredentials: true });
-            console.log("Response from backend: ", result.data);
+            console.log("Response from backend: ", result.data); // Debug log
 
             // If backend returns user details, store them in localStorage to "auto-login"
             const { id, email: newEmail, role } = result.data;
@@ -132,17 +133,10 @@ const Register = () => {
                             required
                         />
 
-                        {/* Explicitly set type, onClick for debugging, and mobile-friendly styling */}
+                        {/* Submit button */}
                         <button
                             type="submit"
                             disabled={!validName || !validPwd || !validMatch}
-                            onClick={() =>
-                                console.log("Sign Up button clicked", {
-                                    validName,
-                                    validPwd,
-                                    validMatch,
-                                })
-                            }
                             style={{
                                 padding: "15px",
                                 fontSize: "18px",
