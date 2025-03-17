@@ -47,6 +47,20 @@ const ApproveBorrowRequests = () => {
     }
   };
 
+  const handleDenyRequest = async (borrowId) => {
+    try {
+      const response = await axios.put(`https://deploycapstone.onrender.com/api/borrow/reject/${borrowId}`);
+      setSuccessMessage(response.data.message || "Request denied successfully!");
+      setBorrowRequests(prevRequests =>
+        prevRequests.map(request =>
+          request._id === borrowId ? { ...request, status: "rejected" } : request
+        )
+      );
+    } catch (error) {
+      console.error("❌ Error denying request:", error);
+    }
+  };
+
   const handleReturnRequest = async (borrowId) => {
     try {
       const response = await axios.put(`https://deploycapstone.onrender.com/api/borrow/return/${borrowId}`);
@@ -123,9 +137,14 @@ const ApproveBorrowRequests = () => {
                   <td className={`status-${request.status}`}>{request.status}</td>
                   <td>
                     {request.status === "pending" && (
-                      <button className="approve-btn" onClick={() => handleApproveRequest(request._id)}>
-                        Approve
-                      </button>
+                      <>
+                        <button className="approve-btn" onClick={() => handleApproveRequest(request._id)}>
+                          Approve
+                        </button>
+                        <button className="deny-btn" onClick={() => handleDenyRequest(request._id)}>
+                          Deny
+                        </button>
+                      </>
                     )}
                     {["approved", "overdue"].includes(request.status) && (
                       <button className="return-btn" onClick={() => handleReturnRequest(request._id)}>

@@ -8,7 +8,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif;
   color: #5a3e2b; /* Warm brown text */
-  /* Removed max-height and overflow-y so it scrolls naturally */
 }
 
 /* Table Styles */
@@ -61,21 +60,50 @@ button {
   color: white;
 }
 
+/* Approve Button */
 .approve-btn {
   background-color: #6b8e23; /* Olive green */
 }
 
-.return-btn {
-  background-color: #8b5e3c; /* Deep brown */
-}
-
-/* Button Hover Effects */
 .approve-btn:hover {
   background-color: #556b2f;
 }
 
+/* Return Button */
+.return-btn {
+  background-color: #8b5e3c; /* Deep brown */
+}
+
 .return-btn:hover {
   background-color: #6b3e2b;
+}
+
+/* Deny Button */
+.deny-btn {
+  background-color: #c0392b; /* Red theme */
+}
+
+.deny-btn:hover {
+  background-color: #a93226;
+}
+
+/* Success & Notification Messages */
+.success-message, .notification-message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.success-message {
+  background-color: #6b8e23;
+  color: white;
+}
+
+.notification-message {
+  background-color: #8b5e3c;
+  color: white;
 }
 
 /* Responsive Design */
