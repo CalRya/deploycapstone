@@ -11,24 +11,27 @@ const DeveloperRoute = require('../routes/Developer.routes');
 
 const DeveloperMiddleware = require('../middleware/Developer.middleware');
 
-// ✅ Ensure CORS headers allow PATCH and PUT
-app.use((req, res, next) => {
+// ✅ CORS Configuration (Explicitly Allowing PATCH)
+app.use(cors({
+    origin: 'https://pageturnerdeploy.vercel.app',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+}));
+
+// ✅ Handle Preflight Requests Manually
+app.options('*', (req, res) => {
     res.header('Access-Control-Allow-Origin', 'https://pageturnerdeploy.vercel.app');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', 'true');
-
-    // Handle preflight requests
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(204);
-    }
-    
-    next();
+    res.sendStatus(204);
 });
 
-ConnectToDatabase();
-
+// ✅ Ensure JSON Parsing
 app.use(express.json());
+
+ConnectToDatabase();
 
 app.get('/', DeveloperMiddleware.CheckDeveloperTokenValid, (req, res) => {
     res.json({
