@@ -12,7 +12,7 @@ const DeveloperRoute = require('../routes/Developer.routes')
 const DeveloperMiddleware = require('../middleware/Developer.middleware')
 
 app.use(cors({
-    origin: '*',
+    origin: 'https://pageturnerdeploy.vercel.app',
     methods: ['POST', 'GET', 'PATCH', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -27,6 +27,8 @@ app.get('/', DeveloperMiddleware.CheckDeveloperTokenValid, (req, res) => {
         message: `This is Home`
     })
 })
+
+app.options('*', cors())
 
 app.use('/api', UserRoute)
 
