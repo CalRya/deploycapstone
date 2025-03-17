@@ -5,10 +5,7 @@ import axios from "axios";
 import "../css/Register.css";
 import { Link, useNavigate } from "react-router-dom";
 
-// Username: Letters, digits, underscore, hyphen, 4-24 chars, must start with letter
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-
-// Password: 8-24 chars, must have uppercase, lowercase, digit, special char from (!@#$%)
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const API_URL = import.meta.env.VITE_API_URL || "https://deploycapstone.onrender.com";
@@ -17,18 +14,15 @@ const REGISTER_URL = `${API_URL}/register`;
 const Register = () => {
   const userRef = useRef();
   const errRef = useRef();
-  const navigate = useNavigate(); // for redirecting after successful sign up
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [user, setUser] = useState("");
   const [validName, setValidName] = useState(false);
-
   const [pwd, setPwd] = useState("");
   const [validPwd, setValidPwd] = useState(false);
-
   const [matchPwd, setMatchPwd] = useState("");
   const [validMatch, setValidMatch] = useState(false);
-
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -51,57 +45,50 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("handleSubmit triggered");
 
-    // Double-check client-side validation
     if (!validName || !validPwd || !validMatch) {
       setErrMsg("Invalid input, please check your details.");
       return;
     }
 
-    const formData = { email, user, password: pwd };
-    console.log("Submitting data: ", formData);
-
     try {
-      const result = await axios.post(REGISTER_URL, formData, { withCredentials: true });
-      console.log("Response from backend: ", result.data);
+      const result = await axios.post(REGISTER_URL, { email, user, password: pwd }, { withCredentials: true });
 
       const { id, email: newEmail, role } = result.data;
       if (id && newEmail && role) {
         localStorage.setItem("currentUser", JSON.stringify({ id, email: newEmail, role }));
-        setSuccess(true); // Registration succeeded
-        navigate("/home"); // Redirect to home or any page after successful registration
+        setSuccess(true);
+        setTimeout(() => navigate("/home"), 2000); // Redirect after success
       }
+
+      // Reset fields only on successful registration
+      setEmail("");
+      setUser("");
+      setPwd("");
+      setMatchPwd("");
     } catch (err) {
       console.error("❌ Registration Error:", err);
-      if (err.response && err.response.data) {
-        setErrMsg(err.response.data.message || "Failed to create user. Please try again.");
+      if (err.response?.data?.message) {
+        setErrMsg(err.response.data.message);
       } else {
         setErrMsg("Failed to create user. Please try again.");
       }
     }
-
-    // Clear the form fields after submission
-    setEmail("");
-    setUser("");
-    setPwd("");
-    setMatchPwd("");
   };
 
   return (
     <>
       {success ? (
         <section>
-          <h2>Registration successful! You will be redirected to home...</h2>
+          <h2>Registration successful! Redirecting...</h2>
         </section>
       ) : (
         <section>
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>
+          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
             {errMsg}
           </p>
           <h1>Register</h1>
           <form onSubmit={handleSubmit}>
-            {/* Email */}
             <label htmlFor="email">Email:</label>
             <input
               type="email"
@@ -112,7 +99,6 @@ const Register = () => {
               required
             />
 
-            {/* Username */}
             <label htmlFor="username">
               Username:
               <FontAwesomeIcon icon={faCheck} className={validName ? "valid" : "hide"} />
@@ -128,7 +114,6 @@ const Register = () => {
               required
             />
 
-            {/* Password */}
             <label htmlFor="password">
               Password:
               <FontAwesomeIcon icon={faCheck} className={validPwd ? "valid" : "hide"} />
@@ -137,35 +122,20 @@ const Register = () => {
             <input
               type="password"
               id="password"
-              onChange={(e) => {
-                setPwd(e.target.value);
-                // Debug log to confirm if your password meets the regex
-                console.log("pwd:", e.target.value, "validPwd:", PWD_REGEX.test(e.target.value));
-              }}
+              onChange={(e) => setPwd(e.target.value)}
               value={pwd}
               required
             />
-            {/* Show a warning if the user typed something and it's invalid */}
             {pwd && !validPwd && (
               <p className="instructions">
-                8 to 24 characters.
-                <br />
-                Must include uppercase [A-Z], lowercase [a-z], a digit [0-9], and
-                special character (!@#$%).
+                8 to 24 characters. Must include uppercase, lowercase, a number, and a special character (!@#$%).
               </p>
             )}
 
-            {/* Confirm Password */}
             <label htmlFor="confirm_pwd">
               Confirm Password:
-              <FontAwesomeIcon
-                icon={faCheck}
-                className={validMatch && matchPwd ? "valid" : "hide"}
-              />
-              <FontAwesomeIcon
-                icon={faTimes}
-                className={validMatch || !matchPwd ? "hide" : "invalid"}
-              />
+              <FontAwesomeIcon icon={faCheck} className={validMatch && matchPwd ? "valid" : "hide"} />
+              <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? "hide" : "invalid"} />
             </label>
             <input
               type="password"
@@ -174,27 +144,22 @@ const Register = () => {
               value={matchPwd}
               required
             />
-            {/* Show a warning if the user typed something but doesn't match the password */}
-            {matchPwd && !validMatch && (
-              <p className="instructions">Must match the first password field.</p>
-            )}
+            {matchPwd && !validMatch && <p className="instructions">Must match the first password field.</p>}
 
             <button
               type="submit"
               disabled={!validName || !validPwd || !validMatch}
-              style={{
-                padding: "15px",
-                fontSize: "18px",
-                width: "100%",
-                cursor: "pointer",
-              }}
+              style={{ padding: "15px", fontSize: "18px", width: "100%", cursor: "pointer" }}
             >
               Sign Up
             </button>
           </form>
 
           <p>
-            Already registered? <Link to="/login">Sign In</Link>
+            Already registered?{" "}
+            <Link to="/login" className="btn-inline">
+              Sign In
+            </Link>
           </p>
         </section>
       )}

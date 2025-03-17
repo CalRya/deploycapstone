@@ -60,12 +60,12 @@ input:focus {
     box-shadow: 0px 0px 5px rgba(139, 94, 59, 0.3);
 }
 
-/* Button */
+/* Button - Updated to use forgot password color */
 button {
     width: 100%;
     padding: 12px;
     margin-top: 15px;
-    background: #8b5e3b;
+    background: #704c2f; /* Updated default color */
     border: none;
     color: white;
     font-size: 1rem;
@@ -77,7 +77,7 @@ button {
 }
 
 button:hover {
-    background: #704c2f;
+    background: #8b5e3b; /* Updated hover color */
 }
 
 /* Error Message */
@@ -155,4 +155,25 @@ p a:hover {
 .offscreen {
     position: absolute;
     left: -9999px;
+}
+
+/* 
+  =========================================
+  Button-like Links for "Sign In" / "Sign Up"
+  =========================================
+*/
+.btn-inline {
+    display: inline-block;
+    background-color: #704c2f; /* Same color as your sign-up button */
+    color: #fff;
+    padding: 8px 16px;
+    margin-left: 8px;  /* Space before the button */
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-inline:hover {
+    background-color: #8b5e3b; /* Hover color */
 }

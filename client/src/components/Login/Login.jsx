@@ -129,8 +129,10 @@ function Login() {
       <p>
         <Link to="/forgot-password">Forgot Password?</Link>
       </p>
+      {/* "Need an Account?" with Sign Up button-like link */}
       <p>
-        Need an Account? <Link to="/register">Sign Up</Link>
+        Need an Account?
+        <Link to="/register" className="btn-inline">Sign Up</Link>
       </p>
     </section>
   );

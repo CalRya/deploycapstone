@@ -68,23 +68,23 @@ input:focus {
     box-shadow: 0px 0px 5px rgba(139, 94, 59, 0.3);
 }
 
-/* Submit Button */
+/* Submit Button - Updated to use forgot password color */
 button {
     width: 100%;
     padding: 14px;
     margin-top: 15px;
-    background: #8b5e3b;
+    background: #704c2f;  /* Changed to forgot password color */
     border: none;
-    color: rgb(255, 255, 255);
+    color: #fff;
     font-size: 1rem;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background 0.3s ease;
 }
 
 button:hover {
-    background: #704c2f;
+    background: #8b5e3b; /* Updated hover color */
 }
 
 /* Error Message */
@@ -144,4 +144,25 @@ p a {
 p a:hover {
     color: #704c2f;
     text-decoration: underline;
+}
+
+/* 
+  =========================================
+  Button-like Links for "Sign In" / "Sign Up"
+  =========================================
+*/
+.btn-inline {
+    display: inline-block;
+    background-color: #704c2f; /* Same color as your sign-in button */
+    color: #fff;
+    padding: 8px 16px;
+    margin-left: 8px;  /* Space before the button */
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-inline:hover {
+    background-color: #8b5e3b; /* Hover color */
 }
