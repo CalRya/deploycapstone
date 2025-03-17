@@ -100,7 +100,7 @@ function Login() {
     return (
         <section>
             {errMsg && <p ref={errRef} className="errmsg">{errMsg}</p>}
-            <h1>Sign In</h1>
+            <h1>Sign in</h1>
             <form onSubmit={handleSubmit} noValidate>
                 <label htmlFor="email">Email:</label>
                 <input

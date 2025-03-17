@@ -2,16 +2,17 @@
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #f5e6d7;
-    display: flex;
-    justify-content: center; 
-    /* Removed align-items: center so the container can be moved to the top */
-    height: 2vh;
     margin: 0;
+    padding: 0;
     overflow: hidden; /* Removes the vertical scroll bar */
 }
 
-/* Container to properly contain everything */
 section {
+    position: absolute;
+    top: 10px; /* Adjust this value to move container up/down */
+    left: 50%;
+    transform: translateX(-50%);
+    
     background: #fff8f0;
     padding: 2rem;
     border-radius: 12px;
@@ -22,9 +23,6 @@ section {
     box-sizing: border-box;
     overflow: hidden;
     word-wrap: break-word;
-    
-    /* Adjust this value to move it up/down */
-    margin-top: 1rem; 
 }
 
 /* Headings */
