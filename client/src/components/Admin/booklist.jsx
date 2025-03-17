@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import "../css/booklist.css";
+import React, { useState } from "react";
 
 const BookList = () => {
   // State for the Add Book form
   const [book, setBook] = useState({
-    bookID: "",
+    bookID: "", // ID field now included
     bookTitle: "",
     bookAuthor: "",
     bookDescription: "",
@@ -16,79 +15,40 @@ const BookList = () => {
     bookPdfUrl: "",
   });
 
-  // Fetch books from the backend on mount / refresh
-  const fetchBooks = async () => {
-    try {
-      const response = await fetch("https://deploycapstone.onrender.com/api/books");
-      const data = await response.json();
-      setBooks(data);
-    } catch (error) {
-      console.error("Error fetching books:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchBooks();
-  }, []);
-
-  // Handle input changes (text, select, checkbox)
+  // Handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setBook((prevBook) => ({
-      ...prevBook,
+    setBook({
+      ...book,
       [name]: type === "checkbox" ? checked : value,
-    }));
+    });
   };
 
-  // Handle file selection
+  // Handle file change for book cover
   const handleFileChange = (e) => {
-    setBook((prevBook) => ({
-      ...prevBook,
+    setBook({
+      ...book,
       bookCover: e.target.files[0],
-    }));
+    });
   };
 
-  // Handle form submission to add a new book
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("bookID", book.bookID);
-    formData.append("bookTitle", book.bookTitle);
-    formData.append("bookAuthor", book.bookAuthor);
-    formData.append("bookDescription", book.bookDescription);
-    formData.append("bookGenre", book.bookGenre);
-    formData.append("bookPlatform", book.bookPlatform);
-    formData.append("bookAvailability", book.bookAvailability ? "true" : "false");
-    formData.append("bookCategory", book.bookCategory);
-
-    if (book.bookCover) {
-      formData.append("bookCover", book.bookCover);
-    }
-
-    if (book.bookPdfUrl.trim()) {
-      formData.append("bookPdfUrl", book.bookPdfUrl.trim());
-    }
-
-    console.log("📤 Sending data:", Object.fromEntries(formData));
-
     try {
-      const response = await fetch("https://deploycapstone.onrender.com/api/books", {
+      const formData = new FormData();
+      for (const key in book) {
+        formData.append(key, book[key]);
+      }
+
+      const response = await fetch("https://your-api-endpoint.com/api/books", {
         method: "POST",
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
+      if (!response.ok) throw new Error("Failed to add book");
 
-      const newBook = await response.json();
-      console.log("✅ Book added successfully:", newBook);
-
-      // Refresh book list after adding
-      fetchBooks();
-
-      // Reset form
+      alert("Book added successfully!");
       setBook({
         bookID: "",
         bookTitle: "",
@@ -102,108 +62,102 @@ const BookList = () => {
         bookPdfUrl: "",
       });
     } catch (error) {
-      console.error("❌ Failed to add book:", error);
+      console.error("Error adding book:", error);
     }
   };
 
   return (
-    <div className="booklist-container">
+    <div>
       <h2>Add a New Book</h2>
-      <form onSubmit={handleSubmit} encType="multipart/form-data" className="add-book-form">
+      <form onSubmit={handleSubmit}>
+        {/* Book ID (Editable or Auto-Generated) */}
+        <label>Book ID:</label>
         <input
           type="text"
           name="bookID"
           value={book.bookID}
           onChange={handleChange}
-          placeholder="Book ID"
-          required
+          disabled={false} // Change to true if the backend auto-generates the ID
         />
+
+        {/* Book Title */}
+        <label>Book Title:</label>
         <input
           type="text"
           name="bookTitle"
           value={book.bookTitle}
           onChange={handleChange}
-          placeholder="Book Title"
           required
         />
+
+        {/* Author */}
+        <label>Author:</label>
         <input
           type="text"
           name="bookAuthor"
           value={book.bookAuthor}
           onChange={handleChange}
-          placeholder="Author"
           required
         />
 
+        {/* Description */}
+        <label>Description:</label>
         <textarea
           name="bookDescription"
           value={book.bookDescription}
           onChange={handleChange}
-          placeholder="Description"
-          required
-          rows="6"
-          cols="50"
         />
 
+        {/* Genre */}
+        <label>Genre:</label>
         <input
           type="text"
           name="bookGenre"
           value={book.bookGenre}
           onChange={handleChange}
-          placeholder="Genre"
-          required
         />
 
+        {/* Upload Book Cover */}
         <label>Upload Book Cover:</label>
-        <input
-          type="file"
-          name="bookCover"
-          accept="image/*"
-          onChange={handleFileChange}
-          required
-        />
+        <input type="file" accept="image/*" onChange={handleFileChange} />
 
-        <label htmlFor="bookCategory">Book Category:</label>
-        <select
-          name="bookCategory"
-          value={book.bookCategory}
-          onChange={handleChange}
-          required
-        >
-          <option value="academic">academic</option>
-          <option value="non-academic">non-academic</option>
+        {/* Book Category Dropdown */}
+        <label>Book Category:</label>
+        <select name="bookCategory" value={book.bookCategory} onChange={handleChange}>
+          <option value="academic">Academic</option>
+          <option value="fiction">Fiction</option>
+          <option value="nonfiction">Non-fiction</option>
+          <option value="fantasy">Fantasy</option>
         </select>
 
-        <select
-          name="bookPlatform"
-          value={book.bookPlatform}
-          onChange={handleChange}
-          required
-        >
+        {/* Platform Selection */}
+        <label>Platform:</label>
+        <select name="bookPlatform" value={book.bookPlatform} onChange={handleChange}>
           <option value="Physical">Physical</option>
-          <option value="Digital">Digital</option>
+          <option value="Ebook">Ebook</option>
         </select>
 
-        <div className="checkbox-container">
-          <label>
-            Available:
-            <input
-              type="checkbox"
-              name="bookAvailability"
-              checked={book.bookAvailability}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
+        {/* Availability Checkbox */}
+        <label>
+          Available:
+          <input
+            type="checkbox"
+            name="bookAvailability"
+            checked={book.bookAvailability}
+            onChange={handleChange}
+          />
+        </label>
 
+        {/* Optional PDF Link */}
+        <label>PDF Link (optional):</label>
         <input
           type="text"
           name="bookPdfUrl"
           value={book.bookPdfUrl}
           onChange={handleChange}
-          placeholder="PDF Link (optional)"
         />
 
+        {/* Submit Button */}
         <button type="submit">Add Book</button>
       </form>
     </div>
