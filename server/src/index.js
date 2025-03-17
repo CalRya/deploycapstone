@@ -252,6 +252,26 @@ app.put("/api/borrow/approve/:borrowId", async (req, res) => {
   }
 });
 
+app.put("/api/borrow/reject/:id", async (req, res) => {
+  try {
+      const borrowId = req.params.id;
+      
+      const updatedRequest = await BorrowRequest.findByIdAndUpdate(
+          borrowId,
+          { status: "denied" },
+          { new: true }
+      );
+
+      if (!updatedRequest) {
+          return res.status(404).json({ message: "Request not found" });
+      }
+
+      res.json({ message: "Request denied successfully", data: updatedRequest });
+  } catch (error) {
+      res.status(500).json({ message: "Internal Server Error", error });
+  }
+});
+
 // Return a borrowed book
 app.put("/api/borrow/return/:borrowId", async (req, res) => {
   try {
