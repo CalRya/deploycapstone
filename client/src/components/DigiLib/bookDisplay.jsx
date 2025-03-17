@@ -8,7 +8,7 @@ const BookDisplay = ({ searchQuery, bookAdded }) => {
   const [ratingUpdated, setRatingUpdated] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [sortOption, setSortOption] = useState(""); // Sorting option
+  const [sortOption, setSortOption] = useState("bookid"); // Set default to 'bookid'
   const BASE_URL = "https://deploycapstone.onrender.com";
 
   // Fetch Books
@@ -82,11 +82,11 @@ const BookDisplay = ({ searchQuery, bookAdded }) => {
         case "academic":
           return a.bookCategory === "academic" ? -1 : 1;
         case "non-academic":
-          return a.bookCategory === "non-ncademic" ? -1 : 1;
-          case "bookid":
-            return a.bookID.localeCompare(b.bookID); // Sort by bookID
-            default:
-              return 0; // Default to no sorting
+          return a.bookCategory === "non-academic" ? -1 : 1;
+        case "bookid":
+          return a.bookID.localeCompare(b.bookID); // Sort by bookID
+        default:
+          return 0; // Default to no sorting
       }
     });
   };
