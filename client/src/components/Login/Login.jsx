@@ -10,6 +10,7 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errMsg, setErrMsg] = useState("");
+    const [passwordWarning, setPasswordWarning] = useState("");
     const userRef = useRef();
     const errRef = useRef();
     const navigate = useNavigate();
@@ -20,13 +21,39 @@ function Login() {
         userRef.current?.focus();
     }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevents default form navigation
+    // Validate that the password has at least one uppercase letter, one special character, and one number
+    const validatePassword = (pwd) => {
+        const upperCaseRegex = /[A-Z]/;
+        const specialCharRegex = /[\W_]/;
+        const numberRegex = /[0-9]/;
+        return upperCaseRegex.test(pwd) && specialCharRegex.test(pwd) && numberRegex.test(pwd);
+    };
 
-        console.log("📨 Sending POST request to:", LOGIN_URL);
+    // Handle changes in the password field and display a warning if it doesn't meet criteria
+    const handlePasswordChange = (e) => {
+        const newPassword = e.target.value;
+        setPassword(newPassword);
+        if (newPassword && !validatePassword(newPassword)) {
+            setPasswordWarning("Password must contain at least 1 uppercase letter, 1 special character, and 1 number.");
+        } else {
+            setPasswordWarning("");
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Prevent default form submission
+
+        // Reset error message on submit
+        setErrMsg("");
 
         if (!email || !password) {
             setErrMsg("Please fill in both fields.");
+            return;
+        }
+
+        // Ensure password meets the criteria before sending the request
+        if (!validatePassword(password)) {
+            setErrMsg("Password must contain at least 1 uppercase letter, 1 special character, and 1 number.");
             return;
         }
 
@@ -37,11 +64,8 @@ function Login() {
                 { withCredentials: true } // Ensures cookies are sent
             );
 
-            console.log("✅ Server Response:", result.data);
-
             if (result.data?.message?.includes("Login successful")) {
                 const { id, email, role } = result.data;
-
                 if (!id || !email || !role) {
                     setErrMsg("Login error: Missing user details.");
                     return;
@@ -93,14 +117,14 @@ function Login() {
                 <input
                     type="password"
                     id="password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     value={password}
                     required
                 />
+                {passwordWarning && <p className="password-warning">{passwordWarning}</p>}
 
                 <button type="submit">Sign In</button>
             </form>
-
             <p>Need an Account? <Link to="/register">Sign Up</Link></p>
         </section>
     );
