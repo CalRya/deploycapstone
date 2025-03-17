@@ -65,7 +65,7 @@ const Register = () => {
       const { id, email: newEmail, role } = result.data;
       if (id && newEmail && role) {
         localStorage.setItem("currentUser", JSON.stringify({ id, email: newEmail, role }));
-        setSuccess(true); // Registration succeeded, set success to true
+        setSuccess(true); // Registration succeeded
         navigate("/home"); // Redirect to home or any page after successful registration
       }
     } catch (err) {
