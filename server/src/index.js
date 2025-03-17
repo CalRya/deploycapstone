@@ -27,7 +27,7 @@ const authRoutes = require("../routes/authRoutes");
 
 const MONGODB_URI =
   process.env.MONGODB_URI ||
-  "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/Library1?retryWrites=true&w=majority&appName=Library1";
+  "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE?retryWrites=true&w=majority&appName=Library1";
 
 mongoose
   .connect(MONGODB_URI)
