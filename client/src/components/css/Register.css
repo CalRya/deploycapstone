@@ -99,6 +99,21 @@ button:hover {
     margin-top: 5px;
 }
 
+/* Icon States for FontAwesome */
+.hide {
+    display: none;
+}
+
+.invalid {
+    color: red;
+    margin-left: 8px;
+}
+
+.valid {
+    color: green;
+    margin-left: 8px;
+}
+
 /* Links */
 .line {
     margin-top: 15px;

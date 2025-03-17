@@ -137,7 +137,11 @@ const Register = () => {
             <input
               type="password"
               id="password"
-              onChange={(e) => setPwd(e.target.value)}
+              onChange={(e) => {
+                setPwd(e.target.value);
+                // Debug log to confirm if your password meets the regex
+                console.log("pwd:", e.target.value, "validPwd:", PWD_REGEX.test(e.target.value));
+              }}
               value={pwd}
               required
             />
