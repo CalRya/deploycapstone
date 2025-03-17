@@ -125,9 +125,7 @@ const BookList = () => {
         <label>Book Category:</label>
         <select name="bookCategory" value={book.bookCategory} onChange={handleChange}>
           <option value="academic">Academic</option>
-          <option value="fiction">Fiction</option>
-          <option value="nonfiction">Non-fiction</option>
-          <option value="fantasy">Fantasy</option>
+          <option value="non-academic">Non-Academic</option>
         </select>
 
         {/* Platform Selection */}
