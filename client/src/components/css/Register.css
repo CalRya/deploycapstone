@@ -5,8 +5,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 10vh;
     margin: 0;
+    overflow: hidden; /* Removes the vertical scroll bar */
 }
 
 /* Container to properly contain everything */
@@ -21,6 +22,9 @@ section {
     box-sizing: border-box;
     overflow: hidden; /* Prevents text from overflowing */
     word-wrap: break-word; /* Ensures text stays inside */
+    
+    /* Added for vertical adjustment using transform */
+    transform: translateY(var(--vertical-offset, 0)); /* Change the value here (e.g., 20px, -20px, etc.) to adjust vertical position */
 }
 
 /* Headings */
