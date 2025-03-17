@@ -92,6 +92,13 @@ button:hover {
     word-wrap: break-word;
 }
 
+/* Password Instructions */
+.instructions {
+    font-size: 0.9rem;
+    color: #c22; /* Red tone for warnings */
+    margin-top: 5px;
+}
+
 /* Links */
 .line {
     margin-top: 15px;
