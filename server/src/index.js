@@ -22,7 +22,7 @@ const adminRoutes = require("../routes/adminRoutes");
 const articleRoutes = require("../routes/articleRoutes");
 const borrowRoutes = require("../routes/borrowRoutes");
 const premiumRoutes = require("../routes/premiumRoutes");
-// 1️⃣ Import your new auth routes (which contain forgot/reset password endpoints)
+// Import your new auth routes (which contain forgot/reset password endpoints)
 const authRoutes = require("../routes/authRoutes");
 
 const MONGODB_URI =
@@ -30,7 +30,7 @@ const MONGODB_URI =
   "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/CAPSTONE?retryWrites=true&w=majority&appName=Library1";
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
     console.log("✅ Connected to MongoDB Atlas");
 
@@ -49,6 +49,7 @@ const calculateLateFee = (dueDate) => {
 };
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // support URL-encoded data
 
 const allowedOrigins = [
   "http://localhost:5173",
@@ -60,8 +61,11 @@ app.use(
     origin: (origin, callback) => {
       if (
         !origin ||
-        allowedOrigins.includes(origin) ||
-        (origin && origin.endsWith(".vercel.app"))
+        allowedOrigins.some((allowed) => {
+          if (typeof allowed === "string") return allowed === origin;
+          if (allowed instanceof RegExp) return allowed.test(origin);
+          return false;
+        })
       ) {
         callback(null, true);
       } else {
@@ -85,23 +89,9 @@ app.options("*", (req, res) => {
   res.sendStatus(200);
 });
 
-// --- New Route to support frontend calls to /borrow/:user ---
-app.get("/borrow/:user", async (req, res) => {
-  try {
-    const { user } = req.params;
-    if (!user) return res.status(400).json({ message: "User ID is required" });
-    const borrowedBooks = await Borrow.find({
-      user: user,
-      status: { $in: ["pending", "approved", "returned"] },
-    }).populate("book");
-    res.status(200).json(borrowedBooks);
-  } catch (error) {
-    console.error("❌ Error fetching borrowed books:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+// --- Inline Routes (non-auth related) ---
 
-// Existing routes:
+// Get all books
 app.get("/books", async (req, res) => {
   try {
     const books = await Book.find();
@@ -111,6 +101,7 @@ app.get("/books", async (req, res) => {
   }
 });
 
+// Register
 app.post("/register", async (req, res) => {
   try {
     const { user, email, password } = req.body;
@@ -139,6 +130,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
+// Login
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -162,6 +154,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// API route for fetching borrowed books for a user
 app.get("/api/borrow/:user", async (req, res) => {
   try {
     const { user } = req.params;
@@ -177,7 +170,7 @@ app.get("/api/borrow/:user", async (req, res) => {
   }
 });
 
-// NEW ROUTE for fetching all users (for admin dashboard)
+// Get all users (for admin dashboard)
 app.get("/api/users", async (req, res) => {
   try {
     const users = await userModel.find().select("user email role premium");
@@ -188,7 +181,7 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-// Route for fetching a single user by ID:
+// Get a single user by ID
 app.get("/api/users/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -204,6 +197,7 @@ app.get("/api/users/:userId", async (req, res) => {
   }
 });
 
+// Borrow a book
 app.post("/api/borrow/:bookID", async (req, res) => {
   try {
     const { bookID } = req.params;
@@ -238,6 +232,7 @@ app.post("/api/borrow/:bookID", async (req, res) => {
   }
 });
 
+// Approve borrow request
 app.put("/api/borrow/approve/:borrowId", async (req, res) => {
   try {
     const { borrowId } = req.params;
@@ -257,6 +252,7 @@ app.put("/api/borrow/approve/:borrowId", async (req, res) => {
   }
 });
 
+// Return a borrowed book
 app.put("/api/borrow/return/:borrowId", async (req, res) => {
   try {
     const { borrowId } = req.params;
@@ -283,6 +279,7 @@ app.put("/api/borrow/return/:borrowId", async (req, res) => {
   }
 });
 
+// Get all books (API)
 app.get("/api/books", async (req, res) => {
   try {
     const books = await Book.find();
@@ -292,6 +289,7 @@ app.get("/api/books", async (req, res) => {
   }
 });
 
+// Get random books
 app.get("/api/books/random", async (req, res) => {
   try {
     const books = await Book.aggregate([{ $sample: { size: 8 } }]);
@@ -302,6 +300,7 @@ app.get("/api/books/random", async (req, res) => {
   }
 });
 
+// Get all borrow requests
 app.get("/api/borrow", async (req, res) => {
   try {
     const borrowRequests = await Borrow.find({
@@ -317,12 +316,14 @@ app.get("/api/borrow", async (req, res) => {
   }
 });
 
+// Multer configuration for file uploads
 const storageConfig = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname)),
 });
 const uploadConfig = multer({ storage: storageConfig });
 
+// Add a new book
 app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
   try {
     console.log("📥 Received book data:", req.body);
@@ -363,6 +364,7 @@ app.post("/api/books", uploadConfig.single("bookCover"), async (req, res) => {
   }
 });
 
+// Update a book
 app.put("/api/books/:id", uploadConfig.single("bookCover"), async (req, res) => {
   try {
     const { id } = req.params;
@@ -387,6 +389,7 @@ app.put("/api/books/:id", uploadConfig.single("bookCover"), async (req, res) => 
   }
 });
 
+// Update user role
 app.patch("/api/users/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -405,6 +408,7 @@ app.patch("/api/users/:id", async (req, res) => {
   }
 });
 
+// Get stats
 app.get("/api/stats", async (req, res) => {
   try {
     const totalUsers = await userModel.countDocuments();
@@ -423,6 +427,7 @@ app.get("/api/stats", async (req, res) => {
   }
 });
 
+// Submit rating for a borrow record
 app.put("/api/rate/:borrowId", async (req, res) => {
   console.log("🚀 API HIT: PUT /api/rate/:borrowId");
   try {
@@ -469,6 +474,7 @@ app.put("/api/rate/:borrowId", async (req, res) => {
   }
 });
 
+// Update a quote
 app.put("/quote/:id", async (req, res) => {
   try {
     const { text, author } = req.body;
@@ -488,6 +494,7 @@ app.put("/quote/:id", async (req, res) => {
   }
 });
 
+// Get a random quote
 app.get("/quote", async (req, res) => {
   try {
     const quote = await Quote.aggregate([{ $sample: { size: 1 } }]);
@@ -501,6 +508,7 @@ app.get("/quote", async (req, res) => {
   }
 });
 
+// Buy premium membership
 app.post("/api/buy-premium", async (req, res) => {
   const { userId } = req.body;
   console.log("🛒 Premium purchase request for:", userId);
@@ -520,6 +528,7 @@ app.post("/api/buy-premium", async (req, res) => {
   }
 });
 
+// Check premium status
 app.get("/api/check-premium/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
@@ -535,14 +544,13 @@ app.get("/", (req, res) => {
   res.send("📚 Library Management API is running.");
 });
 
-// Use route files
+// Use route files for modular routes
 app.use("/api/books", bookRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/borrow", borrowRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/premium", premiumRoutes);
 
-// Use the new auth routes (which include forgot/reset password endpoints)
 app.use("/api", authRoutes);
 
 app.get("*", (req, res) => {
