@@ -5,7 +5,10 @@ import axios from "axios";
 import "../css/Register.css";
 import { Link, useNavigate } from "react-router-dom";
 
+// Username: Letters, digits, underscore, hyphen, 4-24 chars, must start with letter
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+
+// Password: 8-24 chars, must have uppercase, lowercase, digit, special char from (!@#$%)
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const API_URL = import.meta.env.VITE_API_URL || "https://deploycapstone.onrender.com";
@@ -50,6 +53,7 @@ const Register = () => {
     e.preventDefault();
     console.log("handleSubmit triggered");
 
+    // Double-check client-side validation
     if (!validName || !validPwd || !validMatch) {
       setErrMsg("Invalid input, please check your details.");
       return;
@@ -92,9 +96,12 @@ const Register = () => {
         </section>
       ) : (
         <section>
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p>
+          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>
+            {errMsg}
+          </p>
           <h1>Register</h1>
           <form onSubmit={handleSubmit}>
+            {/* Email */}
             <label htmlFor="email">Email:</label>
             <input
               type="email"
@@ -105,6 +112,7 @@ const Register = () => {
               required
             />
 
+            {/* Username */}
             <label htmlFor="username">
               Username:
               <FontAwesomeIcon icon={faCheck} className={validName ? "valid" : "hide"} />
@@ -120,7 +128,12 @@ const Register = () => {
               required
             />
 
-            <label htmlFor="password">Password:</label>
+            {/* Password */}
+            <label htmlFor="password">
+              Password:
+              <FontAwesomeIcon icon={faCheck} className={validPwd ? "valid" : "hide"} />
+              <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? "hide" : "invalid"} />
+            </label>
             <input
               type="password"
               id="password"
@@ -128,8 +141,28 @@ const Register = () => {
               value={pwd}
               required
             />
+            {/* Show a warning if the user typed something and it's invalid */}
+            {pwd && !validPwd && (
+              <p className="instructions">
+                8 to 24 characters.
+                <br />
+                Must include uppercase [A-Z], lowercase [a-z], a digit [0-9], and
+                special character (!@#$%).
+              </p>
+            )}
 
-            <label htmlFor="confirm_pwd">Confirm Password:</label>
+            {/* Confirm Password */}
+            <label htmlFor="confirm_pwd">
+              Confirm Password:
+              <FontAwesomeIcon
+                icon={faCheck}
+                className={validMatch && matchPwd ? "valid" : "hide"}
+              />
+              <FontAwesomeIcon
+                icon={faTimes}
+                className={validMatch || !matchPwd ? "hide" : "invalid"}
+              />
+            </label>
             <input
               type="password"
               id="confirm_pwd"
@@ -137,6 +170,10 @@ const Register = () => {
               value={matchPwd}
               required
             />
+            {/* Show a warning if the user typed something but doesn't match the password */}
+            {matchPwd && !validMatch && (
+              <p className="instructions">Must match the first password field.</p>
+            )}
 
             <button
               type="submit"
@@ -152,7 +189,9 @@ const Register = () => {
             </button>
           </form>
 
-          <p>Already registered? <Link to="/login">Sign In</Link></p>
+          <p>
+            Already registered? <Link to="/login">Sign In</Link>
+          </p>
         </section>
       )}
     </>
