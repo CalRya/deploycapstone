@@ -83,8 +83,10 @@ const BookDisplay = ({ searchQuery, bookAdded }) => {
           return a.bookCategory === "academic" ? -1 : 1;
         case "non-academic":
           return a.bookCategory === "non-ncademic" ? -1 : 1;
-        default:
-          return 0;
+          case "bookid":
+            return a.bookID.localeCompare(b.bookID); // Sort by bookID
+            default:
+              return 0; // Default to no sorting
       }
     });
   };
@@ -114,7 +116,7 @@ const BookDisplay = ({ searchQuery, bookAdded }) => {
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
         >
-          <option value="">Default</option>
+          <option value="bookid">Default</option>
           <option value="title">Alphabetical (Title)</option>
           <option value="author">Author</option>
           <option value="genre">Genre</option>
