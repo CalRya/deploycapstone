@@ -11,7 +11,6 @@ const DeveloperRoute = require('../routes/Developer.routes');
 
 const DeveloperMiddleware = require('../middleware/Developer.middleware');
 
-// ✅ CORS Configuration (Explicitly Allowing PATCH)
 app.use(cors({
     origin: 'https://pageturnerdeploy.vercel.app',
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
@@ -19,24 +18,26 @@ app.use(cors({
     credentials: true,
 }));
 
-// ✅ Handle Preflight Requests Manually
-app.options('*', (req, res) => {
+// 🔥 Add this middleware to manually handle CORS for preflight requests
+app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'https://pageturnerdeploy.vercel.app');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.sendStatus(204);
-});
 
-// ✅ Ensure JSON Parsing
-app.use(express.json());
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204); // No Content response for preflight
+    }
+    
+    next();
+});
 
 ConnectToDatabase();
 
+app.use(express.json());
+
 app.get('/', DeveloperMiddleware.CheckDeveloperTokenValid, (req, res) => {
-    res.json({
-        message: `This is Home`
-    });
+    res.json({ message: `This is Home` });
 });
 
 app.use('/api', UserRoute);
