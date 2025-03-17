@@ -12,7 +12,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/api/reset-password/${token}`, { password });
+      await axios.post(`https://deploycapstone.onrender.com/api/reset-password/${token}`, { password });
       setMessage("Password reset successful! Redirecting to login...");
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {

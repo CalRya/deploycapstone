@@ -62,7 +62,7 @@ router.post("/forgot-password", async (req, res) => {
     });
 
     // Construct reset link (update the URL to match your frontend)
-    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetLink = `https://deploycapstone.onrender.com/reset-password/${resetToken}`;
 
     await transporter.sendMail({
       to: user.email,

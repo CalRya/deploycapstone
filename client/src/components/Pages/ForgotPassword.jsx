@@ -11,7 +11,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/forgot-password", { email });
+      const res = await axios.post("https://deploycapstone.onrender.com/api/forgot-password", { email });
       setMessage(res.data.message);
     } catch (err) {
       console.error(err);
