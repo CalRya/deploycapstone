@@ -11,35 +11,35 @@ const DeveloperRoute = require('../routes/Developer.routes');
 
 const DeveloperMiddleware = require('../middleware/Developer.middleware');
 
+// 🔥 Configure CORS properly
 app.use(cors({
     origin: 'https://pageturnerdeploy.vercel.app',
-    methods: 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization',
-    credentials: true
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'], // Ensure PATCH is included
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 }));
 
-// 🔥 Add this middleware to manually handle CORS for preflight requests
-app.use((req, res, next) => {
+// 🔥 Handle CORS manually for preflight requests
+app.options('*', (req, res) => {
     res.header('Access-Control-Allow-Origin', 'https://pageturnerdeploy.vercel.app');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', 'true');
-
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(204); // No Content response for preflight
-    }
-    
-    next();
+    return res.sendStatus(204); // No Content response for preflight
 });
 
+// Connect to database
 ConnectToDatabase();
 
+// Middleware to parse JSON
 app.use(express.json());
 
+// Default home route
 app.get('/', DeveloperMiddleware.CheckDeveloperTokenValid, (req, res) => {
     res.json({ message: `This is Home` });
 });
 
+// Register routes
 app.use('/api', UserRoute);
 app.use('/api', AccountRoute);
 app.use('/api', TransactionRoute);
