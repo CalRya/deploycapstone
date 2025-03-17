@@ -12,16 +12,16 @@ const SpinWheelGame = () => {
   // Fetch random books from the database (limited to 5)
   const fetchRandomBooks = async () => {
     try {
-      const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5"); // If API supports limits
+      const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
       if (!response.ok) throw new Error("Failed to fetch books");
 
       let data = await response.json();
-      console.log("Fetched books:", data); // Debugging log
+      console.log("Fetched books:", data);
 
-      data = data.slice(0, 5); // Guarantee only 5 books
+      data = data.slice(0, 5);
 
       const formattedBooks = data.map((book, index) => ({
-        segmentText: book.bookTitle, // Full title
+        segmentText: book.bookTitle, 
         segColor: getWheelColors(index),
         coverImage: book.bookCoverUrl ? `https://deploycapstone.onrender.com/api/books${book.bookCoverUrl}` : null,
         fontSize: adjustFontSize(book.bookTitle),
@@ -92,7 +92,7 @@ const SpinWheelGame = () => {
     arrowLocation: "top",
     showTextOnSpin: false,
     isSpinSound: true,
-    textStyle: { 
+    textStyle: {
       whiteSpace: "normal",
       wordWrap: "break-word",
       textAlign: "center",
@@ -118,7 +118,6 @@ const SpinWheelGame = () => {
               <h1 style={styles.title}>📖 Spin the Wheel!</h1>
               {books.length > 0 ? (
                 <div style={styles.wheelContainer}>
-                  {/* Wrap the SpinWheel in Suspense */}
                   <Suspense fallback={<div>Loading Spin Wheel...</div>}>
                     <SpinWheel {...spinWheelProps} />
                   </Suspense>
@@ -132,18 +131,7 @@ const SpinWheelGame = () => {
           ) : (
             <div style={styles.resultContainer}>
               <h2 style={styles.resultText}>📚 Your Recommendation:</h2>
-              {selectedBook.coverImage ? (
-                <img
-                  src={selectedBook.coverImage}
-                  alt="Book Cover"
-                  style={styles.bookCover}
-                />
-              ) : (
-                <p style={{ fontSize: "18px", color: "gray" }}>
-                  No cover available
-                </p>
-              )}
-              <h3 style={styles.resultTitle}>{selectedBook.segmentText}</h3>
+              <h3 style={styles.resultTitle}>{selectedBook.segmentText}</h3> {/* Only show the book title */}
               <button style={styles.spinAgainButton} onClick={spinAgain}>
                 🔄 Spin Again
               </button>
@@ -230,13 +218,14 @@ const styles = {
     textAlign: "center",
     marginTop: "20px",
   },
-  bookCover: {
-    width: "180px",
-    height: "250px",
-    objectFit: "cover",
-    borderRadius: "8px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+  resultText: {
+    fontSize: "20px",
+    fontWeight: "bold",
+  },
+  resultTitle: {
+    fontSize: "18px",
     marginTop: "10px",
+    fontWeight: "normal",
   },
 };
 
