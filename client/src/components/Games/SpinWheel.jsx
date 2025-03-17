@@ -1,7 +1,8 @@
 import React, { useState, useEffect, Suspense } from "react";
-// Use React.lazy to load the SpinWheel component
+
+// Lazy load the SpinWheel component
 const SpinWheel = React.lazy(() =>
-  import("spin-wheel-game").then(module => ({ default: module.SpinWheel }))
+  import("spin-wheel-game").then((module) => ({ default: module.SpinWheel }))
 );
 
 const SpinWheelGame = () => {
@@ -9,10 +10,12 @@ const SpinWheelGame = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
 
-  // Fetch random books from the database (limited to 5)
+  // Fetch random books from API
   const fetchRandomBooks = async () => {
     try {
-      const response = await fetch("https://deploycapstone.onrender.com/api/books/random?limit=5");
+      const response = await fetch(
+        "https://deploycapstone.onrender.com/api/books/random?limit=5"
+      );
       if (!response.ok) throw new Error("Failed to fetch books");
 
       let data = await response.json();
@@ -21,9 +24,8 @@ const SpinWheelGame = () => {
       data = data.slice(0, 5);
 
       const formattedBooks = data.map((book, index) => ({
-        segmentText: book.bookTitle, 
+        segmentText: book.bookTitle,
         segColor: getWheelColors(index),
-        coverImage: book.bookCoverUrl ? `https://deploycapstone.onrender.com/api/books${book.bookCoverUrl}` : null,
         fontSize: adjustFontSize(book.bookTitle),
       }));
 
@@ -43,7 +45,7 @@ const SpinWheelGame = () => {
     return "10px";
   };
 
-  // Generate colors that fit the brown motif
+  // Generate colors for the wheel
   const getWheelColors = (index) => {
     const colors = ["#C19A6B", "#8B5E3C", "#D2B48C", "#A67B5B", "#7D4E2D"];
     return colors[index % colors.length];
@@ -52,7 +54,7 @@ const SpinWheelGame = () => {
   // Handle spin result
   const handleSpinFinish = (selectedTitle) => {
     console.log(`Spun to: ${selectedTitle}`);
-    const foundBook = books.find(book => book.segmentText === selectedTitle);
+    const foundBook = books.find((book) => book.segmentText === selectedTitle);
     if (foundBook) {
       setSelectedBook(foundBook);
     }
@@ -71,7 +73,7 @@ const SpinWheelGame = () => {
     setSelectedBook(null);
   };
 
-  // Spin again and fetch new books
+  // Spin again
   const spinAgain = async () => {
     setSelectedBook(null);
     await fetchRandomBooks();
@@ -131,7 +133,7 @@ const SpinWheelGame = () => {
           ) : (
             <div style={styles.resultContainer}>
               <h2 style={styles.resultText}>📚 Your Recommendation:</h2>
-              <h3 style={styles.resultTitle}>{selectedBook.segmentText}</h3> {/* Only show the book title */}
+              <h3 style={styles.resultTitle}>{selectedBook.segmentText}</h3>
               <button style={styles.spinAgainButton} onClick={spinAgain}>
                 🔄 Spin Again
               </button>
