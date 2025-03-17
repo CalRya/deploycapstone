@@ -13,9 +13,9 @@ const DeveloperMiddleware = require('../middleware/Developer.middleware');
 
 app.use(cors({
     origin: 'https://pageturnerdeploy.vercel.app',
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+    methods: 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true
 }));
 
 // 🔥 Add this middleware to manually handle CORS for preflight requests
