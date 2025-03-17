@@ -255,7 +255,8 @@ app.put("/api/borrow/approve/:borrowId", async (req, res) => {
 app.put("/api/borrow/reject/:id", async (req, res) => {
   try {
       const borrowId = req.params.id;
-      
+      console.log("🛑 Rejecting borrow request with ID:", borrowId);
+
       const updatedRequest = await BorrowRequest.findByIdAndUpdate(
           borrowId,
           { status: "denied" },
@@ -263,16 +264,19 @@ app.put("/api/borrow/reject/:id", async (req, res) => {
       );
 
       if (!updatedRequest) {
+          console.error("❌ Borrow request not found in database!");
           return res.status(404).json({ message: "Request not found" });
       }
 
+      console.log("✅ Borrow request denied:", updatedRequest);
       res.json({ message: "Request denied successfully", data: updatedRequest });
+
   } catch (error) {
+      console.error("🚨 Server Error:", error);
       res.status(500).json({ message: "Internal Server Error", error });
   }
 });
 
-// Return a borrowed book
 app.put("/api/borrow/return/:borrowId", async (req, res) => {
   try {
     const { borrowId } = req.params;
