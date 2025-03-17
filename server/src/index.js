@@ -25,8 +25,6 @@ const premiumRoutes = require("../routes/premiumRoutes");
 // 1️⃣ Import your new auth routes (which contain forgot/reset password endpoints)
 const authRoutes = require("../routes/authRoutes");
 
-const mongoose = require("mongoose");
-
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   "mongodb+srv://lindsaysal07:P%40ssw0rd0119@library1.v2ang.mongodb.net/Library1?retryWrites=true&w=majority&appName=Library1";
