@@ -156,7 +156,7 @@ const UserTable = ({ users = [], refreshUsers }) => {
                                                 style={{ ...styles.button, ...styles.editButton }}
                                                 onClick={() => setEditingUser(user)}
                                             >
-                                                ✏️ Edit
+                                                ✏️ Save
                                             </button>
                                             <button
                                                 style={{ ...styles.button, ...styles.deleteButton }}
