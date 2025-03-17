@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import NavbarReal from "../../Navbar/NavbarReal"; // Make sure NavbarReal is correctly referenced
+import NavbarReal from "../../Navbar/NavbarReal"; // Ensure correct path
 import UserTable from "./UserTable";
 import AddUserForm from "./AddUserForm";
 
@@ -34,10 +34,11 @@ const AdminDashboard = () => {
     setSearchQuery(e.target.value);
   };
 
+  // ✅ Updated PATCH to PUT for role changes
   const handleRoleChange = async (userId, newRole) => {
     try {
       const response = await fetch(`https://deploycapstone.onrender.com/api/users/${userId}`, {
-        method: "PATCH",
+        method: "PUT", // ✅ Changed from PATCH to PUT
         headers: {
           "Content-Type": "application/json",
         },
@@ -49,7 +50,7 @@ const AdminDashboard = () => {
       }
 
       console.log(`✅ Role updated for user ${userId} to ${newRole}`);
-      fetchUsers();
+      fetchUsers(); // Refresh user list
     } catch (error) {
       console.error("❌ Error updating role:", error.message);
     }
@@ -59,7 +60,6 @@ const AdminDashboard = () => {
     user.user && user.user.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // ✅ Updated styles to improve responsiveness
   const styles = {
     dashboard: {
       display: "flex",
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
       backgroundColor: "#F5F5DC",
       borderRadius: "10px",
       boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
-      transform: "scale(0.95)", // Scales down everything slightly
+      transform: "scale(0.95)",
       transformOrigin: "top center",
     },
     header: {
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
       padding: "10px",
       backgroundColor: "#8B5A2B",
       borderRadius: "8px",
-      flexWrap: "wrap", // Makes it mobile-friendly
+      flexWrap: "wrap",
     },
     input: {
       padding: "10px",
@@ -112,7 +112,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      {/* ✅ Updated Navbar to ensure correct styling */}
+      {/* ✅ Updated Navbar */}
       <NavbarReal />
 
       <div style={styles.dashboard}>
@@ -129,7 +129,7 @@ const AdminDashboard = () => {
           />
         </div>
 
-        {/* ✅ User Table */}
+        {/* ✅ User Table with updated role change function */}
         <UserTable users={filteredUsers} refreshUsers={fetchUsers} onRoleChange={handleRoleChange} />
 
         {/* ✅ Add User Section */}

@@ -13,7 +13,8 @@ const DeveloperMiddleware = require('../middleware/Developer.middleware')
 
 app.use(cors({
     origin: '*',
-    methods: ['POST', 'GET'],
+    methods: ['POST', 'GET', 'PATCH', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 }))
 
