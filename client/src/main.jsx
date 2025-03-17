@@ -33,10 +33,15 @@ import AboutAdmin from './components/Pages/ADMIN/AboutAdmin';
 import ProfAdmin from './components/Pages/ProfAdmin';
 import ManageAdmin from './components/Pages/ADMIN/RealAdmin';
 
+import ForgotPassword from './components/Pages/ForgotPassword';
+import ResetPassword from './components/Pages/ResetPassword';
+
 const router = createBrowserRouter([
   { path: "/", element: <RegisterApp /> },
   { path: "register", element: <RegisterApp /> },
   { path: "login", element: <Login /> },
+  { path: "forgot-password", element: <ForgotPassword /> },
+  { path: "reset-password/:token", element: <ResetPassword /> },
   { path: "home", element: <HomePage /> },
   { path: "lib", element: <LibraryPage /> },
   { path: "gamesh", element: <GameHome /> },

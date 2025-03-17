@@ -9,8 +9,9 @@ const UserSchema = new mongoose.Schema({
         status: { type: String, enum: ['none', 'monthly', 'lifetime'], default: 'none' },
         expiryDate: { type: Date, default: null }
     },
-    borrowedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }]
+    borrowedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
+    resetToken: { type: String, default: null },
+    resetTokenExpiry: { type: Date, default: null }
 });
-
 
 module.exports = mongoose.model("User", UserSchema);
