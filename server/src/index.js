@@ -182,6 +182,20 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
+app.get("/borrow/:id", async (req, res) => {
+  try {
+      const borrowId = req.params.id;
+      const borrowRequest = await BorrowRequest.findById(borrowId);
+      if (!borrowRequest) {
+          return res.status(404).json({ message: "Borrow request not found" });
+      }
+      res.json(borrowRequest);
+  } catch (error) {
+      res.status(500).json({ message: "Server error", error });
+  }
+});
+
+
 // Get a single user by ID
 app.get("/api/users/:userId", async (req, res) => {
   try {
