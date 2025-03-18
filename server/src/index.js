@@ -156,7 +156,7 @@ app.post("/login", async (req, res) => {
 });
 
 // API route for fetching borrowed books for a user
-app.get("/api/borrow/:user", async (req, res) => {
+app.get("/borrow/:user", async (req, res) => {
   try {
     const { user } = req.params;
     if (!user) return res.status(400).json({ message: "User ID is required" });
