@@ -185,7 +185,7 @@ app.get("/api/users", async (req, res) => {
 app.get("/api/borrow/:id", async (req, res) => {
   try {
       const borrowId = req.params.id;
-      const borrowRequest = await BorrowRequest.findById(borrowId);
+      const borrowRequest = await BorrowRequestSchema.findById(borrowId);
       if (!borrowRequest) {
           return res.status(404).json({ message: "Borrow request not found" });
       }
