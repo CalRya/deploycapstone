@@ -182,7 +182,7 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-app.get("/borrow/:id", async (req, res) => {
+app.get("/api/borrow/:id", async (req, res) => {
   try {
       const borrowId = req.params.id;
       const borrowRequest = await BorrowRequest.findById(borrowId);
